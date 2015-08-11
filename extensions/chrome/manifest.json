@@ -1,0 +1,30 @@
+{
+  "manifest_version": 2,
+  "name": "github-hovercard",
+  "description": "Quick user hovercard for GitHub.",
+  "version": "0.0.1",
+  "permissions": [
+    "activeTab"
+  ],
+  "web_accessible_resources": [
+    "spinner.svg"
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "http://github.com/*",
+        "https://github.com/*"
+      ],
+      "js": [
+        "jquery.js",
+        "mustache.js",
+        "tooltipster.js",
+        "hovercard.js"
+      ],
+      "css": [
+        "tooltipster.css",
+        "hovercard.css"
+      ]
+    }
+  ]
+}

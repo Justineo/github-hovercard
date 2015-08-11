@@ -1,0 +1,26 @@
+{
+  "name": "github-hovercard",
+  "version": "0.0.1",
+  "description": "Quick user hovercard for GitHub.",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Justineo/github-hovercard.git"
+  },
+  "keywords": [
+    "GitHub",
+    "hovercard",
+    "Chrome extension",
+    "Firefox add-on"
+  ],
+  "devDependencies": {
+    "gulp": "^3.8.9",
+    "gulp-rename": "~1.2.0",
+    "gulp-replace": "^0.5.4"
+  },
+  "author": "Justineo",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Justineo/github-hovercard/issues"
+  },
+  "homepage": "https://github.com/Justineo/github-hovercard"
+}

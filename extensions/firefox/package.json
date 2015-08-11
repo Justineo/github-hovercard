@@ -1,0 +1,13 @@
+{
+  "title": "GitHub Hovercard",
+  "name": "github-hovercard",
+  "version": "0.0.1",
+  "description": "Quick user hovercard for GitHub.",
+  "main": "index.js",
+  "author": "Justineo",
+  "engines": {
+    "firefox": ">=38.0a1",
+    "fennec": ">=38.0a1"
+  },
+  "license": "MIT"
+}
