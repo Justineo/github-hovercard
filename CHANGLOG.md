@@ -1,6 +1,10 @@
 Changelog
 ---
 
+## 0.0.4
+
+* Fix more reserved usernames.
+
 ## 0.0.3
 
 * Fix reserved username 'pulls' and 'issues'.

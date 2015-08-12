@@ -25,12 +25,13 @@ $(function () {
 
     var me = $('meta[name="user-login"]').attr('content');
 
-    // from octotree
+    // based on octotree's config
     const GH_RESERVED_USER_NAMES = [
       'settings', 'orgs', 'organizations', 'site', 'blog', 'about',
       'explore', 'styleguide', 'showcases', 'trending', 'stars',
       'dashboard', 'notifications', 'search', 'developer', 'account',
-      'pulls', 'issues'
+      'pulls', 'issues', 'features', 'contact', 'security', 'join',
+      'login', 'password_reset', 'showcases.atom'
     ];
 
     var strategies = {
