@@ -15,7 +15,6 @@ $(function () {
     };
     observer.observe(target, observeConfig);
 
-
     var extractor = {
         SLUG: 0,
         TEXT: 1,
@@ -23,6 +22,13 @@ $(function () {
         TITLE: 3,
         URL: 4
     };
+
+    var me = $('meta[name="user-login"]').attr('content');
+    var excludes = [
+        me, 'pulls', 'issues', 'notifications', 'watching',
+        'new', 'stars', 'explore', 'trending', 'showcases',
+        'security', 'blog', 'about'
+    ];
 
     var strategies = {
         '.repo-list-name .prefix': extractor.TEXT,
@@ -59,8 +65,8 @@ $(function () {
         '.issue-list-meta li:nth-child(2) a': extractor.TEXT,
         '.user-list-info a:first-child': extractor.TEXT,
         '.commits li span': extractor.TITLE,
-        '.follow-list-name a': extractor.HREF
-        // 'a': extractor.URL
+        '.follow-list-name a': extractor.HREF,
+        'a': extractor.URL
     };
 
     function trim(str) {
@@ -86,13 +92,7 @@ $(function () {
         return elem.data(USER_KEY) || !!elem.data(SKIP_KEY);
     }
 
-    function preload(images) {
-        images.forEach(function (image) {
-            (new Image()).src = image;
-        });
-    }
-
-    var URL_PATTERN = /^https?:\/\/github.com\/([^\/]+)(?:\/?|\/[^\/]+)$/;
+    var URL_PATTERN = /^https?:\/\/github.com\/([^\/]+)\/?(?:#)$/;
     var SLUG_PATTERN = /^([^\/]+)\/[^#]+(?:#\d+)?$/;
     var selectors = Object.keys(strategies);
 
@@ -141,7 +141,11 @@ $(function () {
                         if (href) {
                             match = href.match(URL_PATTERN);
                             username = trim(match && match[1]);
+                            if (excludes.indexOf(username) !== -1) {
+                                username = null;
+                            }
                         }
+                        break;
                     default:
                         break;
                 }
@@ -217,6 +221,5 @@ $(function () {
         });
     }
 
-    preload(['https://rawgit.com/StylishThemes/GitHub-Dark/master/images/octocat-spinner-smil.min.svg']);
     init();
 });

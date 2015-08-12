@@ -1,18 +1,23 @@
 var gulp = require('gulp');
 var fs = require('fs');
+var merge = require('merge-stream');
 var exec = require('child_process').exec;
 var pack = JSON.parse(fs.readFileSync('./package.json', { encoding: 'utf8' }));
 var version = pack.version;
 
-gulp.task('copy-assets', function () {
+gulp.task('cp', function () {
   var replace = require('gulp-replace');
-  return gulp.src('./src/*')
+  var src = gulp.src('./src/*')
     .pipe(gulp.dest('./extensions/firefox/data'))
     .pipe(replace(/spinner.svg/, 'chrome-extension://__MSG_@@extension_id__/spinner.svg'))
     .pipe(gulp.dest('./extensions/chrome'));
+  var assets = gulp.src('./assets/*')
+    .pipe(gulp.dest('./extensions/firefox/data'))
+    .pipe(gulp.dest('./extensions/chrome'));
+  return merge(src, assets);
 });
 
-gulp.task('pack-chrome-extension', ['copy-assets'], function (cb) {
+gulp.task('pack-chrome-extension', ['cp'], function (cb) {
   exec('find . -path \'*/.*\' -prune -o -type f -print | zip ../packed/github-hovercard.zip -@', {
     cwd: 'extensions/chrome'
   }, function (error, stdout, stderr) {
@@ -28,7 +33,7 @@ gulp.task('pack-chrome-extension', ['copy-assets'], function (cb) {
   });
 });
 
-gulp.task('pack-firefox-addon', ['copy-assets'], function (cb) {
+gulp.task('pack-firefox-addon', ['cp'], function (cb) {
   exec('jpm xpi', {
     cwd: 'extensions/firefox'
   }, function (error, stdout, stderr) {
