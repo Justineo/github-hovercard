@@ -27,11 +27,10 @@ $(function () {
 
     // from octotree
     const GH_RESERVED_USER_NAMES = [
-      'settings', 'orgs', 'organizations',
-      'site', 'blog', 'about', 'explore',
-      'styleguide', 'showcases', 'trending',
-      'stars', 'dashboard', 'notifications',
-      'search', 'developer', 'account'
+      'settings', 'orgs', 'organizations', 'site', 'blog', 'about',
+      'explore', 'styleguide', 'showcases', 'trending', 'stars',
+      'dashboard', 'notifications', 'search', 'developer', 'account',
+      'pulls', 'issues'
     ];
 
     var strategies = {
