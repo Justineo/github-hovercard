@@ -92,7 +92,7 @@ $(function () {
         return elem.data(USER_KEY) || !!elem.data(SKIP_KEY);
     }
 
-    var URL_PATTERN = /^https?:\/\/github.com\/([^\/]+)\/?(?:#)$/;
+    var URL_PATTERN = /^https?:\/\/github.com\/([^\/\?#]+)$/;
     var SLUG_PATTERN = /^([^\/]+)\/[^#]+(?:#\d+)?$/;
     var selectors = Object.keys(strategies);
 
