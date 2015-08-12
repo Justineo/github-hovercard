@@ -15,7 +15,7 @@ $(function () {
     };
     observer.observe(target, observeConfig);
 
-    var extractor = {
+    const EXTRACTOR = {
         SLUG: 0,
         TEXT: 1,
         ALT: 2,
@@ -24,49 +24,53 @@ $(function () {
     };
 
     var me = $('meta[name="user-login"]').attr('content');
-    var excludes = [
-        me, 'pulls', 'issues', 'notifications', 'watching',
-        'new', 'stars', 'explore', 'trending', 'showcases',
-        'security', 'blog', 'about'
+
+    // from octotree
+    const GH_RESERVED_USER_NAMES = [
+      'settings', 'orgs', 'organizations',
+      'site', 'blog', 'about', 'explore',
+      'styleguide', 'showcases', 'trending',
+      'stars', 'dashboard', 'notifications',
+      'search', 'developer', 'account'
     ];
 
     var strategies = {
-        '.repo-list-name .prefix': extractor.TEXT,
-        '.avatar': extractor.ALT,
-        '.gravatar': extractor.ALT,
-        '.author-gravatar': extractor.ALT,
-        '.timeline-comment-avatar': extractor.ALT,
-        '[data-ga-click~="target:actor"]': extractor.TEXT,
-        '[data-ga-click~="target:repository"]': extractor.SLUG,
-        '[data-ga-click~="target:repo"]': extractor.SLUG,
-        '[data-ga-click~="target:parent"]': extractor.SLUG,
-        '[data-ga-click~="target:issue"]': extractor.SLUG,
-        '[data-ga-click~="target:issue-comment"]': extractor.SLUG,
-        '[data-ga-click~="target:pull"]': extractor.SLUG,
-        '.user-mention': extractor.TEXT,
-        '.opened-by a': extractor.TEXT,
-        '.issue-title-link': extractor.SLUG,
-        '.filter-list .repo-and-owner': extractor.SLUG,
-        '.repo-list a span:first-child': extractor.TEXT,
-        '.repo-and-owner .owner': extractor.TEXT,
-        '.capped-card .aname': extractor.TEXT,
-        '.team-member-username a': extractor.TEXT,
-        '.member-username': extractor.TEXT,
-        '.repo a:first-of-type': extractor.TEXT,
-        '.repo-name': extractor.SLUG,
-        '.author-name a': extractor.TEXT,
-        '.author-name span': extractor.TEXT,
-        '.release-authorship a:first-of-type': extractor.TEXT,
-        '.table-list-cell-avatar img': extractor.ALT,
-        '.author': extractor.TEXT,
-        '.repo-list-name a': extractor.SLUG,
-        '.code-list-item a:first-child': extractor.SLUG,
-        '.issue-list-meta li:first-child a': extractor.SLUG,
-        '.issue-list-meta li:nth-child(2) a': extractor.TEXT,
-        '.user-list-info a:first-child': extractor.TEXT,
-        '.commits li span': extractor.TITLE,
-        '.follow-list-name a': extractor.HREF,
-        'a': extractor.URL
+        '.repo-list-name .prefix': EXTRACTOR.TEXT,
+        '.avatar': EXTRACTOR.ALT,
+        '.gravatar': EXTRACTOR.ALT,
+        '.author-gravatar': EXTRACTOR.ALT,
+        '.timeline-comment-avatar': EXTRACTOR.ALT,
+        '[data-ga-click~="target:actor"]': EXTRACTOR.TEXT,
+        '[data-ga-click~="target:repository"]': EXTRACTOR.SLUG,
+        '[data-ga-click~="target:repo"]': EXTRACTOR.SLUG,
+        '[data-ga-click~="target:parent"]': EXTRACTOR.SLUG,
+        '[data-ga-click~="target:issue"]': EXTRACTOR.SLUG,
+        '[data-ga-click~="target:issue-comment"]': EXTRACTOR.SLUG,
+        '[data-ga-click~="target:pull"]': EXTRACTOR.SLUG,
+        '.user-mention': EXTRACTOR.TEXT,
+        '.opened-by a': EXTRACTOR.TEXT,
+        '.issue-title-link': EXTRACTOR.SLUG,
+        '.filter-list .repo-and-owner': EXTRACTOR.SLUG,
+        '.repo-list a span:first-child': EXTRACTOR.TEXT,
+        '.repo-and-owner .owner': EXTRACTOR.TEXT,
+        '.capped-card .aname': EXTRACTOR.TEXT,
+        '.team-member-username a': EXTRACTOR.TEXT,
+        '.member-username': EXTRACTOR.TEXT,
+        '.repo a:first-of-type': EXTRACTOR.TEXT,
+        '.repo-name': EXTRACTOR.SLUG,
+        '.author-name a': EXTRACTOR.TEXT,
+        '.author-name span': EXTRACTOR.TEXT,
+        '.release-authorship a:first-of-type': EXTRACTOR.TEXT,
+        '.table-list-cell-avatar img': EXTRACTOR.ALT,
+        '.author': EXTRACTOR.TEXT,
+        '.repo-list-name a': EXTRACTOR.SLUG,
+        '.code-list-item a:first-child': EXTRACTOR.SLUG,
+        '.issue-list-meta li:first-child a': EXTRACTOR.SLUG,
+        '.issue-list-meta li:nth-child(2) a': EXTRACTOR.TEXT,
+        '.user-list-info a:first-child': EXTRACTOR.TEXT,
+        '.commits li span': EXTRACTOR.TITLE,
+        '.follow-list-name a': EXTRACTOR.HREF,
+        'a': EXTRACTOR.URL
     };
 
     function trim(str) {
@@ -76,8 +80,8 @@ $(function () {
         return str.replace(/^\s+|\s+$/g, '');
     }
 
-    var USER_KEY = 'hovercard-user';
-    var SKIP_KEY = 'hovercard-skip';
+    const USER_KEY = 'hovercard-user';
+    const SKIP_KEY = 'hovercard-skip';
 
     function markExtracted(elem, username) {
         if (username) {
@@ -89,7 +93,7 @@ $(function () {
     }
 
     function getExtracted(elem) {
-        return elem.data(USER_KEY) || !!elem.data(SKIP_KEY);
+        return elem.data(USER_KEY) || !!elem.data(SKIP_KEY) || elem.find('.' + USER_KEY).length;
     }
 
     var URL_PATTERN = /^https?:\/\/github.com\/([^\/\?#]+)$/;
@@ -109,19 +113,19 @@ $(function () {
                 var username;
                 var match;
                 switch (strategy) {
-                    case extractor.TEXT:
+                    case EXTRACTOR.TEXT:
                         username = trim(elem.text().replace(/[@\/]/g, ''));
                         break;
-                    case extractor.TITLE:
+                    case EXTRACTOR.TITLE:
                         username = trim(elem.attr('title').replace(/[@\/]/g, ''));
                         break;
-                    case extractor.ALT:
+                    case EXTRACTOR.ALT:
                         username = trim(elem.attr('alt').replace(/[@\/]/g, ''));
                         break;
-                    case extractor.HREF:
+                    case EXTRACTOR.HREF:
                         username = trim(elem.attr('href').replace(/[@\/]/g, ''));
                         break;
-                    case extractor.SLUG:
+                    case EXTRACTOR.SLUG:
                         var slug = elem.text();
                         match = slug.match(SLUG_PATTERN);
                         username = trim(match && match[1]);
@@ -131,7 +135,7 @@ $(function () {
                             elem = elem.children().first();
                         }
                         break;
-                    case extractor.URL:
+                    case EXTRACTOR.URL:
                         var attr = elem.attr('href');
                         if (attr && attr.charAt(0) === '#') {
                             // ignore local anchors
@@ -141,7 +145,7 @@ $(function () {
                         if (href) {
                             match = href.match(URL_PATTERN);
                             username = trim(match && match[1]);
-                            if (excludes.indexOf(username) !== -1) {
+                            if (GH_RESERVED_USER_NAMES.indexOf(username) !== -1) {
                                 username = null;
                             }
                         }
@@ -151,7 +155,11 @@ $(function () {
                 }
 
                 if (username) {
-                    markExtracted(elem, username);
+                    if (username !== me) {
+                        markExtracted(elem, username);
+                    } else {
+                        markExtracted(elem);
+                    }
                 }
             });
         });
