@@ -20,4 +20,4 @@ Working on it.
 
 ## Acknowledgements
 
-Thanks (`Tooltipster`)[http://iamceege.github.io/tooltipster/] for the awesome tooltip component and [jQuery](http://jquery.com/) for basic operations.
+Thanks [`Tooltipster`](http://iamceege.github.io/tooltipster/) for the awesome tooltip component and [jQuery](http://jquery.com/) for basic operations.
