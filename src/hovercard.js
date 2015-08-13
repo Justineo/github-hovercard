@@ -209,18 +209,16 @@ $(function () {
                 } else {
                     $.ajax({
                         url: '//api.github.com/users/' + username,
-                        datatype: 'json',
-                        success: function (user) {
-                            cache[username] = user;
-                            elem.tooltipster('content', getCardHTML(user));
-                        },
-                        error: function (e) {
-                            var error = e.responseJSON;
-                            elem.tooltipster('content', $('<div class="hovercard">' + error.message.replace(
-                                /documentation/,
-                                '<a href="' + error.documentation_url + '">documentation</a>'
-                            ) + '</div>'));
-                        }
+                        datatype: 'json'
+                    }).done(function (user) {
+                        cache[username] = user;
+                        elem.tooltipster('content', getCardHTML(user));
+                    }).fail(function (e) {
+                        var error = e.responseJSON;
+                        elem.tooltipster('content', $('<div class="hovercard">' + error.message.replace(
+                            /documentation/,
+                            '<a href="' + error.documentation_url + '">documentation</a>'
+                        ) + '</div>'));
                     });
                 }
                 done();
