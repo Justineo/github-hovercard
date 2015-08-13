@@ -168,7 +168,7 @@ $(function () {
             '<address class="hovercard">\
                 <img src="{{avatar}}&s=32" class="hovercard-avatar">\
                 <div class="hovercard-person">\
-                    <p><strong><a href="{{userUrl}}">{{loginName}}</a></strong>{{#isOrg}} <small>(Orgnization)</small>{{/isOrg}}</p>\
+                    <p><strong><a href="{{userUrl}}">{{loginName}}</a></strong>{{#isOrg}} <small>(Organization)</small>{{/isOrg}}</p>\
                     {{#realName}}<p>{{realName}}</p>{{/realName}}\
                 </div>\
                 <div class="hovercard-more">\

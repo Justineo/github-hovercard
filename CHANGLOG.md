@@ -1,6 +1,10 @@
 Changelog
 ---
 
+## 0.0.5
+
+* Fix a typo.
+
 ## 0.0.4
 
 * Fix more reserved usernames.

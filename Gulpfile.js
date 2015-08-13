@@ -18,32 +18,32 @@ gulp.task('cp', function () {
 });
 
 gulp.task('pack-chrome-extension', ['cp'], function (cb) {
+  var manifestPath = './extensions/chrome/manifest.json';
+  var manifest = JSON.parse(fs.readFileSync(manifestPath, { encoding: 'utf8' }));
+  manifest.version = version;
+  fs.writeFileSync(manifestPath, JSON.stringify(manifest, null, '  '));
   exec('find . -path \'*/.*\' -prune -o -type f -print | zip ../packed/github-hovercard.zip -@', {
     cwd: 'extensions/chrome'
   }, function (error, stdout, stderr) {
     if (error) {
       return cb(error);
     } else {
-      var manifestPath = './extensions/chrome/manifest.json';
-      var manifest = JSON.parse(fs.readFileSync(manifestPath, { encoding: 'utf8' }));
-      manifest.version = version;
-      fs.writeFileSync(manifestPath, JSON.stringify(manifest, null, '  '));
       cb();
     }
   });
 });
 
 gulp.task('pack-firefox-addon', ['cp'], function (cb) {
+  var fxPackPath = './extensions/firefox/package.json';
+  var fxPack = JSON.parse(fs.readFileSync(fxPackPath, { encoding: 'utf8' }));
+  fxPack.version = version;
+  fs.writeFileSync(fxPackPath, JSON.stringify(fxPack, null, '  '));
   exec('jpm xpi', {
     cwd: 'extensions/firefox'
   }, function (error, stdout, stderr) {
     if (error) {
       return cb(error);
     } else {
-      var fxPackPath = './extensions/firefox/package.json';
-      var fxPack = JSON.parse(fs.readFileSync(fxPackPath, { encoding: 'utf8' }));
-      fxPack.version = version;
-      fs.writeFileSync(fxPackPath, JSON.stringify(fxPack, null, '  '));
       fs.renameSync('./extensions/firefox/@' + pack.name + '-' + version + '.xpi', './extensions/packed/' + pack.name + '.xpi');
       cb();
     }
