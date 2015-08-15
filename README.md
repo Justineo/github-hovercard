@@ -14,9 +14,11 @@ Quick user hovercard for GitHub.
 
 For unauthenticated requests, GitHub API has a fairly low request limit.
 
-In later versions I might introduce access tokens to increase this limit.
+~~In later versions I might introduce access tokens to increase this limit.~~
 
-Working on it.
+~~Working on it.~~
+
+Authentication is supported form v0.0.7.
 
 ## Acknowledgements
 
