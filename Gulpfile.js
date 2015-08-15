@@ -14,7 +14,10 @@ gulp.task('cp', function () {
   var assets = gulp.src('./assets/*')
     .pipe(gulp.dest('./extensions/firefox/data'))
     .pipe(gulp.dest('./extensions/chrome'));
-  return merge(src, assets);
+  var icon = gulp.src('./icon.png')
+    .pipe(gulp.dest('./extensions/firefox'))
+    .pipe(gulp.dest('./extensions/chrome'));
+  return merge(src, assets, icon);
 });
 
 gulp.task('pack-chrome-extension', ['cp'], function (cb) {

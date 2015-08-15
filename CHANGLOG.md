@@ -1,6 +1,15 @@
 Changelog
 ---
 
+## 0.0.7
+
+* Add more selectors.
+* Add source code comments for extractors.
+
+## 0.0.6
+
+* Fix username pattern and add reserved username.
+
 ## 0.0.5
 
 * Fix a typo.
