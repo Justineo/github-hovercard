@@ -12,6 +12,7 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    clear: both;
 }
 
 .hovercard-error p {
@@ -42,8 +43,9 @@
     display: inline-block;
     width: 18px;
     text-align: center;
-    font-size: 11px;
+    font-size: 90%;
     line-height: 12px;
+    vertical-align: middle;
     opacity: .8;
 }
 
@@ -55,6 +57,42 @@
     border: 2px solid rgba(255, 255, 255, .1);
     border-radius: 2px;
     background-color: #fff;
+}
+
+.hovercard-stats {
+    float: left;
+    margin-bottom: 10px;
+    padding: 3px 3px;
+    border-radius: 2px;
+    background-color: rgba(255, 255, 255, .15);
+}
+
+.hovercard-stats strong,
+.hovercard-stats span {
+    display: block;
+    padding: 2px 4px;
+    line-height: 1;
+    text-align: center;
+}
+
+.hovercard-stats span {
+    font-style: 70%;
+    color: #fff;
+    opacity: .8;
+}
+
+.hovercard-stats a {
+    display: block;
+    float: left;
+    padding: 0 3px;
+}
+
+.hovercard-stats a:hover {
+    text-decoration: none;
+}
+
+.hovercard-stats {
+    line-height: 1;
 }
 
 .hovercard-error {

@@ -75,6 +75,7 @@ $(function () {
         '.commits li span': EXTRACTOR.TITLE,
         '.follow-list-name a': EXTRACTOR.HREF,
         '.sidebar-assignee .assignee': EXTRACTOR.TEXT,
+        '.contribution .cmeta': EXTRACTOR.SLUG,
         'a': EXTRACTOR.URL
     };
 
@@ -175,15 +176,36 @@ $(function () {
             '<address class="hovercard">\
                 <img src="{{avatar}}&s=32" class="hovercard-avatar">\
                 <div class="hovercard-person">\
-                    <p><strong><a href="{{userUrl}}">{{loginName}}</a></strong>{{#isOrg}} <small>(Organization)</small>{{/isOrg}}</p>\
+                    <p><strong><a href="{{userUrl}}">{{loginName}}</a></strong>{{#isAdmin}} <small>(Administrator)</small>{{/isAdmin}}{{#isOrg}} <small>(Organization)</small>{{/isOrg}}</p>\
                     {{#realName}}<p>{{realName}}</p>{{/realName}}\
                 </div>\
                 <div class="hovercard-more">\
+                    {{^isOrg}}<div class="hovercard-stats">\
+                        <a href="{{followersUrl}}">\
+                            <strong>{{followers}}</strong>\
+                            <span>Followers</span>\
+                        </a>\
+                        <a href="{{followingUrl}}">\
+                            <strong>{{following}}</strong>\
+                            <span>Following</span>\
+                        </a>\
+                        <a href="{{reposUrl}}">\
+                            <strong>{{repos}}</strong>\
+                            <span>Repos</span>\
+                        </a>\
+                    </div>{{/isOrg}}\
                     {{#location}}<p><span class="octicon octicon-location"></span>{{location}}</p>{{/location}}\
                     {{#company}}<p><span class="octicon octicon-organization"></span>{{company}}</p>{{/company}}\
                 </div>\
             </address>';
         Mustache.parse(CARD_TPL);
+
+        function formatNumber(num) {
+            if (num >= 1000) {
+                return (num / 1000).toFixed(1) + 'k';
+            }
+            return num;
+        }
 
         function getCardHTML(user) {
             // https://developer.github.com/v3/users/#get-a-single-user
@@ -193,10 +215,15 @@ $(function () {
                 loginName: user.login,
                 realName: user.name,
                 location: user.location,
-                org: user.organization,
-                orgUrl: user.organizations_url,
+                isAdmin: user.site_admin,
                 isOrg: user.type === 'Organization',
-                company: user.company
+                company: user.company,
+                followers: formatNumber(user.followers),
+                following: formatNumber(user.following),
+                repos: formatNumber(user.public_repos),
+                followersUrl: '//github.com/' + user.login + '/followers',
+                followingUrl: '//github.com/' + user.login + '/following',
+                reposUrl: '//github.com/' + user.login + '?tab=repositories'
             });
 
             return $(html);
@@ -204,7 +231,7 @@ $(function () {
 
         const ERROR_TPL =
             '<div class="hovercard hovercard-error">\
-                <p><strong>{{title}}</strong></p>\
+                <p><strong><span class="octicon octicon-issue-opened"></span>{{title}}</strong></p>\
                 {{#message}}<p>{{{message}}}</p>{{/message}}\
             </div>';
         Mustache.parse(ERROR_TPL);
@@ -272,7 +299,7 @@ $(function () {
                                     break;
                                 default:
                                     title = 'Error';
-                                    message = xhr.responseJSON.message || '';
+                                    message = Mustache.escape(xhr.responseJSON.message || '');
                                     break;
                             }
 

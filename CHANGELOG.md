@@ -1,6 +1,12 @@
 Changelog
 ---
 
+## 0.0.8
+
+* Fixed an XSS vulnerability.
+* Add administrator notice.
+* Add stats section on hovercard.
+
 ## 0.0.7
 
 * Add more selectors.
