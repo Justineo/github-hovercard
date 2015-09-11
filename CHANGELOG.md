@@ -1,6 +1,18 @@
 Changelog
 ---
 
+## 0.0.11
+
+* Adjusted tooltip styles to conform with GitHub tooltips.
+
+## 0.0.10
+
+* Switched main element lookup to `<body>` to prevent future GitHub updates breaking current logic.
+
+## 0.0.9
+
+* Corrected main element lookup to attach `MutationObserver`.
+
 ## 0.0.8
 
 * Fixed an XSS vulnerability.

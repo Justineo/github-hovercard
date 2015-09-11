@@ -1,5 +1,5 @@
 $(function () {
-    var target = document.querySelector('.site');
+    var target = document.body;
     var observer = new MutationObserver(function (mutations) {
         mutations.forEach(function (mutation) {
             if (mutation.type === 'childList') {
@@ -15,14 +15,6 @@ $(function () {
     };
     observer.observe(target, observeConfig);
 
-    const EXTRACTOR = {
-        SLUG: 0,  // {{user}}/{{repo}}
-        TEXT: 1,  // {{user}}
-        ALT: 2,   // alt="{{user}}"
-        TITLE: 3, // title="{{user}}"
-        URL: 4    // href="/{{user}}" or href="https://github.com/{{user}}"
-    };
-
     var me = $('meta[name="user-login"]').attr('content');
 
     // based on octotree's config
@@ -36,11 +28,20 @@ $(function () {
 
     const GH_USER_NAME_PATTERN = /^[a-z0-9]$|^[a-z0-9](?:[a-z0-9](?!--)|-(?!-))*[a-z0-9]$/i;
 
+    const EXTRACTOR = {
+        SLUG: 0,  // {{user}}/{{repo}}
+        TEXT: 1,  // {{user}}
+        ALT: 2,   // alt="{{user}}"
+        TITLE: 3, // title="{{user}}"
+        URL: 4    // href="/{{user}}" or href="https://github.com/{{user}}"
+    };
+
     var strategies = {
         '.repo-list-name .prefix': EXTRACTOR.TEXT,
         '.avatar': EXTRACTOR.ALT,
         '.gravatar': EXTRACTOR.ALT,
         '.author-gravatar': EXTRACTOR.ALT,
+        '.author-avatar': EXTRACTOR.ALT,
         '.timeline-comment-avatar': EXTRACTOR.ALT,
         '[data-ga-click~="target:actor"]': EXTRACTOR.TEXT,
         '[data-ga-click~="target:repository"]': EXTRACTOR.SLUG,
@@ -52,7 +53,7 @@ $(function () {
         '[data-ga-click~="target:pull-comment"]': EXTRACTOR.SLUG,
         '.user-mention': EXTRACTOR.TEXT,
         '.opened-by a': EXTRACTOR.TEXT,
-        '.issue-title-link': EXTRACTOR.SLUG,
+        '.table-list-issues .issue-title-link': EXTRACTOR.SLUG,
         '.filter-list .repo-and-owner': EXTRACTOR.SLUG,
         '.repo-list a span:first-child': EXTRACTOR.TEXT,
         '.repo-list-info a': EXTRACTOR.SLUG,
@@ -103,8 +104,8 @@ $(function () {
         return elem.data(USER_KEY) || !!elem.data(SKIP_KEY) || elem.find('.' + USER_KEY).length;
     }
 
-    var URL_PATTERN = /^https?:\/\/github.com\/([^\/\?#]+)$/;
-    var SLUG_PATTERN = /^([^\/]+)\/[^#]+(?:#\d+)?$/;
+    const URL_PATTERN = /^https?:\/\/github.com\/([^\/\?#]+)$/;
+    const SLUG_PATTERN = /^([^\/]+)\/[^#]+(?:#\d+)?$/;
     var selectors = Object.keys(strategies);
 
     function extract(context) {
