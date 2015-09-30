@@ -1,9 +1,10 @@
 Changelog
 ---
 
-## 0.0.11
+## 0.1.0
 
 * Adjusted tooltip styles to conform with GitHub tooltips.
+* Added hovercard for repos.
 
 ## 0.0.10
 

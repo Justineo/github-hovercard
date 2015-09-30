@@ -1,13 +1,14 @@
 $(function () {
-    var target = document.body;
-    var observer = new MutationObserver(function (mutations) {
+    'use strict';
+    let target = document.body;
+    let observer = new MutationObserver(function (mutations) {
         mutations.forEach(function (mutation) {
             if (mutation.type === 'childList') {
                 extract(mutation.target);
             }
         });
     });
-    var observeConfig = {
+    let observeConfig = {
         attributes: true,
         childList: true,
         characterData: true,
@@ -15,7 +16,7 @@ $(function () {
     };
     observer.observe(target, observeConfig);
 
-    var me = $('meta[name="user-login"]').attr('content');
+    let me = $('meta[name="user-login"]').attr('content');
 
     // based on octotree's config
     const GH_RESERVED_USER_NAMES = [
@@ -23,27 +24,31 @@ $(function () {
       'explore', 'styleguide', 'showcases', 'trending', 'stars',
       'dashboard', 'notifications', 'search', 'developer', 'account',
       'pulls', 'issues', 'features', 'contact', 'security', 'join',
-      'login', 'password_reset', 'watching'
+      'login', 'password_reset', 'watching', 'new'
     ];
 
     const GH_USER_NAME_PATTERN = /^[a-z0-9]$|^[a-z0-9](?:[a-z0-9](?!--)|-(?!-))*[a-z0-9]$/i;
 
     const EXTRACTOR = {
-        SLUG: 0,  // {{user}}/{{repo}}
-        TEXT: 1,  // {{user}}
-        ALT: 2,   // alt="{{user}}"
-        TITLE: 3, // title="{{user}}"
-        URL: 4    // href="/{{user}}" or href="https://github.com/{{user}}"
+        SLUG: 1,  // {{user}}/{{repo}}#{{issue}}
+        TEXT_USER: 2,  // {{user}}
+        TITLE_USER: 3, // title="{{user}}"
+        ALT_USER: 4,   // alt="{{user}}"
+        HREF_USER: 5,   // alt="{{user}}"
+        URL: 6, // href="/{{user}}" or href="https://github.com/{{user}}"
+        NEXT_TEXT_REPO: 7, // <span>...</span> {{repo}}
+        ANCESTOR_URL_REPO: 8 // <a href="/{{user}}/{{repo}}">...{{elem}}...</a>
     };
 
-    var strategies = {
-        '.repo-list-name .prefix': EXTRACTOR.TEXT,
-        '.avatar': EXTRACTOR.ALT,
-        '.gravatar': EXTRACTOR.ALT,
-        '.author-gravatar': EXTRACTOR.ALT,
-        '.author-avatar': EXTRACTOR.ALT,
-        '.timeline-comment-avatar': EXTRACTOR.ALT,
-        '[data-ga-click~="target:actor"]': EXTRACTOR.TEXT,
+    let strategies = {
+        '.explore-content .repo-list-name .prefix': EXTRACTOR.TEXT_USER,
+        '.fork-flag a': EXTRACTOR.SLUG,
+        '.avatar': EXTRACTOR.ALT_USER,
+        '.gravatar': EXTRACTOR.ALT_USER,
+        '.author-gravatar': EXTRACTOR.ALT_USER,
+        '.author-avatar': EXTRACTOR.ALT_USER,
+        '.timeline-comment-avatar': EXTRACTOR.ALT_USER,
+        '[data-ga-click~="target:actor"]': EXTRACTOR.TEXT_USER,
         '[data-ga-click~="target:repository"]': EXTRACTOR.SLUG,
         '[data-ga-click~="target:repo"]': EXTRACTOR.SLUG,
         '[data-ga-click~="target:parent"]': EXTRACTOR.SLUG,
@@ -51,32 +56,43 @@ $(function () {
         '[data-ga-click~="target:issue-comment"]': EXTRACTOR.SLUG,
         '[data-ga-click~="target:pull"]': EXTRACTOR.SLUG,
         '[data-ga-click~="target:pull-comment"]': EXTRACTOR.SLUG,
-        '.user-mention': EXTRACTOR.TEXT,
-        '.opened-by a': EXTRACTOR.TEXT,
-        '.table-list-issues .issue-title-link': EXTRACTOR.SLUG,
+        '.user-mention': EXTRACTOR.TEXT_USER,
+        '.opened-by a': EXTRACTOR.TEXT_USER,
+        '.table-list-issues .issue-nwo-link': EXTRACTOR.SLUG,
         '.filter-list .repo-and-owner': EXTRACTOR.SLUG,
-        '.repo-list a span:first-child': EXTRACTOR.TEXT,
+        '.repo-list a span:first-child': EXTRACTOR.TEXT_USER,
+        '.repo-list .repo-name': EXTRACTOR.ANCESTOR_URL_REPO,
         '.repo-list-info a': EXTRACTOR.SLUG,
-        '.repo-and-owner .owner': EXTRACTOR.TEXT,
-        '.capped-card .aname': EXTRACTOR.TEXT,
-        '.team-member-username a': EXTRACTOR.TEXT,
-        '.member-username': EXTRACTOR.TEXT,
-        '.repo a:first-of-type': EXTRACTOR.TEXT,
-        '.repo-name': EXTRACTOR.SLUG,
-        '.author-name a': EXTRACTOR.TEXT,
-        '.author-name span': EXTRACTOR.TEXT,
-        '.release-authorship a:first-of-type': EXTRACTOR.TEXT,
-        '.table-list-cell-avatar img': EXTRACTOR.ALT,
-        '.author': EXTRACTOR.TEXT,
-        '.repo-list-name a': EXTRACTOR.SLUG,
+        '.repo-and-owner .owner': EXTRACTOR.TEXT_USER,
+        '.repo-and-owner .repo': EXTRACTOR.ANCESTOR_URL_REPO,
+        '.capped-card .aname': EXTRACTOR.TEXT_USER,
+        '.team-member-username a': EXTRACTOR.TEXT_USER,
+        '.member-username': EXTRACTOR.TEXT_USER,
+        '.repo a:first-of-type': EXTRACTOR.TEXT_USER,
+        '.repo a:last-of-type': EXTRACTOR.ANCESTOR_URL_REPO,
+        '.repo-collection .repo-name': EXTRACTOR.SLUG,
+        '.branch-meta a': EXTRACTOR.TEXT_USER,
+        '.commit-meta .commit-author': EXTRACTOR.TEXT_USER,
+        '.author-name a': EXTRACTOR.TEXT_USER,
+        '.author-name span': EXTRACTOR.TEXT_USER,
+        '.release-authorship a:first-of-type': EXTRACTOR.TEXT_USER,
+        '.table-list-cell-avatar img': EXTRACTOR.ALT_USER,
+        '.author': EXTRACTOR.TEXT_USER,
+        '.codesearch-results .repo-list-name a': EXTRACTOR.SLUG,
         '.code-list-item a:first-child': EXTRACTOR.SLUG,
         '.issue-list-meta li:first-child a': EXTRACTOR.SLUG,
-        '.issue-list-meta li:nth-child(2) a': EXTRACTOR.TEXT,
-        '.user-list-info a:first-child': EXTRACTOR.TEXT,
-        '.commits li span': EXTRACTOR.TITLE,
-        '.follow-list-name a': EXTRACTOR.HREF,
-        '.sidebar-assignee .assignee': EXTRACTOR.TEXT,
+        '.issue-list-meta li:nth-child(2) a': EXTRACTOR.TEXT_USER,
+        '.user-list-info a:first-child': EXTRACTOR.TEXT_USER,
+        '.commits li span': EXTRACTOR.TITLE_USER,
+        '.follow-list-name a': EXTRACTOR.HREF_USER,
+        '.sidebar-assignee .assignee': EXTRACTOR.TEXT_USER,
         '.contribution .cmeta': EXTRACTOR.SLUG,
+        '.select-menu-item-gravatar img': EXTRACTOR.ALT_USER,
+        '.notifications-repo-link': EXTRACTOR.SLUG,
+        '.explore-content .repo-list-name .slash': EXTRACTOR.NEXT_TEXT_REPO,
+        '.leaderboard-list-content .repo': EXTRACTOR.ANCESTOR_URL_REPO,
+        '.profilecols .repo-list-name a': EXTRACTOR.ANCESTOR_URL_REPO,
+        '.simple-conversation-list a': EXTRACTOR.SLUG,
         'a': EXTRACTOR.URL
     };
 
@@ -87,119 +103,207 @@ $(function () {
         return str.replace(/^\s+|\s+$/g, '');
     }
 
-    const USER_KEY = 'hovercard-user';
-    const SKIP_KEY = 'hovercard-skip';
+    const USER_KEY = 'hovercard-user-x';
+    const REPO_KEY = 'hovercard-repo-x';
+    const SKIP_KEY = 'hovercard-skip-x';
     const TOKEN_KEY = 'hovercard-token';
 
-    function markExtracted(elem, username) {
-        if (username) {
-            elem.data(USER_KEY, username);
-            elem.addClass(USER_KEY);
-        } else {
+    function markExtracted(elem, key, value) {
+        if (value) {
+            elem.data(key, value);
+            elem.addClass(key);
+            elem.data(SKIP_KEY, null);
+        }
+        if (!key || !value) {
             elem.data(SKIP_KEY, '✓');
         }
     }
 
     function getExtracted(elem) {
-        return elem.data(USER_KEY) || !!elem.data(SKIP_KEY) || elem.find('.' + USER_KEY).length;
+        return elem.data(USER_KEY) || elem.data(REPO_KEY) || !!elem.data(SKIP_KEY)
+            || elem.find('.' + USER_KEY + ', .' + REPO_KEY).length;
     }
 
-    const URL_PATTERN = /^https?:\/\/github.com\/([^\/\?#]+)$/;
-    const SLUG_PATTERN = /^([^\/]+)\/[^#]+(?:#\d+)?$/;
-    var selectors = Object.keys(strategies);
+    const URL_USER_PATTERN = /^https?:\/\/github.com\/([^\/\?#]+)$/;
+    const URL_REPO_PATTERN = /^https?:\/\/github.com\/([^\/]+)\/([^\/\?#]+)$/;
+    const SLUG_PATTERN = /([^\/\s]+)\/([^#\s]+)(?:#\d+)?/;
+    let selectors = Object.keys(strategies);
+
+    function getFullRepoFromAncestorLink(elem) {
+        let href = elem.closest('a').prop('href');
+        let fullRepo = null;
+        if (href) {
+            let match = href.match(URL_REPO_PATTERN);
+            fullRepo = match && (match[1] + '/' + match[2]);
+        }
+        return fullRepo;
+    }
 
     function extract(context) {
         selectors.forEach(function (selector) {
-            var strategy = strategies[selector];
-            var elems = $(selector, context);
+            let strategy = strategies[selector];
+            let elems = $(selector, context);
             elems.each(function () {
-                var elem = $(this);
+                let elem = $(this);
                 if (getExtracted(elem)) {
                     // skip processed elements
                     return;
                 }
-                var username;
-                var match;
+                let username; // {{user}}
+                let repo; // {{repo}}
+                let fullRepo; // {{user}}/{{repo}}
                 switch (strategy) {
-                    case EXTRACTOR.TEXT:
+                    case EXTRACTOR.TEXT_USER: {
                         username = trim(elem.text().replace(/[@\/]/g, ''));
                         break;
-                    case EXTRACTOR.TITLE:
+                    }
+                    case EXTRACTOR.TITLE_USER: {
                         username = trim(elem.attr('title').replace(/[@\/]/g, ''));
                         break;
-                    case EXTRACTOR.ALT:
+                    }
+                    case EXTRACTOR.ALT_USER: {
                         username = trim(elem.attr('alt').replace(/[@\/]/g, ''));
                         break;
-                    case EXTRACTOR.HREF:
+                    }
+                    case EXTRACTOR.HREF: {
                         username = trim(elem.attr('href').replace(/[@\/]/g, ''));
                         break;
-                    case EXTRACTOR.SLUG:
-                        var slug = elem.text();
-                        match = slug.match(SLUG_PATTERN);
+                    }
+                    case EXTRACTOR.SLUG: {
+                        let slug = elem.text();
+                        let match = slug.match(SLUG_PATTERN);
                         username = trim(match && match[1]);
-                        if (username) {
-                            elem.html('<span>' + username + '</span>' + slug.replace(username, ''));
+                        repo = trim(match && match[2]);
+                        if (username && repo) {
+                            fullRepo = username + '/' + repo;
+                            elem.html(slug.replace(fullRepo, '<span>' + username + '</span>/<span>' + repo + '</span>'));
                             markExtracted(elem);
-                            elem = elem.children().first();
+                            markExtracted(elem.children().first(), USER_KEY, username);
+                            markExtracted(elem.children().first().next(), REPO_KEY, fullRepo);
+                            elem = null;
                         }
                         break;
-                    case EXTRACTOR.URL:
-                        var attr = elem.attr('href');
+                    }
+                    case EXTRACTOR.URL:{
+                        let attr = elem.attr('href');
                         if (attr && attr.charAt(0) === '#') {
                             // ignore local anchors
                             return;
                         }
-                        var href = elem.prop('href'); // absolute path via prop
+                        let href = elem.prop('href'); // absolute path via prop
                         if (href) {
-                            match = href.match(URL_PATTERN);
+                            let match = href.match(URL_USER_PATTERN);
                             username = trim(match && match[1]);
-                            if (GH_RESERVED_USER_NAMES.indexOf(username) !== -1
-                                || !GH_USER_NAME_PATTERN.test(username)) {
+                            if (!username) {
+                                match = href.match(URL_REPO_PATTERN);
+                                username = trim(match && match[1]);
+                                repo = trim(match && match[2]);
+                            }
+                            if (username) {
+                                if (GH_RESERVED_USER_NAMES.indexOf(username) !== -1
+                                    || !GH_USER_NAME_PATTERN.test(username)) {
+                                    username = null;
+                                    repo = null;
+                                }
+                            }
+                            if (repo) {
+                                fullRepo = username + '/' + repo;
                                 username = null;
                             }
                         }
                         break;
+                    }
+                    case EXTRACTOR.NEXT_TEXT_REPO: {
+                        fullRepo = getFullRepoFromAncestorLink(elem);
+                        repo = fullRepo.split('/')[1];
+                        let textNode = elem[0].nextSibling;
+                        if (fullRepo && textNode) {
+                            textNode.parentNode.removeChild(textNode);
+                            elem.after(' <span>' + repo + '</span>');
+                            markExtracted(elem);
+                            markExtracted(elem.next(), REPO_KEY, fullRepo);
+                        }
+                        elem = null;
+                        break;
+                    }
+                    case EXTRACTOR.ANCESTOR_URL_REPO: {
+                        fullRepo = getFullRepoFromAncestorLink(elem);
+                        break;
+                    }
                     default:
                         break;
                 }
 
-                if (username) {
-                    if (username !== me) {
-                        markExtracted(elem, username);
-                    } else {
-                        markExtracted(elem);
-                    }
+                // elem === null means already marked in extractors
+                if (!elem) {
+                    return;
+                }
+                if (username && username !== me) {
+                    markExtracted(elem, USER_KEY, username);
+                }
+                if (fullRepo) {
+                    markExtracted(elem, REPO_KEY, fullRepo);
+                }
+                if (!username && !fullRepo) {
+                    markExtracted(elem);
                 }
             });
         });
 
-        const CARD_TPL =
-            '<address class="hovercard">\
-                <img src="{{avatar}}&s=32" class="hovercard-avatar">\
-                <div class="hovercard-person">\
-                    <p><strong><a href="{{userUrl}}">{{loginName}}</a></strong>{{#isAdmin}} <small>(Administrator)</small>{{/isAdmin}}{{#isOrg}} <small>(Organization)</small>{{/isOrg}}</p>\
-                    {{#realName}}<p>{{realName}}</p>{{/realName}}\
-                </div>\
-                <div class="hovercard-more">\
-                    {{^isOrg}}<div class="hovercard-stats">\
-                        <a href="{{followersUrl}}">\
-                            <strong>{{followers}}</strong>\
-                            <span>Followers</span>\
-                        </a>\
-                        <a href="{{followingUrl}}">\
-                            <strong>{{following}}</strong>\
-                            <span>Following</span>\
-                        </a>\
-                        <a href="{{reposUrl}}">\
-                            <strong>{{repos}}</strong>\
-                            <span>Repos</span>\
-                        </a>\
-                    </div>{{/isOrg}}\
-                    {{#location}}<p><span class="octicon octicon-location"></span>{{location}}</p>{{/location}}\
-                    {{#company}}<p><span class="octicon octicon-organization"></span>{{company}}</p>{{/company}}\
-                </div>\
-            </address>';
-        Mustache.parse(CARD_TPL);
+        const CARD_TPL = {
+            user:
+                '<address class="hovercard">\
+                    <img src="{{avatar}}&s=32" class="hovercard-avatar">\
+                    <div class="hovercard-person">\
+                        <p><strong><a href="{{userUrl}}">{{loginName}}</a></strong>{{#isAdmin}} <small>(Administrator)</small>{{/isAdmin}}{{#isOrg}} <small>(Organization)</small>{{/isOrg}}</p>\
+                        {{#realName}}<p>{{realName}}</p>{{/realName}}\
+                    </div>\
+                    <div class="hovercard-more">\
+                        {{^isOrg}}<div class="hovercard-stats">\
+                            <a href="{{followersUrl}}">\
+                                <strong>{{followers}}</strong>\
+                                <span>Followers</span>\
+                            </a>\
+                            <a href="{{followingUrl}}">\
+                                <strong>{{following}}</strong>\
+                                <span>Following</span>\
+                            </a>\
+                            <a href="{{reposUrl}}">\
+                                <strong>{{repos}}</strong>\
+                                <span>Repos</span>\
+                            </a>\
+                        </div>{{/isOrg}}\
+                        {{#location}}<p><span class="octicon octicon-location"></span>{{location}}</p>{{/location}}\
+                        {{#company}}<p><span class="octicon octicon-organization"></span>{{company}}</p>{{/company}}\
+                    </div>\
+                </address>',
+            repo:
+                '<div class="hovercard">\
+                    <div class="hovercard-repo">\
+                        <span class="octicon octicon-repo{{#parent}}-forked{{/parent}}"></span>\
+                        <p><a href="{{ownerUrl}}">{{owner}}</a> / <strong><a href="{{repoUrl}}">{{repo}}</a></strong></p>\
+                        <p>{{#parent}}<span>forked from <a href="{{url}}">{{repo}}</a></span>{{/parent}}</p>\
+                    </div>\
+                    <div class="hovercard-more">\
+                        <div class="hovercard-stats">\
+                            <a href="{{starsUrl}}">\
+                                <strong>{{stars}}</strong>\
+                                <span>Stars</span>\
+                            </a>\
+                            <a href="{{forksUrl}}">\
+                                <strong>{{forks}}</strong>\
+                                <span>Forks</span>\
+                            </a>\
+                            {{#hasIssues}}<a href="{{issuesUrl}}">\
+                                <strong>{{issues}}</strong>\
+                                <span>Issues</span>\
+                            </a>{{/hasIssues}}\
+                        </div>\
+                        {{#language}}<p><span class="octicon octicon-code"></span>{{language}}</p>{{/language}}\
+                        {{#homepage}}<p><span class="octicon octicon-link"></span><a href="{{homepage}}">{{homepage}}</a></p>{{/homepage}}\
+                    </div>\
+                </div>'
+        };
 
         function formatNumber(num) {
             if (num >= 1000) {
@@ -208,24 +312,52 @@ $(function () {
             return num;
         }
 
-        function getCardHTML(user) {
+        function getCardHTML(type, raw) {
+            let data;
+            if (type === 'user') {
+                data = {
+                    avatar: raw.avatar_url,
+                    userUrl: raw.html_url,
+                    loginName: raw.login,
+                    realName: raw.name,
+                    location: raw.location,
+                    isAdmin: raw.site_admin,
+                    isOrg: raw.type === 'Organization',
+                    company: raw.company,
+                    followers: formatNumber(raw.followers),
+                    following: formatNumber(raw.following),
+                    repos: formatNumber(raw.public_repos),
+                    followersUrl: '//github.com/' + raw.login + '/followers',
+                    followingUrl: '//github.com/' + raw.login + '/following',
+                    reposUrl: '//github.com/' + raw.login + '?tab=repositories'
+                };
+            } else if (type === 'repo') {
+                data = {
+                    owner: raw.owner.login,
+                    ownerAvatar: raw.owner.avatar_url,
+                    ownerUrl: raw.owner.html_url,
+                    repo: raw.name,
+                    repoUrl: raw.html_url,
+                    language: raw.language,
+                    stars: formatNumber(raw.stargazers_count),
+                    forks: formatNumber(raw.forks_count),
+                    issues: formatNumber(raw.open_issues_count),
+                    hasIssues: raw.has_issues,
+                    homepage: raw.homepage,
+                    starsUrl: '//github.com/' + raw.full_name + '/stargazers',
+                    forksUrl: '//github.com/' + raw.full_name + '/network',
+                    issuesUrl: '//github.com/' + raw.full_name + '/issues'
+                };
+                if (raw.parent) {
+                    data.parent = {
+                        repo: raw.parent.full_name,
+                        url: raw.parent.html_url
+                    };
+                }
+            }
+
             // https://developer.github.com/v3/users/#get-a-single-user
-            var html = Mustache.render(CARD_TPL, {
-                avatar: user.avatar_url,
-                userUrl: user.html_url,
-                loginName: user.login,
-                realName: user.name,
-                location: user.location,
-                isAdmin: user.site_admin,
-                isOrg: user.type === 'Organization',
-                company: user.company,
-                followers: formatNumber(user.followers),
-                following: formatNumber(user.following),
-                repos: formatNumber(user.public_repos),
-                followersUrl: '//github.com/' + user.login + '/followers',
-                followingUrl: '//github.com/' + user.login + '/following',
-                reposUrl: '//github.com/' + user.login + '?tab=repositories'
-            });
+            let html = Mustache.render(CARD_TPL[type], data);
 
             return $(html);
         }
@@ -235,46 +367,57 @@ $(function () {
                 <p><strong><span class="octicon octicon-issue-opened"></span>{{title}}</strong></p>\
                 {{#message}}<p>{{{message}}}</p>{{/message}}\
             </div>';
-        Mustache.parse(ERROR_TPL);
 
         function getErrorHTML(error) {
-            var html = Mustache.render(ERROR_TPL, error);
+            let html = Mustache.render(ERROR_TPL, error);
             return $(html);
         }
 
-        var cache = {};
+        let cache = {
+            user: {},
+            repo: {}
+        };
         const CREATE_TOKEN_PATH = '//github.com/settings/tokens/new';
+        const API_PREFIX = {
+            user: '//api.github.com/users/',
+            repo: '//api.github.com/repos/'
+        };
 
-        $('.' + USER_KEY  + ':not(.tooltipstered)').tooltipster({
+        let tipSelector = '.' + USER_KEY  + ':not(.tooltipstered), .' + REPO_KEY + ':not(.tooltipstered)';
+        $(tipSelector).tooltipster({
             updateAnimation: false,
             functionBefore: function (elem, done) {
                 elem.tooltipster('content', $('<span class="loading"></span>'));
-                var username = elem.data(USER_KEY);
-                var user = cache[username];
-                if (user) {
-                    elem.tooltipster('content', getCardHTML(user));
+                let username = elem.data(USER_KEY);
+                let fullRepo = elem.data(REPO_KEY);
+                let type = username ? 'user' : 'repo';
+                let value = username || fullRepo;
+
+                let raw = cache[type][value];
+                if (raw) {
+                    elem.tooltipster('content', getCardHTML(type, raw));
                 } else {
-                    var requestOptions = {
-                        url: '//api.github.com/users/' + username,
+                    let requestOptions = {
+                        url: API_PREFIX[type] + value,
                         datatype: 'json'
                     };
 
-                    var token = localStorage.getItem(TOKEN_KEY);
+                    let token = localStorage.getItem(TOKEN_KEY);
                     if (token) {
                         requestOptions.headers = {
                             Authorization: 'token ' + token
                         };
                     }
                     $.ajax(requestOptions)
-                        .done(function (user) {
-                            cache[username] = user;
-                            elem.tooltipster('content', getCardHTML(user));
+                        .done(function (raw) {
+                            cache[type][value] = raw;
+                            elem.tooltipster('content', getCardHTML(type, raw));
                         })
                         .fail(function (xhr) {
-                            var status = xhr.status;
-                            var title = '';
-                            var message = '';
-                            var needToken = false;
+                            let status = xhr.status;
+                            let title = '';
+                            let message = '';
+                            let needToken = false;
 
                             switch (status) {
                                 case 0:
@@ -304,7 +447,7 @@ $(function () {
                                     break;
                             }
 
-                            var error = {
+                            let error = {
                                 title: title,
                                 message: message,
                                 needToken: needToken
@@ -329,8 +472,8 @@ $(function () {
             </form>\
         </div>';
 
-    var tokenForm = $(FORM_TPL);
-    var tokenField = tokenForm.find('.hovercard-token');
+    let tokenForm = $(FORM_TPL);
+    let tokenField = tokenForm.find('.hovercard-token');
     tokenForm.find('button').on('click', function (e) {
         if ($(e.target).is('.hovercard-save') && tokenField.val()) {
             localStorage.setItem(TOKEN_KEY, tokenField.val());

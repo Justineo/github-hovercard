@@ -5,10 +5,9 @@
 }
 
 .hovercard p {
-    margin: 0;
-    padding: 0 0 5px;
+    margin: 0 0 4px;
     vertical-align: middle;
-    line-height: 1;
+    line-height: 1.2;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -41,9 +40,11 @@
 
 .hovercard .octicon {
     display: inline-block;
+    margin-top: -2px;
+    margin-right: 2px;
     width: 18px;
     text-align: center;
-    font-size: 90%;
+    font-size: 14px;
     line-height: 12px;
     vertical-align: middle;
     opacity: .8;
@@ -59,8 +60,29 @@
     background-color: #fff;
 }
 
-.hovercard-stats {
+.hovercard-repo {
+    position: relative;
     float: left;
+    margin-top: 2px;
+    margin-bottom: 6px;
+    padding-left: 24px;
+}
+
+.hovercard-repo p:first-of-type {
+    font-size: 13px;
+}
+
+.hovercard-repo .octicon {
+    position: absolute;
+    top: 2px;
+    left: 0;
+    font-size: 24px;
+    line-height: 1;
+}
+
+.hovercard-stats {
+    display: flex;
+    min-width: 180px;
     margin-bottom: 10px;
     padding: 3px 3px;
     border-radius: 2px;
@@ -83,8 +105,7 @@
 
 .hovercard-stats a {
     display: block;
-    float: left;
-    padding: 0 3px;
+    flex: 1 1 auto;
 }
 
 .hovercard-stats a:hover {
