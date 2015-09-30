@@ -27,7 +27,17 @@ $(function () {
       'login', 'password_reset', 'watching', 'new'
     ];
 
+    const GH_RESERVED_REPO_NAMES = [
+        'followers', 'following', 'repositories'
+    ];
+
     const GH_USER_NAME_PATTERN = /^[a-z0-9]$|^[a-z0-9](?:[a-z0-9](?!--)|-(?!-))*[a-z0-9]$/i;
+    const GH_REPO_NAME_PATTERN = /^[a-z0-9-_.]$/i;
+
+    const USER_KEY = 'hovercard-user-x';
+    const REPO_KEY = 'hovercard-repo-x';
+    const SKIP_KEY = 'hovercard-skip-x';
+    const TOKEN_KEY = 'hovercard-token';
 
     const EXTRACTOR = {
         SLUG: 1,  // {{user}}/{{repo}}#{{issue}}
@@ -56,6 +66,7 @@ $(function () {
         '[data-ga-click~="target:issue-comment"]': EXTRACTOR.SLUG,
         '[data-ga-click~="target:pull"]': EXTRACTOR.SLUG,
         '[data-ga-click~="target:pull-comment"]': EXTRACTOR.SLUG,
+        '[data-ga-click~="target:commit-comment"]': EXTRACTOR.SLUG,
         '.user-mention': EXTRACTOR.TEXT_USER,
         '.opened-by a': EXTRACTOR.TEXT_USER,
         '.table-list-issues .issue-nwo-link': EXTRACTOR.SLUG,
@@ -92,9 +103,9 @@ $(function () {
         '.explore-content .repo-list-name .slash': EXTRACTOR.NEXT_TEXT_REPO,
         '.leaderboard-list-content .repo': EXTRACTOR.ANCESTOR_URL_REPO,
         '.profilecols .repo-list-name a': EXTRACTOR.ANCESTOR_URL_REPO,
-        '.simple-conversation-list a': EXTRACTOR.SLUG,
-        'a': EXTRACTOR.URL
+        '.simple-conversation-list a': EXTRACTOR.SLUG
     };
+    strategies['a:not(.hovercard a)'] = EXTRACTOR.URL;
 
     function trim(str) {
         if (!str) {
@@ -102,11 +113,6 @@ $(function () {
         }
         return str.replace(/^\s+|\s+$/g, '');
     }
-
-    const USER_KEY = 'hovercard-user-x';
-    const REPO_KEY = 'hovercard-repo-x';
-    const SKIP_KEY = 'hovercard-skip-x';
-    const TOKEN_KEY = 'hovercard-token';
 
     function markExtracted(elem, key, value) {
         if (value) {
@@ -126,7 +132,7 @@ $(function () {
 
     const URL_USER_PATTERN = /^https?:\/\/github.com\/([^\/\?#]+)$/;
     const URL_REPO_PATTERN = /^https?:\/\/github.com\/([^\/]+)\/([^\/\?#]+)$/;
-    const SLUG_PATTERN = /([^\/\s]+)\/([^#\s]+)(?:#\d+)?/;
+    const SLUG_PATTERN = /([^\/\s]+)\/([^#@\s]+)(?:#\d+|@[\da-f]+)?/;
     let selectors = Object.keys(strategies);
 
     function getFullRepoFromAncestorLink(elem) {
@@ -207,8 +213,11 @@ $(function () {
                                 }
                             }
                             if (repo) {
-                                fullRepo = username + '/' + repo;
-                                username = null;
+                                if (GH_RESERVED_REPO_NAMES.indexOf(repo) !== -1
+                                    || !GH_REPO_NAME_PATTERN.test(repo)) {
+                                    fullRepo = username + '/' + repo;
+                                    username = null;
+                                }
                             }
                         }
                         break;
