@@ -2,7 +2,21 @@
 
 Quick user hovercard for GitHub.
 
-![screenshot](screenshot.png)
+## Screenshots
+
+![Avatars in trending repos](screenshots/1.png)
+
+![Repo names in activity messages](screenshots/2.png)
+
+![Users/organizations in repo title](screenshots/3.png)
+
+![Repo names in activity feed](screenshots/4.png)
+
+![Forked repos](screenshots/5.png)
+
+![User/organization links in any place](screenshots/6.png)
+
+![Repo links in any place](screenshots/7.png)
 
 ## Installation
 

@@ -103,7 +103,8 @@ $(function () {
         '.explore-content .repo-list-name .slash': EXTRACTOR.NEXT_TEXT_REPO,
         '.leaderboard-list-content .repo': EXTRACTOR.ANCESTOR_URL_REPO,
         '.profilecols .repo-list-name a': EXTRACTOR.ANCESTOR_URL_REPO,
-        '.simple-conversation-list a': EXTRACTOR.SLUG
+        '.simple-conversation-list a': EXTRACTOR.SLUG,
+        '.discussion-item-ref strong': EXTRACTOR.SLUG
     };
     strategies['a:not(.hovercard a)'] = EXTRACTOR.URL;
 
