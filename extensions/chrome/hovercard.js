@@ -214,9 +214,10 @@ $(function () {
                                 }
                             }
                             if (repo) {
+                                fullRepo = username + '/' + repo;
                                 if (GH_RESERVED_REPO_NAMES.indexOf(repo) !== -1
                                     || !GH_REPO_NAME_PATTERN.test(repo)) {
-                                    fullRepo = username + '/' + repo;
+                                    fullRepo = null;
                                     username = null;
                                 }
                             }
