@@ -1,6 +1,10 @@
 Changelog
 ---
 
+## 0.1.1
+
+* Fixed reserved repository name check.
+
 ## 0.1.0
 
 * Adjusted tooltip styles to conform with GitHub tooltips.

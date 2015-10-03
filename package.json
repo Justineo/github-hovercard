@@ -1,7 +1,7 @@
 {
   "name": "github-hovercard",
-  "version": "0.1.0",
-  "description": "Quick user hovercard for GitHub.",
+  "version": "0.1.1",
+  "description": "Quick user/repo hovercard for GitHub.",
   "repository": {
     "type": "git",
     "url": "https://github.com/Justineo/github-hovercard.git"
