@@ -24,7 +24,7 @@ $(function () {
       'explore', 'styleguide', 'showcases', 'trending', 'stars',
       'dashboard', 'notifications', 'search', 'developer', 'account',
       'pulls', 'issues', 'features', 'contact', 'security', 'join',
-      'login', 'password_reset', 'watching', 'new'
+      'login', 'password_reset', 'watching', 'new', 'integrations'
     ];
 
     const GH_RESERVED_REPO_NAMES = [
