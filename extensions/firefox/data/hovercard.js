@@ -1,5 +1,6 @@
 $(function () {
     'use strict';
+
     let target = document.body;
     let observer = new MutationObserver(function (mutations) {
         mutations.forEach(function (mutation) {
@@ -24,7 +25,7 @@ $(function () {
       'explore', 'styleguide', 'showcases', 'trending', 'stars',
       'dashboard', 'notifications', 'search', 'developer', 'account',
       'pulls', 'issues', 'features', 'contact', 'security', 'join',
-      'login', 'password_reset', 'watching', 'new'
+      'login', 'password_reset', 'watching', 'new', 'integrations'
     ];
 
     const GH_RESERVED_REPO_NAMES = [
@@ -104,9 +105,9 @@ $(function () {
         '.leaderboard-list-content .repo': EXTRACTOR.ANCESTOR_URL_REPO,
         '.profilecols .repo-list-name a': EXTRACTOR.ANCESTOR_URL_REPO,
         '.simple-conversation-list a': EXTRACTOR.SLUG,
-        '.discussion-item-ref strong': EXTRACTOR.SLUG
+        '.discussion-item-ref strong': EXTRACTOR.SLUG,
+        'a:not(.hovercard a)': EXTRACTOR.URL
     };
-    strategies['a:not(.hovercard a)'] = EXTRACTOR.URL;
 
     function trim(str) {
         if (!str) {
@@ -310,6 +311,7 @@ $(function () {
                                 <span>Issues</span>\
                             </a>{{/hasIssues}}\
                         </div>\
+                        {{#desc}}<p class="hovercard-repo-desc"><span class="octicon octicon-info"></span>{{{desc}}}</p>{{/desc}}\
                         {{#language}}<p><span class="octicon octicon-code"></span>{{language}}</p>{{/language}}\
                         {{#homepage}}<p><span class="octicon octicon-link"></span><a href="{{homepage}}">{{homepage}}</a></p>{{/homepage}}\
                     </div>\
@@ -321,6 +323,17 @@ $(function () {
                 return (num / 1000).toFixed(1) + 'k';
             }
             return num;
+        }
+
+        function replaceEmoji(text) {
+            return text.replace(/:([a-z0-9+-_]+):/ig, function (match, key) {
+                let url = emojiURLs[key];
+                if (!url) {
+                    return match;
+                }
+                return '<img class="emoji" title="' + match + '" alt="' + match + '"'
+                    + ' src="' + url + '" width="18" height="18">';
+            });
         }
 
         function getCardHTML(type, raw) {
@@ -349,6 +362,7 @@ $(function () {
                     ownerUrl: raw.owner.html_url,
                     repo: raw.name,
                     repoUrl: raw.html_url,
+                    desc: replaceEmoji(raw.description),
                     language: raw.language,
                     stars: formatNumber(raw.stargazers_count),
                     forks: formatNumber(raw.forks_count),
@@ -497,5 +511,9 @@ $(function () {
         tokenForm.appendTo($('body'));
     });
 
-    extract();
+    let emojiURLs;
+    $.getJSON(self.options.emojiURL).done(function (emojis) {
+        emojiURLs = emojis;
+        extract();
+    });
 });

@@ -7,17 +7,20 @@ var version = pack.version;
 
 gulp.task('cp', function () {
   var replace = require('gulp-replace');
-  var src = gulp.src('./src/*')
-    .pipe(gulp.dest('./extensions/firefox/data'))
+  var srcChrome = gulp.src('./src/*')
+    .pipe(replace('__EMOJI_URL__', 'chrome.extension.getURL(\'emoji.json\')'))
     .pipe(replace(/spinner.svg/, 'chrome-extension://__MSG_@@extension_id__/spinner.svg'))
     .pipe(gulp.dest('./extensions/chrome'));
+  var srcFirefox = gulp.src('./src/*')
+    .pipe(replace('__EMOJI_URL__', 'self.options.emojiURL'))
+    .pipe(gulp.dest('./extensions/firefox/data'));
   var assets = gulp.src('./assets/*')
     .pipe(gulp.dest('./extensions/firefox/data'))
     .pipe(gulp.dest('./extensions/chrome'));
   var icon = gulp.src('./icon.png')
     .pipe(gulp.dest('./extensions/firefox'))
     .pipe(gulp.dest('./extensions/chrome'));
-  return merge(src, assets, icon);
+  return merge(srcChrome, srcFirefox, assets, icon);
 });
 
 gulp.task('pack-chrome-extension', ['cp'], function (cb) {

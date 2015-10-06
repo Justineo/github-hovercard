@@ -4,6 +4,7 @@ Changelog
 ## 0.1.1
 
 * Fixed reserved repository name check.
+* Add repo description and emoji handling.
 
 ## 0.1.0
 

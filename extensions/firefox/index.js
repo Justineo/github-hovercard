@@ -15,5 +15,8 @@ pageMod.PageMod({
   contentStyleFile: [
     data.url('tooltipster.css'),
     data.url('hovercard.css')
-  ]
+  ],
+  contentScriptOptions: {
+    emojiURL: data.url('emoji.json')
+  }
 });

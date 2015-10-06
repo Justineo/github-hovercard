@@ -10,7 +10,8 @@
     "activeTab"
   ],
   "web_accessible_resources": [
-    "spinner.svg"
+    "spinner.svg",
+    "emoji.json"
   ],
   "content_scripts": [
     {
