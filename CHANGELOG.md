@@ -5,6 +5,7 @@ Changelog
 
 * Fixed reserved repository name check.
 * Add repo description and emoji handling.
+* Skip hovercard on user profile page for the said user.
 
 ## 0.1.0
 
