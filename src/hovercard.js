@@ -51,7 +51,11 @@ $(function () {
         ANCESTOR_URL_REPO: 8 // <a href="/{{user}}/{{repo}}">...{{elem}}...</a>
     };
 
-    let strategies = {
+    const URL_USER_PATTERN = /^https?:\/\/github.com\/([^\/\?#]+)[^\/]*$/;
+    const URL_REPO_PATTERN = /^https?:\/\/github.com\/([^\/]+)\/([^\/\?#]+)[^\/]*$/;
+    const SLUG_PATTERN = /([^\/\s]+)\/([^#@\s]+)(?:#\d+|@[\da-f]+)?/;
+
+    const STRATEGIES = {
         '.explore-content .repo-list-name .prefix': EXTRACTOR.TEXT_USER,
         '.fork-flag a': EXTRACTOR.SLUG,
         '.avatar': EXTRACTOR.ALT_USER,
@@ -132,11 +136,6 @@ $(function () {
             || elem.find('.' + USER_KEY + ', .' + REPO_KEY).length;
     }
 
-    const URL_USER_PATTERN = /^https?:\/\/github.com\/([^\/\?#]+)$/;
-    const URL_REPO_PATTERN = /^https?:\/\/github.com\/([^\/]+)\/([^\/\?#]+)$/;
-    const SLUG_PATTERN = /([^\/\s]+)\/([^#@\s]+)(?:#\d+|@[\da-f]+)?/;
-    let selectors = Object.keys(strategies);
-
     function getFullRepoFromAncestorLink(elem) {
         let href = elem.closest('a').prop('href');
         let fullRepo = null;
@@ -148,8 +147,20 @@ $(function () {
     }
 
     function extract(context) {
+        // if on user profile page, we should not show user
+        // hovercard for the said user
+        let current = location.href.match(URL_USER_PATTERN);
+        if (current) {
+            current = current[1];
+            if (GH_RESERVED_USER_NAMES.indexOf(current) !== -1
+                || !GH_USER_NAME_PATTERN.test(current)) {
+                current = null;
+            }
+        }
+
+        let selectors = Object.keys(STRATEGIES);
         selectors.forEach(function (selector) {
-            let strategy = strategies[selector];
+            let strategy = STRATEGIES[selector];
             let elems = $(selector, context);
             elems.each(function () {
                 let elem = $(this);
@@ -184,10 +195,15 @@ $(function () {
                         repo = trim(match && match[2]);
                         if (username && repo) {
                             fullRepo = username + '/' + repo;
-                            elem.html(slug.replace(fullRepo, '<span>' + username + '</span>/<span>' + repo + '</span>'));
+                            if (username === me || username === current) {
+                                elem.html(slug.replace(fullRepo, username + '/<span>' + repo + '</span>'));
+                                markExtracted(elem.children().first(), REPO_KEY, fullRepo);
+                            } else {
+                                elem.html(slug.replace(fullRepo, '<span>' + username + '</span>/<span>' + repo + '</span>'));
+                                markExtracted(elem.children().first(), USER_KEY, username);
+                                markExtracted(elem.children().first().next(), REPO_KEY, fullRepo);
+                            }
                             markExtracted(elem);
-                            markExtracted(elem.children().first(), USER_KEY, username);
-                            markExtracted(elem.children().first().next(), REPO_KEY, fullRepo);
                             elem = null;
                         }
                         break;
@@ -222,6 +238,10 @@ $(function () {
                                     username = null;
                                 }
                             }
+                            // skip hovercard on myself or current profile page owner
+                            if ((username === me || username === current) && !repo) {
+                                username = null;
+                            }
                         }
                         break;
                     }
@@ -250,7 +270,7 @@ $(function () {
                 if (!elem) {
                     return;
                 }
-                if (username && username !== me) {
+                if (username && username !== me && username !== current) {
                     markExtracted(elem, USER_KEY, username);
                 }
                 if (fullRepo) {
