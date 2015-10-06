@@ -45,7 +45,7 @@ $(function () {
         TEXT_USER: 2,  // {{user}}
         TITLE_USER: 3, // title="{{user}}"
         ALT_USER: 4,   // alt="{{user}}"
-        HREF_USER: 5,   // alt="{{user}}"
+        HREF_USER: 5,   // href="{{user}}"
         URL: 6, // href="/{{user}}" or href="https://github.com/{{user}}"
         NEXT_TEXT_REPO: 7, // <span>...</span> {{repo}}
         ANCESTOR_URL_REPO: 8 // <a href="/{{user}}/{{repo}}">...{{elem}}...</a>
