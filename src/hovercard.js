@@ -60,6 +60,7 @@ $(function () {
         '.fork-flag a': EXTRACTOR.SLUG,
         '.avatar': EXTRACTOR.ALT_USER,
         '.gravatar': EXTRACTOR.ALT_USER,
+        '.leaderboard-gravatar': EXTRACTOR.ALT_USER,
         '.author-gravatar': EXTRACTOR.ALT_USER,
         '.author-avatar': EXTRACTOR.ALT_USER,
         '.timeline-comment-avatar': EXTRACTOR.ALT_USER,
