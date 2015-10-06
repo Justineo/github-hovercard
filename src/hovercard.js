@@ -325,6 +325,10 @@ $(function () {
             return num;
         }
 
+        function encodeHTML(raw){
+            return $('<div/>').text(raw).html();
+        }
+
         function replaceEmoji(text) {
             return text.replace(/:([a-z0-9+-_]+):/ig, function (match, key) {
                 let url = emojiURLs[key];
@@ -362,7 +366,7 @@ $(function () {
                     ownerUrl: raw.owner.html_url,
                     repo: raw.name,
                     repoUrl: raw.html_url,
-                    desc: replaceEmoji(raw.description),
+                    desc: replaceEmoji(encodeHTML(raw.description)),
                     language: raw.language,
                     stars: formatNumber(raw.stargazers_count),
                     forks: formatNumber(raw.forks_count),
