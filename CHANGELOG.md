@@ -1,10 +1,14 @@
 Changelog
 ---
 
+## 0.1.2
+
+* Fixed the problem that loading emoji always fails which leads to initialization problems in Firefox.
+
 ## 0.1.1
 
 * Fixed reserved repository name check.
-* Add repo description and emoji handling.
+* Added repo description and emoji handling.
 * Skip hovercard on user profile page for the said user.
 
 ## 0.1.0

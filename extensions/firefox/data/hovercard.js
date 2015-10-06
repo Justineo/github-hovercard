@@ -536,9 +536,13 @@ $(function () {
         tokenForm.appendTo($('body'));
     });
 
-    let emojiURLs;
-    $.getJSON(self.options.emojiURL).done(function (emojis) {
-        emojiURLs = emojis;
+    let emojiURLs = self.options.emojiURLs;
+    if (typeof emojiURLs === 'string') {
+        $.getJSON(emojiURLs).done(function (emojis) {
+            emojiURLs = emojis;
+            extract();
+        });
+    } else {
         extract();
-    });
+    }
 });

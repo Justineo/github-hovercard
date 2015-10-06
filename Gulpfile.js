@@ -8,11 +8,11 @@ var version = pack.version;
 gulp.task('cp', function () {
   var replace = require('gulp-replace');
   var srcChrome = gulp.src('./src/*')
-    .pipe(replace('__EMOJI_URL__', 'chrome.extension.getURL(\'emoji.json\')'))
+    .pipe(replace('__EMOJI_DATA__', 'chrome.extension.getURL(\'emoji.json\')'))
     .pipe(replace(/spinner.svg/, 'chrome-extension://__MSG_@@extension_id__/spinner.svg'))
     .pipe(gulp.dest('./extensions/chrome'));
   var srcFirefox = gulp.src('./src/*')
-    .pipe(replace('__EMOJI_URL__', 'self.options.emojiURL'))
+    .pipe(replace('__EMOJI_DATA__', 'self.options.emojiURLs'))
     .pipe(gulp.dest('./extensions/firefox/data'));
   var assets = gulp.src('./assets/*')
     .pipe(gulp.dest('./extensions/firefox/data'))

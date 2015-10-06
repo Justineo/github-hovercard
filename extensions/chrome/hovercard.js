@@ -536,9 +536,13 @@ $(function () {
         tokenForm.appendTo($('body'));
     });
 
-    let emojiURLs;
-    $.getJSON(chrome.extension.getURL('emoji.json')).done(function (emojis) {
-        emojiURLs = emojis;
+    let emojiURLs = chrome.extension.getURL('emoji.json');
+    if (typeof emojiURLs === 'string') {
+        $.getJSON(emojiURLs).done(function (emojis) {
+            emojiURLs = emojis;
+            extract();
+        });
+    } else {
         extract();
-    });
+    }
 });

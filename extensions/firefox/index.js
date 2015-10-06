@@ -17,6 +17,6 @@ pageMod.PageMod({
     data.url('hovercard.css')
   ],
   contentScriptOptions: {
-    emojiURL: data.url('emoji.json')
+    emojiURLs: JSON.parse(data.load('emoji.json'))
   }
 });
