@@ -1,6 +1,10 @@
 Changelog
 ---
 
+## 0.2.0
+
+* Applied more ES6 syntax (template string, arrow functions).
+
 ## 0.1.2
 
 * Fixed the problem that loading emoji always fails which leads to initialization problems in Firefox.

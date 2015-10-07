@@ -1,9 +1,9 @@
-$(function () {
+$(() => {
     'use strict';
 
     let target = document.body;
-    let observer = new MutationObserver(function (mutations) {
-        mutations.forEach(function (mutation) {
+    let observer = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
             if (mutation.type === 'childList') {
                 extract(mutation.target);
             }
@@ -134,7 +134,7 @@ $(function () {
 
     function getExtracted(elem) {
         return elem.data(USER_KEY) || elem.data(REPO_KEY) || !!elem.data(SKIP_KEY)
-            || elem.find('.' + USER_KEY + ', .' + REPO_KEY).length;
+            || elem.find(`.${USER_KEY}, .${REPO_KEY}`).length;
     }
 
     function getFullRepoFromAncestorLink(elem) {
@@ -160,7 +160,7 @@ $(function () {
         }
 
         let selectors = Object.keys(STRATEGIES);
-        selectors.forEach(function (selector) {
+        selectors.forEach((selector) => {
             let strategy = STRATEGIES[selector];
             let elems = $(selector, context);
             elems.each(function () {
@@ -197,10 +197,10 @@ $(function () {
                         if (username && repo) {
                             fullRepo = username + '/' + repo;
                             if (username === me || username === current) {
-                                elem.html(slug.replace(fullRepo, username + '/<span>' + repo + '</span>'));
+                                elem.html(slug.replace(fullRepo, `${username}/<span>${repo}</span>`));
                                 markExtracted(elem.children().first(), REPO_KEY, fullRepo);
                             } else {
-                                elem.html(slug.replace(fullRepo, '<span>' + username + '</span>/<span>' + repo + '</span>'));
+                                elem.html(slug.replace(fullRepo, `<span>${username}</span>/<span>${repo}</span>`));
                                 markExtracted(elem.children().first(), USER_KEY, username);
                                 markExtracted(elem.children().first().next(), REPO_KEY, fullRepo);
                             }
@@ -209,7 +209,7 @@ $(function () {
                         }
                         break;
                     }
-                    case EXTRACTOR.URL:{
+                    case EXTRACTOR.URL: {
                         let attr = elem.attr('href');
                         if (attr && attr.charAt(0) === '#') {
                             // ignore local anchors
@@ -252,7 +252,7 @@ $(function () {
                         let textNode = elem[0].nextSibling;
                         if (fullRepo && textNode) {
                             textNode.parentNode.removeChild(textNode);
-                            elem.after(' <span>' + repo + '</span>');
+                            elem.after(` <span>${repo}</span>`);
                             markExtracted(elem);
                             markExtracted(elem.next(), REPO_KEY, fullRepo);
                         }
@@ -284,59 +284,59 @@ $(function () {
         });
 
         const CARD_TPL = {
-            user:
-                '<address class="hovercard">\
-                    <img src="{{avatar}}&s=32" class="hovercard-avatar">\
-                    <div class="hovercard-person">\
-                        <p><strong><a href="{{userUrl}}">{{loginName}}</a></strong>{{#isAdmin}} <small>(Administrator)</small>{{/isAdmin}}{{#isOrg}} <small>(Organization)</small>{{/isOrg}}</p>\
-                        {{#realName}}<p>{{realName}}</p>{{/realName}}\
-                    </div>\
-                    <div class="hovercard-more">\
-                        {{^isOrg}}<div class="hovercard-stats">\
-                            <a href="{{followersUrl}}">\
-                                <strong>{{followers}}</strong>\
-                                <span>Followers</span>\
-                            </a>\
-                            <a href="{{followingUrl}}">\
-                                <strong>{{following}}</strong>\
-                                <span>Following</span>\
-                            </a>\
-                            <a href="{{reposUrl}}">\
-                                <strong>{{repos}}</strong>\
-                                <span>Repos</span>\
-                            </a>\
-                        </div>{{/isOrg}}\
-                        {{#location}}<p><span class="octicon octicon-location"></span>{{location}}</p>{{/location}}\
-                        {{#company}}<p><span class="octicon octicon-organization"></span>{{company}}</p>{{/company}}\
-                    </div>\
-                </address>',
-            repo:
-                '<div class="hovercard">\
-                    <div class="hovercard-repo">\
-                        <span class="octicon octicon-repo{{#parent}}-forked{{/parent}}"></span>\
-                        <p><a href="{{ownerUrl}}">{{owner}}</a> / <strong><a href="{{repoUrl}}">{{repo}}</a></strong></p>\
-                        <p>{{#parent}}<span>forked from <a href="{{url}}">{{repo}}</a></span>{{/parent}}</p>\
-                    </div>\
-                    <div class="hovercard-more">\
-                        <div class="hovercard-stats">\
-                            <a href="{{starsUrl}}">\
-                                <strong>{{stars}}</strong>\
-                                <span>Stars</span>\
-                            </a>\
-                            <a href="{{forksUrl}}">\
-                                <strong>{{forks}}</strong>\
-                                <span>Forks</span>\
-                            </a>\
-                            {{#hasIssues}}<a href="{{issuesUrl}}">\
-                                <strong>{{issues}}</strong>\
-                                <span>Issues</span>\
-                            </a>{{/hasIssues}}\
-                        </div>\
-                        {{#desc}}<p class="hovercard-repo-desc"><span class="octicon octicon-info"></span>{{{desc}}}</p>{{/desc}}\
-                        {{#language}}<p><span class="octicon octicon-code"></span>{{language}}</p>{{/language}}\
-                        {{#homepage}}<p><span class="octicon octicon-link"></span><a href="{{homepage}}">{{homepage}}</a></p>{{/homepage}}\
-                    </div>\
-                </div>'
+            user: `
+                <address class="hovercard">
+                    <img src="{{avatar}}&s=32" class="hovercard-avatar">
+                    <div class="hovercard-person">
+                        <p><strong><a href="{{userUrl}}">{{loginName}}</a></strong>{{#isAdmin}} <small>(Administrator)</small>{{/isAdmin}}{{#isOrg}} <small>(Organization)</small>{{/isOrg}}</p>
+                        {{#realName}}<p>{{realName}}</p>{{/realName}}
+                    </div>
+                    <div class="hovercard-more">
+                        {{^isOrg}}<div class="hovercard-stats">
+                            <a href="{{followersUrl}}">
+                                <strong>{{followers}}</strong>
+                                <span>Followers</span>
+                            </a>
+                            <a href="{{followingUrl}}">
+                                <strong>{{following}}</strong>
+                                <span>Following</span>
+                            </a>
+                            <a href="{{reposUrl}}">
+                                <strong>{{repos}}</strong>
+                                <span>Repos</span>
+                            </a>
+                        </div>{{/isOrg}}
+                        {{#location}}<p><span class="octicon octicon-location"></span>{{location}}</p>{{/location}}
+                        {{#company}}<p><span class="octicon octicon-organization"></span>{{company}}</p>{{/company}}
+                    </div>
+                </address>`,
+            repo: `
+                <div class="hovercard">
+                    <div class="hovercard-repo">
+                        <span class="octicon octicon-repo{{#parent}}-forked{{/parent}}"></span>
+                        <p><a href="{{ownerUrl}}">{{owner}}</a> / <strong><a href="{{repoUrl}}">{{repo}}</a></strong></p>
+                        <p>{{#parent}}<span>forked from <a href="{{url}}">{{repo}}</a></span>{{/parent}}</p>
+                    </div>
+                    <div class="hovercard-more">
+                        <div class="hovercard-stats">
+                            <a href="{{starsUrl}}">
+                                <strong>{{stars}}</strong>
+                                <span>Stars</span>
+                            </a>
+                            <a href="{{forksUrl}}">
+                                <strong>{{forks}}</strong>
+                                <span>Forks</span>
+                            </a>
+                            {{#hasIssues}}<a href="{{issuesUrl}}">
+                                <strong>{{issues}}</strong>
+                                <span>Issues</span>
+                            </a>{{/hasIssues}}
+                        </div>
+                        {{#desc}}<p class="hovercard-repo-desc"><span class="octicon octicon-info"></span>{{{desc}}}</p>{{/desc}}
+                        {{#language}}<p><span class="octicon octicon-code"></span>{{language}}</p>{{/language}}
+                        {{#homepage}}<p><span class="octicon octicon-link"></span><a href="{{homepage}}">{{homepage}}</a></p>{{/homepage}}
+                    </div>
+                </div>`
         };
 
         function formatNumber(num) {
@@ -351,13 +351,13 @@ $(function () {
         }
 
         function replaceEmoji(text) {
-            return text.replace(/:([a-z0-9+-_]+):/ig, function (match, key) {
+            return text.replace(/:([a-z0-9+-_]+):/ig, (match, key) => {
                 let url = emojiURLs[key];
                 if (!url) {
                     return match;
                 }
-                return '<img class="emoji" title="' + match + '" alt="' + match + '"'
-                    + ' src="' + url + '" width="18" height="18">';
+                return `<img class="emoji" title="${match}" alt="${match}"
+                    src="${url}" width="18" height="18">`;
             });
         }
 
@@ -376,9 +376,9 @@ $(function () {
                     followers: formatNumber(raw.followers),
                     following: formatNumber(raw.following),
                     repos: formatNumber(raw.public_repos),
-                    followersUrl: '//github.com/' + raw.login + '/followers',
-                    followingUrl: '//github.com/' + raw.login + '/following',
-                    reposUrl: '//github.com/' + raw.login + '?tab=repositories'
+                    followersUrl: `//github.com/${raw.login}/followers`,
+                    followingUrl: `//github.com/${raw.login}/following`,
+                    reposUrl: `//github.com/${raw.login}?tab=repositories`
                 };
             } else if (type === 'repo') {
                 data = {
@@ -394,9 +394,9 @@ $(function () {
                     issues: formatNumber(raw.open_issues_count),
                     hasIssues: raw.has_issues,
                     homepage: raw.homepage,
-                    starsUrl: '//github.com/' + raw.full_name + '/stargazers',
-                    forksUrl: '//github.com/' + raw.full_name + '/network',
-                    issuesUrl: '//github.com/' + raw.full_name + '/issues'
+                    starsUrl: `//github.com/${raw.full_name}/stargazers`,
+                    forksUrl: `//github.com/${raw.full_name}/network`,
+                    issuesUrl: `//github.com/${raw.full_name}/issues`
                 };
                 if (raw.parent) {
                     data.parent = {
@@ -412,11 +412,11 @@ $(function () {
             return $(html);
         }
 
-        const ERROR_TPL =
-            '<div class="hovercard hovercard-error">\
-                <p><strong><span class="octicon octicon-issue-opened"></span>{{title}}</strong></p>\
-                {{#message}}<p>{{{message}}}</p>{{/message}}\
-            </div>';
+        const ERROR_TPL = `
+            <div class="hovercard hovercard-error">
+                <p><strong><span class="octicon octicon-issue-opened"></span>{{title}}</strong></p>
+                {{#message}}<p>{{{message}}}</p>{{/message}}
+            </div>`;
 
         function getErrorHTML(error) {
             let html = Mustache.render(ERROR_TPL, error);
@@ -433,10 +433,10 @@ $(function () {
             repo: '//api.github.com/repos/'
         };
 
-        let tipSelector = '.' + USER_KEY  + ':not(.tooltipstered), .' + REPO_KEY + ':not(.tooltipstered)';
+        let tipSelector = `.${USER_KEY}:not(.tooltipstered), .${REPO_KEY}:not(.tooltipstered)`;
         $(tipSelector).tooltipster({
             updateAnimation: false,
-            functionBefore: function (elem, done) {
+            functionBefore: (elem, done) => {
                 elem.tooltipster('content', $('<span class="loading"></span>'));
                 let username = elem.data(USER_KEY);
                 let fullRepo = elem.data(REPO_KEY);
@@ -455,15 +455,15 @@ $(function () {
                     let token = localStorage.getItem(TOKEN_KEY);
                     if (token) {
                         requestOptions.headers = {
-                            Authorization: 'token ' + token
+                            Authorization: `token ${token}`
                         };
                     }
                     $.ajax(requestOptions)
-                        .done(function (raw) {
+                        .done((raw) => {
                             cache[type][value] = raw;
                             elem.tooltipster('content', getCardHTML(type, raw));
                         })
-                        .fail(function (xhr) {
+                        .fail((xhr) => {
                             let status = xhr.status;
                             let title = '';
                             let message = '';
@@ -476,18 +476,18 @@ $(function () {
                                     break;
                                 case 401:
                                     title = 'Invalid token';
-                                    message = '<a href="' + CREATE_TOKEN_PATH + '" class="token-link" target="_blank">Create a new access token</a>, paste it back here and try again.';
+                                    message = `<a href="${CREATE_TOKEN_PATH}" class="token-link" target="_blank">Create a new access token</a>, paste it back here and try again.`;
                                     needToken = true;
                                     break;
                                 case 403:
                                     if (xhr.getAllResponseHeaders().indexOf('X-RateLimit-Remaining: 0') !== -1) {
                                         title= 'API limit exceeded';
                                         if (!localStorage.getItem(TOKEN_KEY)) {
-                                            message = 'API rate limit exceeded for current IP. <a href="' + CREATE_TOKEN_PATH + '" class="token-link" target="_blank">Create a new access token</a> and paste it back here to get a higher rate limit.';
+                                            message = `API rate limit exceeded for current IP. <a href="${CREATE_TOKEN_PATH}" class="token-link" target="_blank">Create a new access token</a> and paste it back here to get a higher rate limit.`;
                                         }
                                     } else {
                                         title = 'Forbidden';
-                                        message = 'You are not allowed to access GitHub API. <a href="' + CREATE_TOKEN_PATH + '" class="token-link" target="_blank">Create a new access token</a>, paste it back here and try again.';
+                                        message = `You are not allowed to access GitHub API. <a href="${CREATE_TOKEN_PATH}" class="token-link" target="_blank">Create a new access token</a>, paste it back here and try again.`;
                                     }
                                     needToken = true;
                                     break;
@@ -511,20 +511,20 @@ $(function () {
         });
     }
 
-    const FORM_TPL =
-        '<div class="hovercard-overlay">\
-            <form>\
-                <p>\
-                    <input class="hovercard-token" type="text" placeholder="Paste access token here..." size="40" />\
-                    <button class="btn btn-primary hovercard-save">Save</button>\
-                    <button class="btn hovercard-cancel">Cancel</button>\
-                </p>\
-            </form>\
-        </div>';
+    const FORM_TPL = `
+        <div class="hovercard-overlay">
+            <form>
+                <p>
+                    <input class="hovercard-token" type="text" placeholder="Paste access token here..." size="40" />
+                    <button class="btn btn-primary hovercard-save">Save</button>
+                    <button class="btn hovercard-cancel">Cancel</button>
+                </p>
+            </form>
+        </div>`;
 
     let tokenForm = $(FORM_TPL);
     let tokenField = tokenForm.find('.hovercard-token');
-    tokenForm.find('button').on('click', function (e) {
+    tokenForm.find('button').on('click', (e) => {
         if ($(e.target).is('.hovercard-save') && tokenField.val()) {
             localStorage.setItem(TOKEN_KEY, tokenField.val());
         }
@@ -532,13 +532,14 @@ $(function () {
         return false;
     });
     tokenForm.find('.hovercard-cancel').on('click')
-    $('body').on('click', '.token-link', function () {
+    $('body').on('click', '.token-link', () => {
         tokenForm.appendTo($('body'));
     });
 
     let emojiURLs = self.options.emojiURLs;
+    // JSON resource URL in Chrome, JSON data in Firefox
     if (typeof emojiURLs === 'string') {
-        $.getJSON(emojiURLs).done(function (emojis) {
+        $.getJSON(emojiURLs).done((emojis) => {
             emojiURLs = emojis;
             extract();
         });
