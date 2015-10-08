@@ -114,6 +114,83 @@ $(() => {
         'a:not(.hovercard a)': EXTRACTOR.URL
     };
 
+    const CARD_TPL = {
+        user: `
+            <address class="hovercard">
+                <img src="{{avatar}}&s=32" class="hovercard-avatar">
+                <div class="hovercard-person">
+                    <p><strong><a href="{{userUrl}}">{{loginName}}</a></strong>{{#isAdmin}} <small>(Administrator)</small>{{/isAdmin}}{{#isOrg}} <small>(Organization)</small>{{/isOrg}}</p>
+                    {{#realName}}<p>{{realName}}</p>{{/realName}}
+                </div>
+                <div class="hovercard-more">
+                    {{^isOrg}}<div class="hovercard-stats">
+                        <a href="{{followersUrl}}">
+                            <strong>{{followers}}</strong>
+                            <span>Followers</span>
+                        </a>
+                        <a href="{{followingUrl}}">
+                            <strong>{{following}}</strong>
+                            <span>Following</span>
+                        </a>
+                        <a href="{{reposUrl}}">
+                            <strong>{{repos}}</strong>
+                            <span>Repos</span>
+                        </a>
+                    </div>{{/isOrg}}
+                    {{#location}}<p><span class="octicon octicon-location"></span>{{location}}</p>{{/location}}
+                    {{#company}}<p><span class="octicon octicon-organization"></span>{{company}}</p>{{/company}}
+                </div>
+            </address>`,
+        repo: `
+            <div class="hovercard">
+                <div class="hovercard-repo">
+                    <span class="octicon octicon-repo{{#parent}}-forked{{/parent}}"></span>
+                    <p><a href="{{ownerUrl}}">{{owner}}</a> / <strong><a href="{{repoUrl}}">{{repo}}</a></strong></p>
+                    <p>{{#parent}}<span>forked from <a href="{{url}}">{{repo}}</a></span>{{/parent}}</p>
+                </div>
+                <div class="hovercard-more">
+                    <div class="hovercard-stats">
+                        <a href="{{starsUrl}}">
+                            <strong>{{stars}}</strong>
+                            <span>Stars</span>
+                        </a>
+                        <a href="{{forksUrl}}">
+                            <strong>{{forks}}</strong>
+                            <span>Forks</span>
+                        </a>
+                        {{#hasIssues}}<a href="{{issuesUrl}}">
+                            <strong>{{issues}}</strong>
+                            <span>Issues</span>
+                        </a>{{/hasIssues}}
+                    </div>
+                    {{#desc}}<p class="hovercard-repo-desc"><span class="octicon octicon-info"></span>{{{desc}}}</p>{{/desc}}
+                    {{#language}}<p><span class="octicon octicon-code"></span>{{language}}</p>{{/language}}
+                    {{#homepage}}<p><span class="octicon octicon-link"></span><a href="{{homepage}}">{{homepage}}</a></p>{{/homepage}}
+                </div>
+            </div>`,
+        error: `
+            <div class="hovercard hovercard-error">
+                <p><strong><span class="octicon octicon-issue-opened"></span>{{title}}</strong></p>
+                {{#message}}<p>{{{message}}}</p>{{/message}}
+            </div>`,
+        form: `
+            <div class="hovercard-overlay">
+                <form>
+                    <p>
+                        <input class="hovercard-token" type="text" placeholder="Paste access token here..." size="40" />
+                        <button class="btn btn-primary hovercard-save">Save</button>
+                        <button class="btn hovercard-cancel">Cancel</button>
+                    </p>
+                </form>
+            </div>`
+    };
+
+    const CREATE_TOKEN_PATH = '//github.com/settings/tokens/new';
+    const API_PREFIX = {
+        user: '//api.github.com/users/',
+        repo: '//api.github.com/repos/'
+    };
+
     function trim(str) {
         if (!str) {
             return '';
@@ -146,6 +223,101 @@ $(() => {
         }
         return fullRepo;
     }
+
+    function formatNumber(num) {
+        if (num >= 1000) {
+            return (num / 1000).toFixed(1) + 'k';
+        }
+        return num;
+    }
+
+    function replaceEmoji(text) {
+        return text.replace(/:([a-z0-9+-_]+):/ig, (match, key) => {
+            let url = emojiURLs[key];
+            if (!url) {
+                return match;
+            }
+            return `<img class="emoji" title="${match}" alt="${match}"
+                src="${url}" width="18" height="18">`;
+        });
+    }
+
+    function getCardHTML(type, raw) {
+        let data;
+        if (type === 'user') {
+            data = {
+                avatar: raw.avatar_url,
+                userUrl: raw.html_url,
+                loginName: raw.login,
+                realName: raw.name,
+                location: raw.location,
+                isAdmin: raw.site_admin,
+                isOrg: raw.type === 'Organization',
+                company: raw.company,
+                followers: formatNumber(raw.followers),
+                following: formatNumber(raw.following),
+                repos: formatNumber(raw.public_repos),
+                followersUrl: `//github.com/${raw.login}/followers`,
+                followingUrl: `//github.com/${raw.login}/following`,
+                reposUrl: `//github.com/${raw.login}?tab=repositories`
+            };
+        } else if (type === 'repo') {
+            data = {
+                owner: raw.owner.login,
+                ownerAvatar: raw.owner.avatar_url,
+                ownerUrl: raw.owner.html_url,
+                repo: raw.name,
+                repoUrl: raw.html_url,
+                desc: replaceEmoji(Mustache.escape(raw.description)),
+                language: raw.language,
+                stars: formatNumber(raw.stargazers_count),
+                forks: formatNumber(raw.forks_count),
+                issues: formatNumber(raw.open_issues_count),
+                hasIssues: raw.has_issues,
+                homepage: raw.homepage,
+                starsUrl: `//github.com/${raw.full_name}/stargazers`,
+                forksUrl: `//github.com/${raw.full_name}/network`,
+                issuesUrl: `//github.com/${raw.full_name}/issues`
+            };
+            if (raw.parent) {
+                data.parent = {
+                    repo: raw.parent.full_name,
+                    url: raw.parent.html_url
+                };
+            }
+        }
+
+        // https://developer.github.com/v3/users/#get-a-single-user
+        let html = Mustache.render(CARD_TPL[type], data);
+
+        return $(html);
+    }
+
+    function getErrorHTML(error) {
+        let html = Mustache.render(CARD_TPL.error, error);
+        return $(html);
+    }
+
+    // prepare token form
+    let tokenForm = $(CARD_TPL.form);
+    let tokenField = tokenForm.find('.hovercard-token');
+    tokenForm.find('button').on('click', (e) => {
+        if ($(e.target).is('.hovercard-save') && tokenField.val()) {
+            localStorage.setItem(TOKEN_KEY, tokenField.val());
+        }
+        tokenForm.detach();
+        return false;
+    });
+    tokenForm.find('.hovercard-cancel').on('click')
+    $('body').on('click', '.token-link', () => {
+        tokenForm.appendTo($('body'));
+    });
+
+    // prepare cache objects
+    let cache = {
+        user: {},
+        repo: {}
+    };
 
     function extract(context) {
         // if on user profile page, we should not show user
@@ -283,156 +455,6 @@ $(() => {
             });
         });
 
-        const CARD_TPL = {
-            user: `
-                <address class="hovercard">
-                    <img src="{{avatar}}&s=32" class="hovercard-avatar">
-                    <div class="hovercard-person">
-                        <p><strong><a href="{{userUrl}}">{{loginName}}</a></strong>{{#isAdmin}} <small>(Administrator)</small>{{/isAdmin}}{{#isOrg}} <small>(Organization)</small>{{/isOrg}}</p>
-                        {{#realName}}<p>{{realName}}</p>{{/realName}}
-                    </div>
-                    <div class="hovercard-more">
-                        {{^isOrg}}<div class="hovercard-stats">
-                            <a href="{{followersUrl}}">
-                                <strong>{{followers}}</strong>
-                                <span>Followers</span>
-                            </a>
-                            <a href="{{followingUrl}}">
-                                <strong>{{following}}</strong>
-                                <span>Following</span>
-                            </a>
-                            <a href="{{reposUrl}}">
-                                <strong>{{repos}}</strong>
-                                <span>Repos</span>
-                            </a>
-                        </div>{{/isOrg}}
-                        {{#location}}<p><span class="octicon octicon-location"></span>{{location}}</p>{{/location}}
-                        {{#company}}<p><span class="octicon octicon-organization"></span>{{company}}</p>{{/company}}
-                    </div>
-                </address>`,
-            repo: `
-                <div class="hovercard">
-                    <div class="hovercard-repo">
-                        <span class="octicon octicon-repo{{#parent}}-forked{{/parent}}"></span>
-                        <p><a href="{{ownerUrl}}">{{owner}}</a> / <strong><a href="{{repoUrl}}">{{repo}}</a></strong></p>
-                        <p>{{#parent}}<span>forked from <a href="{{url}}">{{repo}}</a></span>{{/parent}}</p>
-                    </div>
-                    <div class="hovercard-more">
-                        <div class="hovercard-stats">
-                            <a href="{{starsUrl}}">
-                                <strong>{{stars}}</strong>
-                                <span>Stars</span>
-                            </a>
-                            <a href="{{forksUrl}}">
-                                <strong>{{forks}}</strong>
-                                <span>Forks</span>
-                            </a>
-                            {{#hasIssues}}<a href="{{issuesUrl}}">
-                                <strong>{{issues}}</strong>
-                                <span>Issues</span>
-                            </a>{{/hasIssues}}
-                        </div>
-                        {{#desc}}<p class="hovercard-repo-desc"><span class="octicon octicon-info"></span>{{{desc}}}</p>{{/desc}}
-                        {{#language}}<p><span class="octicon octicon-code"></span>{{language}}</p>{{/language}}
-                        {{#homepage}}<p><span class="octicon octicon-link"></span><a href="{{homepage}}">{{homepage}}</a></p>{{/homepage}}
-                    </div>
-                </div>`
-        };
-
-        function formatNumber(num) {
-            if (num >= 1000) {
-                return (num / 1000).toFixed(1) + 'k';
-            }
-            return num;
-        }
-
-        function encodeHTML(raw){
-            return $('<div/>').text(raw).html();
-        }
-
-        function replaceEmoji(text) {
-            return text.replace(/:([a-z0-9+-_]+):/ig, (match, key) => {
-                let url = emojiURLs[key];
-                if (!url) {
-                    return match;
-                }
-                return `<img class="emoji" title="${match}" alt="${match}"
-                    src="${url}" width="18" height="18">`;
-            });
-        }
-
-        function getCardHTML(type, raw) {
-            let data;
-            if (type === 'user') {
-                data = {
-                    avatar: raw.avatar_url,
-                    userUrl: raw.html_url,
-                    loginName: raw.login,
-                    realName: raw.name,
-                    location: raw.location,
-                    isAdmin: raw.site_admin,
-                    isOrg: raw.type === 'Organization',
-                    company: raw.company,
-                    followers: formatNumber(raw.followers),
-                    following: formatNumber(raw.following),
-                    repos: formatNumber(raw.public_repos),
-                    followersUrl: `//github.com/${raw.login}/followers`,
-                    followingUrl: `//github.com/${raw.login}/following`,
-                    reposUrl: `//github.com/${raw.login}?tab=repositories`
-                };
-            } else if (type === 'repo') {
-                data = {
-                    owner: raw.owner.login,
-                    ownerAvatar: raw.owner.avatar_url,
-                    ownerUrl: raw.owner.html_url,
-                    repo: raw.name,
-                    repoUrl: raw.html_url,
-                    desc: replaceEmoji(encodeHTML(raw.description)),
-                    language: raw.language,
-                    stars: formatNumber(raw.stargazers_count),
-                    forks: formatNumber(raw.forks_count),
-                    issues: formatNumber(raw.open_issues_count),
-                    hasIssues: raw.has_issues,
-                    homepage: raw.homepage,
-                    starsUrl: `//github.com/${raw.full_name}/stargazers`,
-                    forksUrl: `//github.com/${raw.full_name}/network`,
-                    issuesUrl: `//github.com/${raw.full_name}/issues`
-                };
-                if (raw.parent) {
-                    data.parent = {
-                        repo: raw.parent.full_name,
-                        url: raw.parent.html_url
-                    };
-                }
-            }
-
-            // https://developer.github.com/v3/users/#get-a-single-user
-            let html = Mustache.render(CARD_TPL[type], data);
-
-            return $(html);
-        }
-
-        const ERROR_TPL = `
-            <div class="hovercard hovercard-error">
-                <p><strong><span class="octicon octicon-issue-opened"></span>{{title}}</strong></p>
-                {{#message}}<p>{{{message}}}</p>{{/message}}
-            </div>`;
-
-        function getErrorHTML(error) {
-            let html = Mustache.render(ERROR_TPL, error);
-            return $(html);
-        }
-
-        let cache = {
-            user: {},
-            repo: {}
-        };
-        const CREATE_TOKEN_PATH = '//github.com/settings/tokens/new';
-        const API_PREFIX = {
-            user: '//api.github.com/users/',
-            repo: '//api.github.com/repos/'
-        };
-
         let tipSelector = `.${USER_KEY}:not(.tooltipstered), .${REPO_KEY}:not(.tooltipstered)`;
         $(tipSelector).tooltipster({
             updateAnimation: false,
@@ -481,19 +503,36 @@ $(() => {
                                     break;
                                 case 403:
                                     if (xhr.getAllResponseHeaders().indexOf('X-RateLimit-Remaining: 0') !== -1) {
-                                        title= 'API limit exceeded';
+                                        title = 'API limit exceeded';
                                         if (!localStorage.getItem(TOKEN_KEY)) {
                                             message = `API rate limit exceeded for current IP. <a href="${CREATE_TOKEN_PATH}" class="token-link" target="_blank">Create a new access token</a> and paste it back here to get a higher rate limit.`;
                                         }
                                     } else {
-                                        title = 'Forbidden';
-                                        message = `You are not allowed to access GitHub API. <a href="${CREATE_TOKEN_PATH}" class="token-link" target="_blank">Create a new access token</a>, paste it back here and try again.`;
+                                        let response = xhr.responseJSON;
+                                        if (type === 'repo' && response.block && response.block.reason === 'dmca') {
+                                            title = 'Access blocked';
+                                            message = 'Repository unavailable due to DMCA takedown.';
+                                        } else {
+                                            title = 'Forbidden';
+                                            message = `You are not allowed to access GitHub API. <a href="${CREATE_TOKEN_PATH}" class="token-link" target="_blank">Create a new access token</a>, paste it back here and try again.`;
+                                        }
                                     }
                                     needToken = true;
                                     break;
+                                case 404:
+                                    title = 'Not found';
+                                    if (type === 'repo') {
+                                        message = 'The repository does\'nt exist or is private.';
+                                    } else {
+                                        message = 'The user does\'nt exist.';
+                                    }
+                                    break;
                                 default:
                                     title = 'Error';
-                                    message = Mustache.escape(xhr.responseJSON.message || '');
+                                    let response = xhr.responseJSON;
+                                    if (response) {
+                                        message = Mustache.escape(response.message || '');
+                                    }
                                     break;
                             }
 
@@ -511,33 +550,9 @@ $(() => {
         });
     }
 
-    const FORM_TPL = `
-        <div class="hovercard-overlay">
-            <form>
-                <p>
-                    <input class="hovercard-token" type="text" placeholder="Paste access token here..." size="40" />
-                    <button class="btn btn-primary hovercard-save">Save</button>
-                    <button class="btn hovercard-cancel">Cancel</button>
-                </p>
-            </form>
-        </div>`;
-
-    let tokenForm = $(FORM_TPL);
-    let tokenField = tokenForm.find('.hovercard-token');
-    tokenForm.find('button').on('click', (e) => {
-        if ($(e.target).is('.hovercard-save') && tokenField.val()) {
-            localStorage.setItem(TOKEN_KEY, tokenField.val());
-        }
-        tokenForm.detach();
-        return false;
-    });
-    tokenForm.find('.hovercard-cancel').on('click')
-    $('body').on('click', '.token-link', () => {
-        tokenForm.appendTo($('body'));
-    });
-
-    let emojiURLs = self.options.emojiURLs;
+    // self.options.emojiURLs will be replaced after build
     // JSON resource URL in Chrome, JSON data in Firefox
+    let emojiURLs = self.options.emojiURLs;
     if (typeof emojiURLs === 'string') {
         $.getJSON(emojiURLs).done((emojis) => {
             emojiURLs = emojis;

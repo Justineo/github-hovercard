@@ -3,7 +3,8 @@ Changelog
 
 ## 0.2.0
 
-* Applied more ES6 syntax (template string, arrow functions).
+* Refactored and applied more ES6 syntax (template string, arrow functions).
+* Supported DMCA notice for repos.
 
 ## 0.1.2
 
