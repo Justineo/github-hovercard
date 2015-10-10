@@ -522,9 +522,9 @@ $(() => {
                                 case 404:
                                     title = 'Not found';
                                     if (type === 'repo') {
-                                        message = 'The repository does\'nt exist or is private.';
+                                        message = 'The repository doesn\'t exist or is private.';
                                     } else {
-                                        message = 'The user does\'nt exist.';
+                                        message = 'The user doesn\'t exist.';
                                     }
                                     break;
                                 default:
