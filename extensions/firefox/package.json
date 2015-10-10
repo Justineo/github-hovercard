@@ -1,10 +1,19 @@
 {
   "title": "GitHub Hovercard",
   "name": "github-hovercard",
-  "version": "0.2.0",
-  "description": "Quick user hovercard for GitHub.",
+  "version": "0.3.0",
+  "description": "Quick user/repo hovercard for GitHub.",
   "main": "index.js",
   "author": "Justineo",
+  "homepage": "https://github.com/Justineo/github-hovercard",
+  "preferences": [
+    {
+      "name": "domains",
+      "title": "Applicable Domains",
+      "type": "string",
+      "description": "Comma-separated domain list. (github.com is always included)"
+    }
+  ],
   "engines": {
     "firefox": ">=38.0a1",
     "fennec": ">=38.0a1"

@@ -1,11 +1,15 @@
-var data = require('sdk/self').data;
-var pageMod = require('sdk/page-mod');
+let data = require('sdk/self').data;
+let domains = require('sdk/simple-prefs').prefs.domains;
+let pageMod = require('sdk/page-mod');
+
+domains = domains.split(/[,\s]/)
+  .map((domain) => [`http://${domain}/*`, `https://${domain}/*`])
+  .reduce((prev, current) => prev.concat(current), [
+    'http://github.com', 'https://github.com/*'
+  ]);
 
 pageMod.PageMod({
-  include: [
-    'http://github.com/*',
-    'https://github.com/*'
-  ],
+  include: domains,
   contentScriptFile: [
     data.url('jquery.js'),
     data.url('mustache.js'),

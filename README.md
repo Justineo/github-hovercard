@@ -1,6 +1,6 @@
 # GitHub Hovercard
 
-Quick user hovercard for GitHub.
+Quick user/repo hovercard for GitHub.
 
 ## Screenshots
 

@@ -1,6 +1,11 @@
 Changelog
 ---
 
+## 0.3.0
+
+* Add options page for Chrome and preferences for Firefox.
+* Add "Applicable Domains" options (which should support GitHun Enterprise).
+
 ## 0.2.0
 
 * Refactored and applied more ES6 syntax (template string, arrow functions).

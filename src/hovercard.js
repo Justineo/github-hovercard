@@ -1,6 +1,8 @@
 $(() => {
     'use strict';
 
+    const GH_DOMAIN = location.host;
+
     let target = document.body;
     let observer = new MutationObserver((mutations) => {
         mutations.forEach((mutation) => {
@@ -46,17 +48,17 @@ $(() => {
         TITLE_USER: 3, // title="{{user}}"
         ALT_USER: 4,   // alt="{{user}}"
         HREF_USER: 5,   // href="{{user}}"
-        URL: 6, // href="/{{user}}" or href="https://github.com/{{user}}"
+        URL: 6, // href="/{{user}}" or href="https://{{GH_DOMAIN}}/{{user}}"
         NEXT_TEXT_REPO: 7, // <span>...</span> {{repo}}
         ANCESTOR_URL_REPO: 8 // <a href="/{{user}}/{{repo}}">...{{elem}}...</a>
     };
 
-    const URL_USER_PATTERN = /^https?:\/\/github.com\/([^\/\?#]+)[^\/]*$/;
-    const URL_REPO_PATTERN = /^https?:\/\/github.com\/([^\/]+)\/([^\/\?#]+)[^\/]*$/;
+    const URL_USER_PATTERN = `^https?:\\/\\/${GH_DOMAIN}\\/([^\\/\\?#]+)[^\\/]*$`;
+    const URL_REPO_PATTERN = `^https?:\\/\\/${GH_DOMAIN}\\/([^\\/]+)\\/([^\\/\\?#]+)[^\\/]*$`;
     const SLUG_PATTERN = /([^\/\s]+)\/([^#@\s]+)(?:#\d+|@[\da-f]+)?/;
 
     const STRATEGIES = {
-        '.explore-content .repo-list-name .prefix': EXTRACTOR.TEXT_USER,
+        '.repo-list-name .prefix': EXTRACTOR.TEXT_USER,
         '.fork-flag a': EXTRACTOR.SLUG,
         '.avatar': EXTRACTOR.ALT_USER,
         '.gravatar': EXTRACTOR.ALT_USER,
@@ -106,7 +108,8 @@ $(() => {
         '.contribution .cmeta': EXTRACTOR.SLUG,
         '.select-menu-item-gravatar img': EXTRACTOR.ALT_USER,
         '.notifications-repo-link': EXTRACTOR.SLUG,
-        '.explore-content .repo-list-name .slash': EXTRACTOR.NEXT_TEXT_REPO,
+        '.explore-page .repo-list-name .slash': EXTRACTOR.NEXT_TEXT_REPO,
+        '.collection-page .repo-list-name .slash': EXTRACTOR.NEXT_TEXT_REPO,
         '.leaderboard-list-content .repo': EXTRACTOR.ANCESTOR_URL_REPO,
         '.profilecols .repo-list-name a': EXTRACTOR.ANCESTOR_URL_REPO,
         '.simple-conversation-list a': EXTRACTOR.SLUG,
@@ -185,10 +188,10 @@ $(() => {
             </div>`
     };
 
-    const CREATE_TOKEN_PATH = '//github.com/settings/tokens/new';
+    const CREATE_TOKEN_PATH = `//${GH_DOMAIN}/settings/tokens/new`;
     const API_PREFIX = {
-        user: '//api.github.com/users/',
-        repo: '//api.github.com/repos/'
+        user: `//api.${GH_DOMAIN}/users/`,
+        repo: `//api.${GH_DOMAIN}/repos/`
     };
 
     function trim(str) {
@@ -257,9 +260,9 @@ $(() => {
                 followers: formatNumber(raw.followers),
                 following: formatNumber(raw.following),
                 repos: formatNumber(raw.public_repos),
-                followersUrl: `//github.com/${raw.login}/followers`,
-                followingUrl: `//github.com/${raw.login}/following`,
-                reposUrl: `//github.com/${raw.login}?tab=repositories`
+                followersUrl: `//${GH_DOMAIN}/${raw.login}/followers`,
+                followingUrl: `//${GH_DOMAIN}/${raw.login}/following`,
+                reposUrl: `//${GH_DOMAIN}/${raw.login}?tab=repositories`
             };
         } else if (type === 'repo') {
             data = {
@@ -275,9 +278,9 @@ $(() => {
                 issues: formatNumber(raw.open_issues_count),
                 hasIssues: raw.has_issues,
                 homepage: raw.homepage,
-                starsUrl: `//github.com/${raw.full_name}/stargazers`,
-                forksUrl: `//github.com/${raw.full_name}/network`,
-                issuesUrl: `//github.com/${raw.full_name}/issues`
+                starsUrl: `//${GH_DOMAIN}/${raw.full_name}/stargazers`,
+                forksUrl: `//${GH_DOMAIN}/${raw.full_name}/network`,
+                issuesUrl: `//${GH_DOMAIN}/${raw.full_name}/issues`
             };
             if (raw.parent) {
                 data.parent = {
@@ -522,9 +525,9 @@ $(() => {
                                 case 404:
                                     title = 'Not found';
                                     if (type === 'repo') {
-                                        message = 'The repository does\'nt exist or is private.';
+                                        message = 'The repository doesn\'t exist or is private.';
                                     } else {
-                                        message = 'The user does\'nt exist.';
+                                        message = 'The user doesn\'t exist.';
                                     }
                                     break;
                                 default:
