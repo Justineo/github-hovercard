@@ -189,9 +189,10 @@ $(() => {
     };
 
     const CREATE_TOKEN_PATH = `//${GH_DOMAIN}/settings/tokens/new`;
+    const IS_ENTERPRISE = GH_DOMAIN === 'github.com';
     const API_PREFIX = {
-        user: `//api.${GH_DOMAIN}/users/`,
-        repo: `//api.${GH_DOMAIN}/repos/`
+        user: IS_ENTERPRISE ? `//${GH_DOMAIN}/api/v3/users/` : `//api.${GH_DOMAIN}/users/`,
+        repo: IS_ENTERPRISE ? `//${GH_DOMAIN}/api/v3/repos/` : `//api.${GH_DOMAIN}/repos/`
     };
 
     function trim(str) {

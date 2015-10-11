@@ -32,7 +32,7 @@ For unauthenticated requests, GitHub API has a fairly low request limit.
 
 ~~Working on it.~~
 
-Authentication is supported form v0.0.7.
+Authentication is supported from v0.0.7.
 
 ## Acknowledgements
 
