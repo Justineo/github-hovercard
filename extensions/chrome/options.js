@@ -28,32 +28,6 @@ function save() {
             result.push(domain);
         }
     });
-
-    // let revokes = [];
-    // for (let i = 0, j = current.length; i < j; i++) {
-    //     let domain = current[i];
-    //     if (result.indexOf(domain) === -1) {
-    //         revokes.push(domain);
-    //     }
-    // }
-    // chrome.permissions.remove({
-    //     origins: revokes.map(toOrigin)
-    // });
-
-    // chrome.permissions.request({
-    //     origins: result.map(toOrigin)
-    // }, (isGranted) => {
-    //     if (isGranted) {
-            chrome.storage.sync.set({
-                domains: result
-            }, () => {
-                current = result;
-                window.close();
-            });
-    //     } else {
-    //         log('Permission denied.');
-    //     }
-    // });
 }
 
 function addRow() {

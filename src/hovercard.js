@@ -525,7 +525,8 @@ $(() => {
                                 case 404:
                                     title = 'Not found';
                                     if (type === 'repo') {
-                                        message = 'The repository doesn\'t exist or is private.';
+                                        message = `The repository doesn\'t exist or is private. <a href="${CREATE_TOKEN_PATH}" class="token-link" target="_blank">Create a new access token</a>, paste it back here and try again.`;
+                                        needToken = true;
                                     } else {
                                         message = 'The user doesn\'t exist.';
                                     }
