@@ -235,7 +235,7 @@ $(() => {
     }
 
     function replaceEmoji(text) {
-        return text.replace(/:([a-z0-9+-_]+):/ig, (match, key) => {
+        return text.replace(/:([a-z0-9+\-_]+):/ig, (match, key) => {
             let url = emojiURLs[key];
             if (!url) {
                 return match;
