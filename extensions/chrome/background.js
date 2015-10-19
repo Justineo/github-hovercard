@@ -72,6 +72,7 @@ function injector(details) {
 }
 
 function bindInjector(domains) {
+    // always enable hovercard on GitHub
     if (domains.indexOf(GITHUB_DOMAIN) === -1) {
         domains.push(GITHUB_DOMAIN);
     }
@@ -93,3 +94,5 @@ function init() {
 }
 
 chrome.runtime.onInstalled.addListener(init);
+
+init();
