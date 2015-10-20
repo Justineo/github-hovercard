@@ -3,8 +3,10 @@ Changelog
 
 ## 0.3.0
 
-* Add options page for Chrome and preferences for Firefox.
-* Add "Applicable Domains" options (which should support GitHun Enterprise).
+* Added options page for Chrome and preferences for Firefox.
+* Added "Applicable Domains" options (which should support GitHun Enterprise).
+* Supported auto link for repo descriptions.
+* Moved homepage before language.
 
 ## 0.2.0
 
