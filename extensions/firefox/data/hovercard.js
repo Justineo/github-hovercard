@@ -168,8 +168,8 @@ $(() => {
                         </a>{{/hasIssues}}
                     </div>
                     {{#desc}}<p class="hovercard-repo-desc"><span class="octicon octicon-info"></span>{{{desc}}}</p>{{/desc}}
-                    {{#language}}<p><span class="octicon octicon-code"></span>{{language}}</p>{{/language}}
                     {{#homepage}}<p><span class="octicon octicon-link"></span><a href="{{homepage}}">{{homepage}}</a></p>{{/homepage}}
+                    {{#language}}<p><span class="octicon octicon-code"></span>{{language}}</p>{{/language}}
                 </div>
             </div>`,
         error: `
@@ -247,6 +247,25 @@ $(() => {
         });
     }
 
+    function replaceLink(text) {
+        return text.replace(/\b(https?:\/\/[^\s]+)/ig, `<a href="$1">$1</a>`);
+    }
+
+    const ESCAPE_MAP = {
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#x27;',
+        '`': '&#x60;'
+    };
+    const ESCAPE_PATTERN = '(?:' + Object.keys(ESCAPE_MAP).join('|') + ')';
+    function encodeHTML(text) {
+        return text.replace(new RegExp(ESCAPE_PATTERN, 'g'), (match) => {
+            return ESCAPE_MAP[match];
+        });
+    }
+
     function getCardHTML(type, raw) {
         let data;
         if (type === 'user') {
@@ -273,7 +292,7 @@ $(() => {
                 ownerUrl: raw.owner.html_url,
                 repo: raw.name,
                 repoUrl: raw.html_url,
-                desc: replaceEmoji(Mustache.escape(raw.description)),
+                desc: replaceLink(replaceEmoji(encodeHTML(raw.description))),
                 language: raw.language,
                 stars: formatNumber(raw.stargazers_count),
                 forks: formatNumber(raw.forks_count),
