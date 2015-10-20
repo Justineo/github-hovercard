@@ -1,9 +1,10 @@
 'use strict';
 
-const ITEM_TPL = `{{#domains}}<li><input type="text" class="domain" value="{{.}}"><button type="button" class="remove">✕</button></li>{{/domains}}`;
+const ITEM_TPL = `{{#domains}}<li><input type="text" class="domain" value="{{.}}" placeholder=""><button type="button" class="remove">✕</button></li>{{/domains}}`;
 
 let list = $('#domains');
 let saveBtn = $('#save');
+let cancelBtn = $('#cancel');
 let addBtn = $('#add');
 let msg = $('#message');
 let current;
@@ -28,6 +29,23 @@ function save() {
             result.push(domain);
         }
     });
+
+    chrome.storage.sync.set({
+        domains: result
+    }, () => {
+        current = result;
+        chrome.runtime.sendMessage({ event: 'optionschange' }, (response) => {
+            if (response.success) {
+                window.close();
+            } else {
+                log('Something went wrong.');
+            }
+        });
+    });
+}
+
+function cancel() {
+    window.close();
 }
 
 function addRow() {
@@ -50,12 +68,18 @@ function log(message, duration) {
     msg.html(message).show();
     if (duration) {
         logTimer = setTimeout(() => {
-            msg.fadeOut(500);
+            msg.animate({ opacity: 0 }, 500);
         }, duration);
     }
 }
 
 $(restore);
 saveBtn.on('click', save);
+cancelBtn.on('click', cancel);
 addBtn.on('click', addRow);
+list.on('keypress', '.domain', (e) => {
+    if (e.which === 13) {
+        save();
+    }
+});
 list.on('click', '.remove', removeRow);

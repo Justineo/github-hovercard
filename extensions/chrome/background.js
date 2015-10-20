@@ -94,5 +94,11 @@ function init() {
 }
 
 chrome.runtime.onInstalled.addListener(init);
+chrome.runtime.onMessage.addListener((message, sender, respond) => {
+    if (message.event === 'optionschange') {
+        init();
+        respond({ success: true });
+    }
+});
 
 init();

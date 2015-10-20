@@ -8,6 +8,14 @@ body {
     padding-bottom: 36px;
 }
 
+:-webkit-any(#form, #actions) button {
+    margin-left: 10px;
+}
+
+:-webkit-any(#form, #actions) button:first-child {
+    margin-left: 0;
+}
+
 #domains {
     padding: 0;
 }
@@ -29,8 +37,6 @@ body {
     width: 28px;
     height: 28px;
     font-size: 22px;
-    -webkit-padding-start: 0;
-    -webkit-padding-end: 0;
     background: none;
     border: none;
     box-shadow: none;
@@ -50,6 +56,7 @@ body {
 }
 
 #actions {
+    display: flex;
     position: fixed;
     right: 0;
     bottom: 0;
@@ -59,8 +66,13 @@ body {
 }
 
 #message {
-    margin-left: 10px;
+    flex-grow: 1;
     color: #666;
+    line-height: 24px;
+}
+
+#save:not(:focus) {
+    border-color: rgba(0, 0, 0, 0.5);
 }
 </style>
 </head>
@@ -72,7 +84,11 @@ body {
     </ul>
 </section>
 <section id="actions">
-    <button id="save">Save</button> <button id="add">Add</button><span id="message"></span>
+    <button id="add">Add</button>
+    <span id="message"></span>
+    <div>
+        <button id="cancel">Cancel</button><button id="save" class="default-button">Save</button>
+    </div>
 </section>
 <script src="jquery.js"></script>
 <script src="mustache.js"></script>
