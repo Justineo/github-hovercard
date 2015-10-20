@@ -34,8 +34,8 @@ $(() => {
         'followers', 'following', 'repositories'
     ];
 
-    const GH_USER_NAME_PATTERN = /^[a-z0-9]$|^[a-z0-9](?:[a-z0-9](?!--)|-(?!-))*[a-z0-9]$/i;
-    const GH_REPO_NAME_PATTERN = /^[a-z0-9-_.]$/i;
+    const GH_USER_NAME_PATTERN = /^[a-z0-9]+$|^[a-z0-9](?:[a-z0-9](?!--)|-(?!-))*[a-z0-9]$/i;
+    const GH_REPO_NAME_PATTERN = /^[a-z0-9\-_\.]+$/i;
 
     const USER_KEY = 'hovercard-user-x';
     const REPO_KEY = 'hovercard-repo-x';
@@ -53,8 +53,9 @@ $(() => {
         ANCESTOR_URL_REPO: 8 // <a href="/{{user}}/{{repo}}">...{{elem}}...</a>
     };
 
-    const URL_USER_PATTERN = `^https?:\\/\\/${GH_DOMAIN}\\/([^\\/\\?#]+)[^\\/]*$`;
-    const URL_REPO_PATTERN = `^https?:\\/\\/${GH_DOMAIN}\\/([^\\/]+)\\/([^\\/\\?#]+)[^\\/]*$`;
+    const GH_DOMAIN_PATTERN = GH_DOMAIN.replace(/\./g, '\\.');
+    const URL_USER_PATTERN = `^https?:\\/\\/${GH_DOMAIN_PATTERN}\\/([^\\/\\?#]+)(?:[^\\/]*$|\\/(?:[\\?#]|$))`;
+    const URL_REPO_PATTERN = `^https?:\\/\\/${GH_DOMAIN_PATTERN}\\/([^\\/\\?#]+)\\/([^\\/\\?#]+)(?:[^\\/]*$|\\/(?:[\\?#]|$))`;
     const SLUG_PATTERN = /([^\/\s]+)\/([^#@\s]+)(?:#\d+|@[\da-f]+)?/;
 
     const STRATEGIES = {
@@ -190,12 +191,10 @@ $(() => {
 
     const CREATE_TOKEN_PATH = `//${GH_DOMAIN}/settings/tokens/new`;
     const IS_ENTERPRISE = GH_DOMAIN !== 'github.com';
-    console.log(GH_DOMAIN);
     const API_PREFIX = {
         user: IS_ENTERPRISE ? `//${GH_DOMAIN}/api/v3/users/` : `//api.${GH_DOMAIN}/users/`,
         repo: IS_ENTERPRISE ? `//${GH_DOMAIN}/api/v3/repos/` : `//api.${GH_DOMAIN}/repos/`
     };
-    console.log(API_PREFIX);
 
     function trim(str) {
         if (!str) {
@@ -449,11 +448,10 @@ $(() => {
                 if (!elem) {
                     return;
                 }
-                if (username && username !== me && username !== current) {
-                    markExtracted(elem, USER_KEY, username);
-                }
                 if (fullRepo) {
                     markExtracted(elem, REPO_KEY, fullRepo);
+                } else if (username && username !== me && username !== current) {
+                    markExtracted(elem, USER_KEY, username);
                 }
                 if (!username && !fullRepo) {
                     markExtracted(elem);
