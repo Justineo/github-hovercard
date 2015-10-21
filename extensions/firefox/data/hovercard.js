@@ -555,7 +555,7 @@ $(() => {
                                     title = 'Error';
                                     let response = xhr.responseJSON;
                                     if (response) {
-                                        message = Mustache.escape(response.message || '');
+                                        message = encodeHTML(response.message || '');
                                     }
                                     break;
                             }
