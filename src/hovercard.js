@@ -292,7 +292,7 @@ $(() => {
                 ownerUrl: raw.owner.html_url,
                 repo: raw.name,
                 repoUrl: raw.html_url,
-                desc: replaceLink(replaceEmoji(encodeHTML(raw.description))),
+                desc: replaceEmoji(replaceLink(encodeHTML(raw.description))),
                 language: raw.language,
                 stars: formatNumber(raw.stargazers_count),
                 forks: formatNumber(raw.forks_count),
