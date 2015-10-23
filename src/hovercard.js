@@ -115,8 +115,13 @@ $(() => {
         '.profilecols .repo-list-name a': EXTRACTOR.ANCESTOR_URL_REPO,
         '.simple-conversation-list a': EXTRACTOR.SLUG,
         '.discussion-item-ref strong': EXTRACTOR.SLUG,
-        'a:not(.hovercard a)': EXTRACTOR.URL
+        'a': EXTRACTOR.URL
     };
+
+    const BLACK_LIST_SELECTOR = [
+        '.hovercard a',
+        '.repo-nav a'
+    ].join(', ');
 
     const CARD_TPL = {
         user: `
@@ -361,7 +366,7 @@ $(() => {
             let elems = $(selector, context);
             elems.each(function () {
                 let elem = $(this);
-                if (getExtracted(elem)) {
+                if (getExtracted(elem) || elem.is(BLACK_LIST_SELECTOR)) {
                     // skip processed elements
                     return;
                 }
