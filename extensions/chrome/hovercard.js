@@ -37,7 +37,7 @@ $(() => {
       'explore', 'styleguide', 'showcases', 'trending', 'stars',
       'dashboard', 'notifications', 'search', 'developer', 'account',
       'pulls', 'issues', 'features', 'contact', 'security', 'join',
-      'login', 'password_reset', 'watching', 'new', 'integrations'
+      'login', 'watching', 'new', 'integrations'
     ];
 
     const GH_RESERVED_REPO_NAMES = [
@@ -189,9 +189,9 @@ $(() => {
                             <span>Issues</span>
                         </a>{{/hasIssues}}
                     </div>
-                    {{#desc}}<p class="hovercard-repo-desc"><span class="octicon octicon-info"></span>{{{desc}}}</p>{{/desc}}
-                    {{#homepage}}<p><span class="octicon octicon-link"></span><a href="{{homepage}}">{{homepage}}</a></p>{{/homepage}}
-                    {{#language}}<p><span class="octicon octicon-code"></span>{{language}}</p>{{/language}}
+                    {{#desc}}<p class="hovercard-repo-desc"><span class="octicon octicon-info"></span>{{{.}}}</p>{{/desc}}
+                    {{#homepage}}<p><span class="octicon octicon-link"></span><a href="{{.}}">{{.}}</a></p>{{/homepage}}
+                    {{#language}}<p><span class="octicon octicon-code"></span>{{.}}</p>{{/language}}
                 </div>
             </div>`,
         issue: `
@@ -202,7 +202,7 @@ $(() => {
                 <div class="hovercard-issue-meta">
                     <p><span class="state state-{{state}}"><span class="octicon octicon-{{#isPullRequest}}git-pull-request{{/isPullRequest}}{{^isPullRequest}}{{^isClosed}}issue-opened{{/isClosed}}{{#isClosed}}issue-closed{{/isClosed}}{{/isPullRequest}}"></span>{{state}}</span><a href="{{userUrl}}">{{user}}</a></p>
                 </div>
-                <div class="hovercard-issue-body">{{{body}}}</div>
+                {{#body}}<div class="hovercard-issue-body">{{{.}}}</div>{{/body}}
             </div>`,
         error: `
             <div class="hovercard hovercard-error">
@@ -368,7 +368,11 @@ $(() => {
         if (type === EXTRACT_TYPE.ISSUE) {
             result.find('pre code').each(function () {
                 let code = $(this);
-                let match = code.attr('class').match(LANG_PATTERN);
+                let className = code.attr('class');
+                let match;
+                if (className) {
+                    match = className.match(LANG_PATTERN);
+                }
                 if (match) {
                     code.html(hljs.highlight(match[1], code.html()).value);
                 } else {
