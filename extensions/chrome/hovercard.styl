@@ -1,0 +1,328 @@
+/**********
+ * Utils
+ **********/
+$with-large-icon
+    position: relative
+    float: left
+    margin-top: 2px
+    margin-bottom: 6px
+    padding-left: 24px
+
+    .octicon
+        position: absolute
+        top: 0
+        left: 0
+        font-size: 24px
+        line-height: 1
+
+$fix-margin
+    & > :first-child
+        margin-top: 0
+
+    & > :last-child
+        margin-bottom: 0
+
+square(s)
+    width: s
+    height: s
+
+/**********
+ * Global
+ **********/
+.hovercard
+    max-width: 320px
+    min-width: 160px
+    font-style: normal
+    line-height: 2
+
+    &.extended
+        max-width: 640px
+
+    p
+        margin: 0 0 4px
+        vertical-align: middle
+        line-height: 1.2
+        white-space: nowrap
+        overflow: hidden
+        text-overflow: ellipsis
+        clear: both
+
+    a
+        color: #bdf
+
+    strong
+        font-size: 120%
+
+    small
+        opacity: .8
+
+/**********
+ * More
+ **********/
+.hovercard-more
+    clear: left
+
+    p
+        position: relative
+        padding-left: 18px
+        line-height: 18px
+
+    .hovercard-repo-desc
+        white-space: normal
+        height: auto
+
+    .emoji
+        vertical-align: middle
+
+    .octicon
+        position: absolute
+        top: 2px
+        left: 0
+        margin: 0
+        font-size: 14px
+        opacity: .8
+
+
+/**********
+ * User
+ **********/
+.hovercard-person
+    float: left
+
+.hovercard-avatar
+    float: left
+    square(32px)
+    margin: 0 8px 8px 0
+    border: 2px solid rgba(255, 255, 255, .1)
+    border-radius: 2px
+    background-color: #fff
+
+/**********
+ * Repo
+ **********/
+.hovercard-repo
+    @extends $with-large-icon
+
+    p:first-of-type
+        font-size: 13px
+
+.hovercard-stats
+    display: flex
+    min-width: 180px
+    margin-bottom: 10px
+    padding: 3px
+    border-radius: 2px
+    background-color: rgba(255, 255, 255, .15)
+    line-height: 1
+
+    strong,
+    span
+        display: block
+        padding: 2px 4px
+        line-height: 1
+        text-align: center
+
+    span
+        font-style: 70%
+        color: #fff
+        opacity: .8
+
+    a
+        display: block
+        flex: 1 1 auto
+
+        &:hover
+            text-decoration: none
+
+/**********
+ * Issue
+ **********/
+.hovercard-issue
+
+.hovercard-issue-meta
+    p
+        line-height: 16px
+
+    .state
+        margin-right: 5px
+        padding: 0 4px
+        text-transform: capitalize
+
+        .octicon
+            margin-right: 4px
+            font-size: 12px
+
+    .hovercard-avatar
+        margin: 0 5px 0 0
+        square(16px)
+        border-width: 1px
+        vertical-align: middle
+        line-height 1.2
+
+.hovercard-issue-body
+    @extends $fix-margin
+
+    clear: left
+    overflow: auto
+    max-height: 360px
+    margin: 8px 0 3px
+    padding: 8px 10px
+    border-radius: 2px
+    background-color: rgba(255, 255, 255, .15)
+    font-family: "Helvetica Neue", Helvetica, "Segoe UI", Arial, freesans, sans-serif
+    font-size: 12px
+    line-height: 1.6
+    word-wrap: break-word
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6
+        margin-top: 1em
+        margin-bottom: 12px
+        font-weight: 700
+        line-height: 1.4
+
+        tt,
+        code
+            font-size: inherit
+
+    h1
+        font-size: 1.5em
+    h2
+        font-size: 1.4em
+    h3
+        font-size: 1.3em
+    h4
+        font-size: 1.2em
+    h5
+        font-size: 1.1em
+    h6
+        font-size: 1em
+
+    p,
+    blockquote,
+    ul,
+    ol,
+    dl,
+    table,
+    pre
+        margin-top: 0
+        margin-bottom: 1em
+
+    hr
+        height: 2px
+        padding: 0
+        margin: 16px 0
+        background-color: #ccc
+        border: 0 none
+
+    a:not([href])
+        color: inherit
+
+    p
+        white-space: normal
+
+    ul,
+    ol
+        padding-left: 2em
+
+        ol,
+        ul
+            margin-top: 0
+            margin-bottom: 0
+
+    dl
+        padding: 0
+
+    dt
+        padding: 0
+        margin-top: 1em
+        font-size: 1em
+        font-style: italic
+        font-weight: 700
+
+    dd
+        padding: 0 1em
+        margin-bottom: 1em
+
+    blockquote
+        padding: 0 1em
+        border-left: 3px solid #ccc
+
+    table
+        width: 100%
+        overflow: auto
+        word-break: normal
+        word-break: keep-all
+
+    th
+        font-weight: 700
+
+    th,
+    td
+        padding: .5em 1em
+
+    img
+        max-width: 100%
+
+    code,
+    tt
+        padding: .2em 0
+        margin: 0
+        background-color: rgba(0, 0, 0, .04)
+        border-radius: 2px
+
+        br
+            display: none
+
+    pre
+        padding: .6em
+        overflow: auto
+        line-height: 1.45
+        background-color: rgba(108, 108, 108, .5)
+        border-radius: 2px
+        word-wrap: normal
+
+        code,
+        tt
+            background-color: transparent
+
+/**********
+ * Error
+ **********/
+.hovercard-error
+    max-width: 320px
+
+    p
+        line-height: 1.6
+        white-space: normal
+
+    .octicon
+        display: inline-block
+        position: static
+        margin-right: 5px
+
+/**********
+ * Overlay
+ **********/
+.hovercard-overlay
+    position: fixed
+    z-index: 10000000
+    top: 0
+    right: 0
+    bottom: 0
+    left: 0
+    background-color: rgba(0, 0, 0, .6)
+
+    form
+        position: absolute
+        top: 50%
+        left: 50%
+        transform: translate(-50%, -50%)
+        border: 3px solid rgba(0, 0, 0, .75)
+        padding: 0 20px
+        border-radius: 5px
+        background-color: #fff

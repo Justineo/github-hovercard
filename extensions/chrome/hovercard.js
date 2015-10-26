@@ -408,7 +408,6 @@ $(() => {
     };
 
     function extract(context) {
-        console.log(context);
         isExtracting = true;
 
         // if on user profile page, we should not show user

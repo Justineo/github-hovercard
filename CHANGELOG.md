@@ -3,6 +3,7 @@ Changelog
 
 ## 0.3.0
 
+* Added issue extraction (with Markdown conversion and syntax highlight).
 * Added options page for Chrome and preferences for Firefox.
 * Added "Applicable Domains" options (which should support GitHun Enterprise).
 * Supported auto link for repo descriptions.

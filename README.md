@@ -1,6 +1,6 @@
 # GitHub Hovercard
 
-Quick user/repo hovercard for GitHub.
+Quick user/repo/issue hovercard for GitHub.
 
 ## Screenshots
 
@@ -36,4 +36,7 @@ Authentication is supported from v0.0.7.
 
 ## Acknowledgements
 
-Thanks [Tooltipster](http://iamceege.github.io/tooltipster/) for the awesome tooltip component and [jQuery](http://jquery.com/) for basic operations.
+* Thank [Tooltipster](https://github.com/iamceege/tooltipster/) for the awesome tooltip component
+* Thank [jQuery](https://github.com/jquery/jquery) for basic operations.
+* Thank [marked](https://github.com/chjj/marked) for Markdown support.
+* Thank [highlight.js](https://github.com/isagalaev/highlight.js) for neat code styles.
