@@ -583,7 +583,6 @@ $(() => {
 
         $(tipSelector).tooltipster({
             updateAnimation: false,
-            autoClose: false,
             functionBefore: (elem, done) => {
                 elem.tooltipster('content', $('<span class="loading"></span>'));
                 let type = elem.data(TYPE_KEY);
