@@ -5,7 +5,14 @@ var exec = require('child_process').exec;
 var pack = JSON.parse(fs.readFileSync('./package.json', { encoding: 'utf8' }));
 var version = pack.version;
 
-gulp.task('cp', function () {
+gulp.task('css', function () {
+  var stylus = require('gulp-stylus');
+  return gulp.src('./src/*.styl')
+    .pipe(stylus())
+    .pipe(gulp.dest('./src'));
+});
+
+gulp.task('cp', ['css'], function () {
   var replace = require('gulp-replace');
   var srcChrome = gulp.src('./src/*')
     .pipe(replace('__EMOJI_DATA__', 'chrome.extension.getURL(\'emoji.json\')'))

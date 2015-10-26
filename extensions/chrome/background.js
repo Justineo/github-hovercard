@@ -4,11 +4,14 @@ let contentJS = [
     'jquery.js',
     'mustache.js',
     'tooltipster.js',
+    'marked.js',
+    'highlight.pack.js',
     'hovercard.js'
 ];
 
 let contentCSS = [
     'tooltipster.css',
+    'highlight.css',
     'hovercard.css'
 ];
 

@@ -1,164 +1,339 @@
-.hovercard {
-    max-width: 320px;
-    font-style: normal;
-    line-height: 2;
-}
-
-.hovercard p {
-    margin: 0 0 4px;
-    vertical-align: middle;
-    line-height: 1.2;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    clear: both;
-}
-
-.hovercard-error p {
-    white-space: normal;
-}
-
-.hovercard a {
-    color: #bdf;
-}
-
-.hovercard strong {
-    font-size: 120%;
-}
-
-.hovercard small {
-    opacity: .8;
-}
-
-.hovercard-person {
-    float: left;
-}
-
-.hovercard-more {
-    clear: left;
-}
-
-.hovercard-more p {
-    position: relative;
-    padding-left: 18px;
-    line-height: 18px;
-}
-
-.hovercard-more .hovercard-repo-desc {
-    white-space: normal;
-    height: auto;
-}
-
-.hovercard-more .emoji {
-    vertical-align: middle;
-}
-
-.hovercard .octicon {
-    position: absolute;
-    top: 2px;
-    left: 0;
-    margin: 0;
-    font-size: 14px;
-    opacity: .8;
-}
-
-.hovercard-avatar {
-    float: left;
-    width: 32px;
-    height: 32px;
-    margin: 0 8px 8px 0;
-    border: 2px solid rgba(255, 255, 255, .1);
-    border-radius: 2px;
-    background-color: #fff;
-}
-
+/**********
+ * Utils
+ **********/
 .hovercard-repo {
-    position: relative;
-    float: left;
-    margin-top: 2px;
-    margin-bottom: 6px;
-    padding-left: 24px;
+  position: relative;
+  float: left;
+  margin-top: 2px;
+  margin-bottom: 6px;
+  padding-left: 24px;
 }
-
-.hovercard-repo p:first-of-type {
-    font-size: 13px;
-}
-
 .hovercard-repo .octicon {
-    position: absolute;
-    top: 0;
-    left: 0;
-    font-size: 24px;
-    line-height: 1;
+  position: absolute;
+  top: 0;
+  left: 0;
+  font-size: 24px;
+  line-height: 1;
 }
-
+.hovercard-issue-body > :first-child {
+  margin-top: 0;
+}
+.hovercard-issue-body > :last-child {
+  margin-bottom: 0;
+}
+/**********
+ * Global
+ **********/
+.hovercard {
+  max-width: 320px;
+  min-width: 160px;
+  font-style: normal;
+  line-height: 2;
+}
+.hovercard.extended {
+  max-width: 640px;
+}
+.hovercard p {
+  margin: 0 0 4px;
+  vertical-align: middle;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  clear: both;
+}
+.hovercard a {
+  color: #bdf;
+}
+.hovercard strong {
+  font-size: 120%;
+}
+.hovercard small {
+  opacity: 0.8;
+}
+/**********
+ * More
+ **********/
+.hovercard-more {
+  clear: left;
+}
+.hovercard-more p {
+  position: relative;
+  padding-left: 18px;
+  line-height: 18px;
+}
+.hovercard-more .hovercard-repo-desc {
+  white-space: normal;
+  height: auto;
+}
+.hovercard-more .emoji {
+  vertical-align: middle;
+}
+.hovercard-more .octicon {
+  position: absolute;
+  top: 2px;
+  left: 0;
+  margin: 0;
+  font-size: 14px;
+  opacity: 0.8;
+}
+/**********
+ * User
+ **********/
+.hovercard-person {
+  float: left;
+}
+.hovercard-avatar {
+  float: left;
+  width: 32px;
+  height: 32px;
+  margin: 0 8px 8px 0;
+  border: 2px solid rgba(255,255,255,0.1);
+  border-radius: 2px;
+  background-color: #fff;
+}
+/**********
+ * Repo
+ **********/
+.hovercard-repo p:first-of-type {
+  font-size: 13px;
+}
 .hovercard-stats {
-    display: flex;
-    min-width: 180px;
-    margin-bottom: 10px;
-    padding: 3px 3px;
-    border-radius: 2px;
-    background-color: rgba(255, 255, 255, .15);
+  display: flex;
+  min-width: 180px;
+  margin-bottom: 10px;
+  padding: 3px;
+  border-radius: 2px;
+  background-color: rgba(255,255,255,0.15);
+  line-height: 1;
 }
-
 .hovercard-stats strong,
 .hovercard-stats span {
-    display: block;
-    padding: 2px 4px;
-    line-height: 1;
-    text-align: center;
+  display: block;
+  padding: 2px 4px;
+  line-height: 1;
+  text-align: center;
 }
-
 .hovercard-stats span {
-    font-style: 70%;
-    color: #fff;
-    opacity: .8;
+  font-style: 70%;
+  color: #fff;
+  opacity: 0.8;
 }
-
 .hovercard-stats a {
-    display: block;
-    flex: 1 1 auto;
+  display: block;
+  flex: 1 1 auto;
 }
-
 .hovercard-stats a:hover {
-    text-decoration: none;
+  text-decoration: none;
 }
-
-.hovercard-stats {
-    line-height: 1;
+/**********
+ * Issue
+ **********/
+.hovercard-issue p,
+.hovercard-issue-meta p {
+  line-height: 16px;
 }
-
+.hovercard-issue .state,
+.hovercard-issue-meta .state {
+  margin-right: 5px;
+  padding: 0 4px;
+  text-transform: capitalize;
+}
+.hovercard-issue .state .octicon,
+.hovercard-issue-meta .state .octicon {
+  margin-right: 4px;
+  font-size: 12px;
+}
+.hovercard-issue .hovercard-avatar,
+.hovercard-issue-meta .hovercard-avatar {
+  margin: 0 5px 0 0;
+  width: 16px;
+  height: 16px;
+  border-width: 1px;
+  vertical-align: middle;
+  line-height: 1.2;
+}
+.hovercard-issue-body {
+  clear: left;
+  overflow: auto;
+  max-height: 360px;
+  margin: 8px 0 3px;
+  padding: 8px 10px;
+  border-radius: 2px;
+  background-color: rgba(255,255,255,0.15);
+  font-family: "Helvetica Neue", Helvetica, "Segoe UI", Arial, freesans, sans-serif;
+  font-size: 12px;
+  line-height: 1.6;
+  word-wrap: break-word;
+}
+.hovercard-issue-body h1,
+.hovercard-issue-body h2,
+.hovercard-issue-body h3,
+.hovercard-issue-body h4,
+.hovercard-issue-body h5,
+.hovercard-issue-body h6 {
+  margin-top: 1em;
+  margin-bottom: 12px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+.hovercard-issue-body h1 tt,
+.hovercard-issue-body h2 tt,
+.hovercard-issue-body h3 tt,
+.hovercard-issue-body h4 tt,
+.hovercard-issue-body h5 tt,
+.hovercard-issue-body h6 tt,
+.hovercard-issue-body h1 code,
+.hovercard-issue-body h2 code,
+.hovercard-issue-body h3 code,
+.hovercard-issue-body h4 code,
+.hovercard-issue-body h5 code,
+.hovercard-issue-body h6 code {
+  font-size: inherit;
+}
+.hovercard-issue-body h1 {
+  font-size: 1.5em;
+}
+.hovercard-issue-body h2 {
+  font-size: 1.4em;
+}
+.hovercard-issue-body h3 {
+  font-size: 1.3em;
+}
+.hovercard-issue-body h4 {
+  font-size: 1.2em;
+}
+.hovercard-issue-body h5 {
+  font-size: 1.1em;
+}
+.hovercard-issue-body h6 {
+  font-size: 1em;
+}
+.hovercard-issue-body p,
+.hovercard-issue-body blockquote,
+.hovercard-issue-body ul,
+.hovercard-issue-body ol,
+.hovercard-issue-body dl,
+.hovercard-issue-body table,
+.hovercard-issue-body pre {
+  margin-top: 0;
+  margin-bottom: 1em;
+}
+.hovercard-issue-body hr {
+  height: 2px;
+  padding: 0;
+  margin: 16px 0;
+  background-color: #ccc;
+  border: 0 none;
+}
+.hovercard-issue-body a:not([href]) {
+  color: inherit;
+}
+.hovercard-issue-body p {
+  white-space: normal;
+}
+.hovercard-issue-body ul,
+.hovercard-issue-body ol {
+  padding-left: 2em;
+}
+.hovercard-issue-body ul ol,
+.hovercard-issue-body ol ol,
+.hovercard-issue-body ul ul,
+.hovercard-issue-body ol ul {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+.hovercard-issue-body dl {
+  padding: 0;
+}
+.hovercard-issue-body dt {
+  padding: 0;
+  margin-top: 1em;
+  font-size: 1em;
+  font-style: italic;
+  font-weight: 700;
+}
+.hovercard-issue-body dd {
+  padding: 0 1em;
+  margin-bottom: 1em;
+}
+.hovercard-issue-body blockquote {
+  padding: 0 1em;
+  border-left: 3px solid #ccc;
+}
+.hovercard-issue-body table {
+  width: 100%;
+  overflow: auto;
+  word-break: normal;
+  word-break: keep-all;
+}
+.hovercard-issue-body th {
+  font-weight: 700;
+}
+.hovercard-issue-body th,
+.hovercard-issue-body td {
+  padding: 0.5em 1em;
+}
+.hovercard-issue-body img {
+  max-width: 100%;
+}
+.hovercard-issue-body code,
+.hovercard-issue-body tt {
+  padding: 0.2em 0;
+  margin: 0;
+  background-color: rgba(0,0,0,0.04);
+  border-radius: 2px;
+}
+.hovercard-issue-body code br,
+.hovercard-issue-body tt br {
+  display: none;
+}
+.hovercard-issue-body pre {
+  padding: 0.6em;
+  overflow: auto;
+  line-height: 1.45;
+  background-color: rgba(108,108,108,0.5);
+  border-radius: 2px;
+  word-wrap: normal;
+}
+.hovercard-issue-body pre code,
+.hovercard-issue-body pre tt {
+  background-color: transparent;
+}
+/**********
+ * Error
+ **********/
 .hovercard-error {
-    max-width: 320px;
+  max-width: 320px;
 }
-
 .hovercard-error p {
-    line-height: 1.6;
+  line-height: 1.6;
+  white-space: normal;
 }
-
 .hovercard-error .octicon {
-    display: inline-block;
-    position: static;
-    margin-right: 5px;
+  display: inline-block;
+  position: static;
+  margin-right: 5px;
 }
-
+/**********
+ * Overlay
+ **********/
 .hovercard-overlay {
-    position: fixed;
-    z-index: 10000000;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    background-color: rgba(0, 0, 0, .6);
+  position: fixed;
+  z-index: 10000000;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background-color: rgba(0,0,0,0.6);
 }
-
 .hovercard-overlay form {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    border: 3px solid rgba(0, 0, 0, .75);
-    padding: 0 20px;
-    border-radius: 5px;
-    background-color: #fff;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border: 3px solid rgba(0,0,0,0.75);
+  padding: 0 20px;
+  border-radius: 5px;
+  background-color: #fff;
 }

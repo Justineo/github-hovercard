@@ -3,11 +3,21 @@ $(() => {
 
     const GH_DOMAIN = location.host;
 
-    let target = document.body;
+    const TOOLTIP_CONTEXT = '.tooltipster-base';
+    const DEFAULT_TARGET = document.body;
+    let isExtracting = false;
     let observer = new MutationObserver((mutations) => {
+        if (isExtracting) {
+            return;
+        }
         mutations.forEach((mutation) => {
             if (mutation.type === 'childList') {
-                extract(mutation.target);
+                let target = mutation.target;
+                if (!$(target).is(TOOLTIP_CONTEXT)
+                    && !$(target).parents(TOOLTIP_CONTEXT).length
+                    && !$(target).is(DEFAULT_TARGET)) {
+                    extract(target);
+                }
             }
         });
     });
@@ -17,7 +27,7 @@ $(() => {
         characterData: true,
         subtree: true
     };
-    observer.observe(target, observeConfig);
+    observer.observe(DEFAULT_TARGET, observeConfig);
 
     let me = $('meta[name="user-login"]').attr('content');
 
@@ -37,17 +47,22 @@ $(() => {
     const GH_USER_NAME_PATTERN = /^[a-z0-9]+$|^[a-z0-9](?:[a-z0-9](?!--)|-(?!-))*[a-z0-9]$/i;
     const GH_REPO_NAME_PATTERN = /^[a-z0-9\-_\.]+$/i;
 
-    const USER_KEY = 'hovercard-user-x';
-    const REPO_KEY = 'hovercard-repo-x';
-    const SKIP_KEY = 'hovercard-skip-x';
+    const TYPE_KEY = 'hovercard-type';
+    const VALUE_KEY = 'hovercard-value';
+    const EXTRACT_TYPE = {
+        USER: 'user',
+        REPO: 'repo',
+        ISSUE: 'issue',
+        SKIP: 'skip'
+    };
     const TOKEN_KEY = 'hovercard-token';
 
     const EXTRACTOR = {
-        SLUG: 1,  // {{user}}/{{repo}}#{{issue}}
-        TEXT_USER: 2,  // {{user}}
+        SLUG: 1, // {{user}}/{{repo}}#{{issue}}
+        TEXT_USER: 2, // {{user}}
         TITLE_USER: 3, // title="{{user}}"
-        ALT_USER: 4,   // alt="{{user}}"
-        HREF_USER: 5,   // href="{{user}}"
+        ALT_USER: 4, // alt="{{user}}"
+        HREF_USER: 5, // href="{{user}}"
         URL: 6, // href="/{{user}}" or href="https://{{GH_DOMAIN}}/{{user}}"
         NEXT_TEXT_REPO: 7, // <span>...</span> {{repo}}
         ANCESTOR_URL_REPO: 8 // <a href="/{{user}}/{{repo}}">...{{elem}}...</a>
@@ -56,7 +71,8 @@ $(() => {
     const GH_DOMAIN_PATTERN = GH_DOMAIN.replace(/\./g, '\\.');
     const URL_USER_PATTERN = `^https?:\\/\\/${GH_DOMAIN_PATTERN}\\/([^\\/\\?#]+)(?:[^\\/]*$|\\/(?:[\\?#]|$))`;
     const URL_REPO_PATTERN = `^https?:\\/\\/${GH_DOMAIN_PATTERN}\\/([^\\/\\?#]+)\\/([^\\/\\?#]+)(?:[^\\/]*$|\\/(?:[\\?#]|$))`;
-    const SLUG_PATTERN = /([^\/\s]+)\/([^#@\s]+)(?:#\d+|@[\da-f]+)?/;
+    const URL_ISSUE_PATTERN = `^https?:\\/\\/${GH_DOMAIN_PATTERN}\\/([^\\/\\?#]+)\\/([^\\/\\?#]+)\\/(?:issues|pull)\\/(\\d+)(?:[^\\/]*$|(?:[\\?#]|$))`;
+    const SLUG_PATTERN = /([^\/\s]+)\/([^#@\s]+)(?:#(\d+)|@[\da-f]+)?/;
 
     const STRATEGIES = {
         '.repo-list-name .prefix': EXTRACTOR.TEXT_USER,
@@ -76,7 +92,7 @@ $(() => {
         '[data-ga-click~="target:pull"]': EXTRACTOR.SLUG,
         '[data-ga-click~="target:pull-comment"]': EXTRACTOR.SLUG,
         '[data-ga-click~="target:commit-comment"]': EXTRACTOR.SLUG,
-        '.user-mention': EXTRACTOR.TEXT_USER,
+        // '.user-mention': EXTRACTOR.TEXT_USER,
         '.opened-by a': EXTRACTOR.TEXT_USER,
         '.table-list-issues .issue-nwo-link': EXTRACTOR.SLUG,
         '.filter-list .repo-and-owner': EXTRACTOR.SLUG,
@@ -113,14 +129,15 @@ $(() => {
         '.collection-page .repo-list-name .slash': EXTRACTOR.NEXT_TEXT_REPO,
         '.leaderboard-list-content .repo': EXTRACTOR.ANCESTOR_URL_REPO,
         '.profilecols .repo-list-name a': EXTRACTOR.ANCESTOR_URL_REPO,
-        '.simple-conversation-list a': EXTRACTOR.SLUG,
+        '.conversation-list-heading:has(.octicon-git-commit) + .simple-conversation-list a': EXTRACTOR.SLUG,
         '.discussion-item-ref strong': EXTRACTOR.SLUG,
         'a': EXTRACTOR.URL
     };
 
     const BLACK_LIST_SELECTOR = [
         '.hovercard a',
-        '.repo-nav a'
+        '.repo-nav a',
+        '.tabnav-tab'
     ].join(', ');
 
     const CARD_TPL = {
@@ -155,7 +172,7 @@ $(() => {
                 <div class="hovercard-repo">
                     <span class="octicon octicon-repo{{#parent}}-forked{{/parent}}"></span>
                     <p><a href="{{ownerUrl}}">{{owner}}</a> / <strong><a href="{{repoUrl}}">{{repo}}</a></strong></p>
-                    <p>{{#parent}}<span>forked from <a href="{{url}}">{{repo}}</a></span>{{/parent}}</p>
+                    {{#parent}}<p><span>forked from <a href="{{url}}">{{repo}}</a></span></p>{{/parent}}
                 </div>
                 <div class="hovercard-more">
                     <div class="hovercard-stats">
@@ -177,9 +194,19 @@ $(() => {
                     {{#language}}<p><span class="octicon octicon-code"></span>{{language}}</p>{{/language}}
                 </div>
             </div>`,
+        issue: `
+            <div class="hovercard">
+                <div class="hovercard-issue">
+                    <p><a href="{{issueUrl}}"><strong>{{title}}</strong></a> <small>#{{number}}</small></p>
+                </div>
+                <div class="hovercard-issue-meta">
+                    <p><span class="state state-{{state}}"><span class="octicon octicon-{{#isPullRequest}}git-pull-request{{/isPullRequest}}{{^isPullRequest}}{{^isClosed}}issue-opened{{/isClosed}}{{#isClosed}}issue-closed{{/isClosed}}{{/isPullRequest}}"></span>{{state}}</span><a href="{{userUrl}}">{{user}}</a></p>
+                </div>
+                <div class="hovercard-issue-body">{{{body}}}</div>
+            </div>`,
         error: `
             <div class="hovercard hovercard-error">
-                <p><strong><span class="octicon octicon-issue-opened"></span>{{title}}</strong></p>
+                <p><strong><span class="octicon octicon-alert"></span>{{title}}</strong></p>
                 {{#message}}<p>{{{message}}}</p>{{/message}}
             </div>`,
         form: `
@@ -196,10 +223,7 @@ $(() => {
 
     const CREATE_TOKEN_PATH = `//${GH_DOMAIN}/settings/tokens/new`;
     const IS_ENTERPRISE = GH_DOMAIN !== 'github.com';
-    const API_PREFIX = {
-        user: IS_ENTERPRISE ? `//${GH_DOMAIN}/api/v3/users/` : `//api.${GH_DOMAIN}/users/`,
-        repo: IS_ENTERPRISE ? `//${GH_DOMAIN}/api/v3/repos/` : `//api.${GH_DOMAIN}/repos/`
-    };
+    const API_PREFIX = IS_ENTERPRISE ? `//${GH_DOMAIN}/api/v3/` : `//api.${GH_DOMAIN}/`;
 
     function trim(str) {
         if (!str) {
@@ -208,20 +232,29 @@ $(() => {
         return str.replace(/^\s+|\s+$/g, '');
     }
 
-    function markExtracted(elem, key, value) {
+    function markExtracted(elem, type, value) {
         if (value) {
-            elem.data(key, value);
-            elem.addClass(key);
-            elem.data(SKIP_KEY, null);
+            elem.data(TYPE_KEY, type);
+            elem.data(VALUE_KEY, value);
+            elem.addClass(getTypeClass(type));
         }
-        if (!key || !value) {
-            elem.data(SKIP_KEY, '✓');
+        if (!type || !value) {
+            elem.data(TYPE_KEY, EXTRACT_TYPE.SKIP);
         }
     }
 
     function getExtracted(elem) {
-        return elem.data(USER_KEY) || elem.data(REPO_KEY) || !!elem.data(SKIP_KEY)
-            || elem.find(`.${USER_KEY}, .${REPO_KEY}`).length;
+        let extractedSelector = Object.keys(EXTRACT_TYPE)
+            .map(key => EXTRACT_TYPE[key])
+            .map(getTypeClass)
+            .map(className => `.${className}`)
+            .join(',');
+        return elem.data(VALUE_KEY) || elem.data(TYPE_KEY) === EXTRACT_TYPE.SKIP
+            || elem.find(extractedSelector).length;
+    }
+
+    function getTypeClass(type) {
+        return `hovercard-${type}-x`;
     }
 
     function getFullRepoFromAncestorLink(elem) {
@@ -273,7 +306,7 @@ $(() => {
 
     function getCardHTML(type, raw) {
         let data;
-        if (type === 'user') {
+        if (type === EXTRACT_TYPE.USER) {
             data = {
                 avatar: raw.avatar_url,
                 userUrl: raw.html_url,
@@ -290,7 +323,7 @@ $(() => {
                 followingUrl: `//${GH_DOMAIN}/${raw.login}/following`,
                 reposUrl: `//${GH_DOMAIN}/${raw.login}?tab=repositories`
             };
-        } else if (type === 'repo') {
+        } else if (type === EXTRACT_TYPE.REPO) {
             data = {
                 owner: raw.owner.login,
                 ownerAvatar: raw.owner.avatar_url,
@@ -314,12 +347,37 @@ $(() => {
                     url: raw.parent.html_url
                 };
             }
+        } else if (type === EXTRACT_TYPE.ISSUE) {
+            data = {
+                title: raw.title,
+                body: marked(replaceEmoji(raw.body)),
+                issueUrl: raw.html_url,
+                number: raw.number,
+                isPullRequest: !!raw.pull_request,
+                isClosed: raw.state === 'closed',
+                userUrl: raw.user.html_url,
+                user: raw.user.login,
+                state: raw.state,
+                avatar: raw.user.avatar_url
+            };
         }
 
-        // https://developer.github.com/v3/users/#get-a-single-user
         let html = Mustache.render(CARD_TPL[type], data);
+        let result = $(html);
+        const LANG_PATTERN = /lang-(.+)/;
+        if (type === EXTRACT_TYPE.ISSUE) {
+            result.find('pre code').each(function () {
+                let code = $(this);
+                let match = code.attr('class').match(LANG_PATTERN);
+                if (match) {
+                    code.html(hljs.highlight(match[1], code.html()).value);
+                } else {
+                    code.html(hljs.highlightAuto(code.html()).value);
+                }
+            });
+        }
 
-        return $(html);
+        return result;
     }
 
     function getErrorHTML(error) {
@@ -345,10 +403,14 @@ $(() => {
     // prepare cache objects
     let cache = {
         user: {},
-        repo: {}
+        repo: {},
+        issue: {}
     };
 
     function extract(context) {
+        console.log(context);
+        isExtracting = true;
+
         // if on user profile page, we should not show user
         // hovercard for the said user
         let current = location.href.match(URL_USER_PATTERN);
@@ -373,6 +435,8 @@ $(() => {
                 let username; // {{user}}
                 let repo; // {{repo}}
                 let fullRepo; // {{user}}/{{repo}}
+                let issue; // {{issue}}
+                let fullIssue; // {{user}}/{{repo}}#{{issue}}
                 switch (strategy) {
                     case EXTRACTOR.TEXT_USER: {
                         username = trim(elem.text().replace(/[@\/]/g, ''));
@@ -395,17 +459,29 @@ $(() => {
                         let match = slug.match(SLUG_PATTERN);
                         username = trim(match && match[1]);
                         repo = trim(match && match[2]);
+                        issue = trim(match && match[3]);
                         if (username && repo) {
                             fullRepo = username + '/' + repo;
+                            if (issue) {
+                                elem.html(slug.replace('#' + issue, `#<span>${issue}</span>`));
+                                slug = elem.html();
+                            }
                             if (username === me || username === current) {
                                 elem.html(slug.replace(fullRepo, `${username}/<span>${repo}</span>`));
-                                markExtracted(elem.children().first(), REPO_KEY, fullRepo);
+                                markExtracted(elem.children().first(), EXTRACT_TYPE.REPO, fullRepo);
                             } else {
                                 elem.html(slug.replace(fullRepo, `<span>${username}</span>/<span>${repo}</span>`));
-                                markExtracted(elem.children().first(), USER_KEY, username);
-                                markExtracted(elem.children().first().next(), REPO_KEY, fullRepo);
+                                markExtracted(elem.children().first(), EXTRACT_TYPE.USER, username);
+                                markExtracted(elem.children().first().next(), EXTRACT_TYPE.REPO, fullRepo);
                             }
-                            markExtracted(elem);
+                            if (issue) {
+                                markExtracted(elem.children().last(), EXTRACT_TYPE.ISSUE, fullRepo + '#' + issue);
+                            }
+
+                            // if not marked earlier, mark as nothing extracted
+                            if (!getExtracted(elem)) {
+                                markExtracted(elem);
+                            }
                             elem = null;
                         }
                         break;
@@ -425,20 +501,31 @@ $(() => {
                                 username = trim(match && match[1]);
                                 repo = trim(match && match[2]);
                             }
+                            if (!username) {
+                                match = href.match(URL_ISSUE_PATTERN);
+                                username = trim(match && match[1]);
+                                repo = trim(match && match[2]);
+                                issue = trim(match && match[3]);
+                            }
                             if (username) {
                                 if (GH_RESERVED_USER_NAMES.indexOf(username) !== -1
                                     || !GH_USER_NAME_PATTERN.test(username)) {
                                     username = null;
                                     repo = null;
+                                    issue = null;
                                 }
                             }
                             if (repo) {
-                                fullRepo = username + '/' + repo;
+                                fullRepo = `${username}/${repo}`;
                                 if (GH_RESERVED_REPO_NAMES.indexOf(repo) !== -1
                                     || !GH_REPO_NAME_PATTERN.test(repo)) {
                                     fullRepo = null;
                                     username = null;
+                                    issue = null;
                                 }
+                            }
+                            if (issue) {
+                                fullIssue = `${username}/${repo}#${issue}`;
                             }
                             // skip hovercard on myself or current profile page owner
                             if ((username === me || username === current) && !repo) {
@@ -455,7 +542,7 @@ $(() => {
                             textNode.parentNode.removeChild(textNode);
                             elem.after(` <span>${repo}</span>`);
                             markExtracted(elem);
-                            markExtracted(elem.next(), REPO_KEY, fullRepo);
+                            markExtracted(elem.next(), EXTRACT_TYPE.REPO, fullRepo);
                         }
                         elem = null;
                         break;
@@ -472,33 +559,59 @@ $(() => {
                 if (!elem) {
                     return;
                 }
-                if (fullRepo) {
-                    markExtracted(elem, REPO_KEY, fullRepo);
+                if (fullIssue) {
+                    markExtracted(elem, EXTRACT_TYPE.ISSUE, fullIssue);
+                } else if (fullRepo) {
+                    markExtracted(elem, EXTRACT_TYPE.REPO, fullRepo);
                 } else if (username && username !== me && username !== current) {
-                    markExtracted(elem, USER_KEY, username);
+                    markExtracted(elem, EXTRACT_TYPE.USER, username);
                 }
-                if (!username && !fullRepo) {
+                if (!username && !fullRepo && !fullIssue) {
                     markExtracted(elem);
                 }
             });
         });
 
-        let tipSelector = `.${USER_KEY}:not(.tooltipstered), .${REPO_KEY}:not(.tooltipstered)`;
+        setTimeout(() => {
+            isExtracting = false;
+        }, 0);
+
+        let tipSelector = Object.keys(EXTRACT_TYPE)
+            .map(key => EXTRACT_TYPE[key])
+            .map(getTypeClass)
+            .map(className => `.${className}:not(.tooltipstered)`)
+            .join(',');
+
         $(tipSelector).tooltipster({
             updateAnimation: false,
+            autoClose: false,
             functionBefore: (elem, done) => {
                 elem.tooltipster('content', $('<span class="loading"></span>'));
-                let username = elem.data(USER_KEY);
-                let fullRepo = elem.data(REPO_KEY);
-                let type = username ? 'user' : 'repo';
-                let value = username || fullRepo;
+                let type = elem.data(TYPE_KEY);
+                let value = elem.data(VALUE_KEY);
 
                 let raw = cache[type][value];
                 if (raw) {
                     elem.tooltipster('content', getCardHTML(type, raw));
                 } else {
+                    var apiPath;
+                    switch (type) {
+                        case EXTRACT_TYPE.USER:
+                            apiPath = `users/${value}`;
+                            break;
+                        case EXTRACT_TYPE.REPO:
+                            apiPath = `repos/${value}`;
+                            break;
+                        case EXTRACT_TYPE.ISSUE: {
+                            let values = value.split('#');
+                            let fullRepo = values[0];
+                            let issue = values[1];
+                            apiPath = `repos/${fullRepo}/issues/${issue}`;
+                            break;
+                        }
+                    }
                     let requestOptions = {
-                        url: API_PREFIX[type] + value,
+                        url: API_PREFIX + apiPath,
                         datatype: 'json'
                     };
 
@@ -537,7 +650,7 @@ $(() => {
                                         }
                                     } else {
                                         let response = xhr.responseJSON;
-                                        if (type === 'repo' && response.block && response.block.reason === 'dmca') {
+                                        if (type === EXTRACT_TYPE.REPO && response.block && response.block.reason === 'dmca') {
                                             title = 'Access blocked';
                                             message = 'Repository unavailable due to DMCA takedown.';
                                         } else {
@@ -549,10 +662,10 @@ $(() => {
                                     break;
                                 case 404:
                                     title = 'Not found';
-                                    if (type === 'repo') {
+                                    if (type === EXTRACT_TYPE.REPO) {
                                         message = `The repository doesn\'t exist or is private. <a href="${CREATE_TOKEN_PATH}" class="token-link" target="_blank">Create a new access token</a>, paste it back here and try again.`;
                                         needToken = true;
-                                    } else {
+                                    } else if (type === EXTRACT_TYPE.USER) {
                                         message = 'The user doesn\'t exist.';
                                     }
                                     break;
@@ -577,6 +690,12 @@ $(() => {
             },
             interactive: true
         });
+
+        // Listen for future mutations but not ones happens
+        // in current extraction process
+        setTimeout(() => {
+            isExtracting = false;
+        }, 0);
     }
 
     // self.options.emojiURLs will be replaced after build

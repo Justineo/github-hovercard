@@ -16,6 +16,7 @@
     "gulp": "^3.8.9",
     "gulp-rename": "~1.2.0",
     "gulp-replace": "^0.5.4",
+    "gulp-stylus": "^2.1.0",
     "merge-stream": "^1.0.0"
   },
   "author": "Justineo",
