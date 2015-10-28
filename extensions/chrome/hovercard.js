@@ -3,7 +3,7 @@ $(() => {
 
     const GH_DOMAIN = location.host;
 
-    const TOOLTIP_CONTEXT = '.tooltipster-base';
+    const TOOLTIP_RELATED = '.tooltipster-base, .tooltipster-sizer';
     const DEFAULT_TARGET = document.body;
     let isExtracting = false;
     let observer = new MutationObserver((mutations) => {
@@ -13,8 +13,8 @@ $(() => {
         mutations.forEach((mutation) => {
             if (mutation.type === 'childList') {
                 let target = mutation.target;
-                if (!$(target).is(TOOLTIP_CONTEXT)
-                    && !$(target).parents(TOOLTIP_CONTEXT).length
+                if (!$(target).is(TOOLTIP_RELATED)
+                    && !$(target).parents(TOOLTIP_RELATED).length
                     && !$(target).is(DEFAULT_TARGET)) {
                     extract(target);
                 }
@@ -37,7 +37,7 @@ $(() => {
       'explore', 'styleguide', 'showcases', 'trending', 'stars',
       'dashboard', 'notifications', 'search', 'developer', 'account',
       'pulls', 'issues', 'features', 'contact', 'security', 'join',
-      'login', 'watching', 'new', 'integrations'
+      'login', 'watching', 'new', 'integrations', 'pricing'
     ];
 
     const GH_RESERVED_REPO_NAMES = [
@@ -330,7 +330,7 @@ $(() => {
                 ownerUrl: raw.owner.html_url,
                 repo: raw.name,
                 repoUrl: raw.html_url,
-                desc: replaceEmoji(replaceLink(encodeHTML(raw.description))),
+                desc: raw.description ? replaceEmoji(replaceLink(encodeHTML(raw.description))) : '',
                 language: raw.language,
                 stars: formatNumber(raw.stargazers_count),
                 forks: formatNumber(raw.forks_count),
@@ -350,7 +350,7 @@ $(() => {
         } else if (type === EXTRACT_TYPE.ISSUE) {
             data = {
                 title: raw.title,
-                body: marked(replaceEmoji(raw.body)),
+                body: raw.body ? marked(replaceEmoji(raw.body)) : '',
                 issueUrl: raw.html_url,
                 number: raw.number,
                 isPullRequest: !!raw.pull_request,
@@ -374,9 +374,9 @@ $(() => {
                     match = className.match(LANG_PATTERN);
                 }
                 if (match) {
-                    code.html(hljs.highlight(match[1], code.html()).value);
+                    code.html(hljs.highlight(match[1], code.text()).value);
                 } else {
-                    code.html(hljs.highlightAuto(code.html()).value);
+                    code.html(hljs.highlightAuto(code.text()).value);
                 }
             });
         }
@@ -582,12 +582,15 @@ $(() => {
         let tipSelector = Object.keys(EXTRACT_TYPE)
             .map(key => EXTRACT_TYPE[key])
             .map(getTypeClass)
-            .map(className => `.${className}:not(.tooltipstered)`)
+            .map(className => `.${className}`)
             .join(',');
 
         $(tipSelector).tooltipster({
             updateAnimation: false,
-            functionBefore: (elem, done) => {
+            contentAsHTML: true,
+            // debug: false,
+            functionBefore: (me, event) => {
+                let elem = $(event.origin);
                 elem.tooltipster('content', $('<span class="loading"></span>'));
                 let type = elem.data(TYPE_KEY);
                 let value = elem.data(VALUE_KEY);
@@ -688,7 +691,6 @@ $(() => {
                             elem.tooltipster('content', getErrorHTML(error));
                         });
                 }
-                done();
             },
             interactive: true
         });
