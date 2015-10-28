@@ -588,7 +588,7 @@ $(() => {
         $(tipSelector).tooltipster({
             updateAnimation: false,
             contentAsHTML: true,
-            // debug: false,
+            debug: false,
             functionBefore: (me, event) => {
                 let elem = $(event.origin);
                 elem.tooltipster('content', $('<span class="loading"></span>'));
