@@ -198,7 +198,7 @@ $(() => {
         issue: `
             <div class="hovercard">
                 <div class="hovercard-issue">
-                    <p><a href="{{issueUrl}}"><strong>{{title}}</strong></a> <small>#{{number}}</small></p>
+                    <p><small>#{{number}}</small> <a href="{{issueUrl}}"><strong>{{title}}</strong></a></p>
                 </div>
                 <div class="hovercard-issue-meta">
                     <p><span class="state state-{{state}}"><span class="octicon octicon-{{#isPullRequest}}git-pull-request{{/isPullRequest}}{{^isPullRequest}}{{^isClosed}}issue-opened{{/isClosed}}{{#isClosed}}issue-closed{{/isClosed}}{{/isPullRequest}}"></span>{{state}}</span><a href="{{userUrl}}">{{user}}</a> created on {{{createTime}}}</p>
