@@ -137,7 +137,8 @@ $(() => {
     const BLACK_LIST_SELECTOR = [
         '.hovercard a',
         '.repo-nav a',
-        '.tabnav-tab'
+        '.tabnav-tab',
+        '.discussion-item .timestamp'
     ].join(', ');
 
     const CARD_TPL = {
@@ -200,7 +201,7 @@ $(() => {
                     <p><a href="{{issueUrl}}"><strong>{{title}}</strong></a> <small>#{{number}}</small></p>
                 </div>
                 <div class="hovercard-issue-meta">
-                    <p><span class="state state-{{state}}"><span class="octicon octicon-{{#isPullRequest}}git-pull-request{{/isPullRequest}}{{^isPullRequest}}{{^isClosed}}issue-opened{{/isClosed}}{{#isClosed}}issue-closed{{/isClosed}}{{/isPullRequest}}"></span>{{state}}</span><a href="{{userUrl}}">{{user}}</a></p>
+                    <p><span class="state state-{{state}}"><span class="octicon octicon-{{#isPullRequest}}git-pull-request{{/isPullRequest}}{{^isPullRequest}}{{^isClosed}}issue-opened{{/isClosed}}{{#isClosed}}issue-closed{{/isClosed}}{{/isPullRequest}}"></span>{{state}}</span><a href="{{userUrl}}">{{user}}</a> created on {{{createTime}}}</p>
                 </div>
                 {{#body}}<div class="hovercard-issue-body">{{{.}}}</div>{{/body}}
             </div>`,
@@ -272,6 +273,15 @@ $(() => {
             return (num / 1000).toFixed(1) + 'k';
         }
         return num;
+    }
+
+    const MONTH_NAMES = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+                         'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+    function formatTime(time) {
+        var t = new Date(time);
+        var formatted = MONTH_NAMES[t.getMonth()] + ' ' + t.getDate() + ', ' + t.getFullYear();
+        return `<time datetime="${time}">${formatted}</time>`;
     }
 
     function replaceEmoji(text) {
@@ -358,7 +368,8 @@ $(() => {
                 userUrl: raw.user.html_url,
                 user: raw.user.login,
                 state: raw.state,
-                avatar: raw.user.avatar_url
+                avatar: raw.user.avatar_url,
+                createTime: formatTime(raw.created_at)
             };
         }
 
@@ -588,7 +599,7 @@ $(() => {
         $(tipSelector).tooltipster({
             updateAnimation: false,
             contentAsHTML: true,
-            // debug: false,
+            debug: false,
             functionBefore: (me, event) => {
                 let elem = $(event.origin);
                 elem.tooltipster('content', $('<span class="loading"></span>'));
