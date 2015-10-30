@@ -1,6 +1,18 @@
 # GitHub Hovercard
 
-Quick user/repo/issue hovercard for GitHub.
+Neat user/repo/issue hovercard for GitHub.
+
+## Installation
+
+[Chrome extension](https://chrome.google.com/webstore/detail/github-hovercard/mmoahbbnojgkclgceahhakhnccimnplk)
+
+[Firefox add-on](https://addons.mozilla.org/en-US/firefox/addon/github-hovercard/)
+
+## FAQ
+
+* Why does the Chrome Extension version require permission for all URLs?
+
+    To support GitHub Enterprise, the extension have to request permission to a domain according to the domain set in user options. But Chrome has a bug that if `<all_urls>` is set in `optional_permissions` in the extension manifest, the dynamically requested domain permissions will be "forgotten" after Chrome restarts. So the only way to enable this kind of "dynamic injection" of the extension is to request permissions for all domains and handle content script injection by the extension itself.
 
 ## Screenshots
 
@@ -18,11 +30,7 @@ Quick user/repo/issue hovercard for GitHub.
 
 ![Repo links in any place](screenshots/7.png)
 
-## Installation
-
-[Chrome extension](https://chrome.google.com/webstore/detail/github-hovercard/mmoahbbnojgkclgceahhakhnccimnplk)
-
-[Firefox add-on](https://addons.mozilla.org/en-US/firefox/addon/github-hovercard/)
+![Issue in news feed](screenshots/8.png)
 
 ## Known issues
 
