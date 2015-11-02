@@ -138,7 +138,8 @@ $(() => {
         '.hovercard a',
         '.repo-nav a',
         '.tabnav-tab',
-        '.discussion-item .timestamp'
+        '.discussion-item .timestamp',
+        '.file-wrap a'
     ].join(', ');
 
     const CARD_TPL = {
@@ -503,7 +504,7 @@ $(() => {
                         username = trim(elem.attr('alt').replace(/[@\/]/g, ''));
                         break;
                     }
-                    case EXTRACTOR.HREF: {
+                    case EXTRACTOR.HREF_USER: {
                         username = trim(elem.attr('href').replace(/[@\/]/g, ''));
                         break;
                     }
