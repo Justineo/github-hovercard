@@ -1,6 +1,10 @@
 Changelog
 ---
 
+## 0.3.1
+
+* Fixed several potential XSS vulnerabilities.
+
 ## 0.3.0
 
 * Upgraded Tooltipster to v4 and enhanced its inline element support when break into multiple lines

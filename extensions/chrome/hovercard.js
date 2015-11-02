@@ -281,7 +281,7 @@ $(() => {
     function formatTime(time) {
         var t = new Date(time);
         var formatted = MONTH_NAMES[t.getMonth()] + ' ' + t.getDate() + ', ' + t.getFullYear();
-        return `<time datetime="${time}">${formatted}</time>`;
+        return encodeHTML`<time datetime="${time}">${formatted}</time>`;
     }
 
     function replaceEmoji(text) {
@@ -299,19 +299,58 @@ $(() => {
         return text.replace(/\b(https?:\/\/[^\s]+)/ig, `<a href="$1">$1</a>`);
     }
 
-    const ESCAPE_MAP = {
-        '&': '&amp;',
-        '<': '&lt;',
-        '>': '&gt;',
-        '"': '&quot;',
-        "'": '&#x27;',
-        '`': '&#x60;'
-    };
-    const ESCAPE_PATTERN = '(?:' + Object.keys(ESCAPE_MAP).join('|') + ')';
-    function encodeHTML(text) {
-        return text.replace(new RegExp(ESCAPE_PATTERN, 'g'), (match) => {
-            return ESCAPE_MAP[match];
+    // Code via https://developers.google.com/web/updates/2015/01/ES6-Template-Strings
+    // HTML Escape helper utility
+    let htmlUtil = (function () {
+        // Thanks to Andrea Giammarchi
+        let reEscape = /[&<>'"]/g;
+        let reUnescape = /&(?:amp|#38|lt|#60|gt|#62|apos|#39|quot|#34);/g;
+        let oEscape = {
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            "'": '&#39;',
+            '"': '&quot;'
+        };
+        let oUnescape = {
+            '&amp;': '&',
+            '&#38;': '&',
+            '&lt;': '<',
+            '&#60;': '<',
+            '&gt;': '>',
+            '&#62;': '>',
+            '&apos;': "'",
+            '&#39;': "'",
+            '&quot;': '"',
+            '&#34;': '"'
+        };
+        let fnEscape = function (m) {
+            return oEscape[m];
+        };
+        let fnUnescape = function (m) {
+            return oUnescape[m];
+        };
+        let replace = String.prototype.replace;
+
+        return (Object.freeze || Object)({
+            escape: function escape(s) {
+                return replace.call(s, reEscape, fnEscape);
+            },
+            unescape: function unescape(s) {
+                return replace.call(s, reUnescape, fnUnescape);
+            }
         });
+    }());
+
+    // Tagged template function
+    function encodeHTML(pieces) {
+        var result = pieces[0];
+        var substitutions = [].slice.call(arguments, 1);
+        for (var i = 0; i < substitutions.length; ++i) {
+            result += htmlUtil.escape(substitutions[i]) + pieces[i + 1];
+        }
+
+        return result;
     }
 
     function getCardHTML(type, raw) {
@@ -340,7 +379,7 @@ $(() => {
                 ownerUrl: raw.owner.html_url,
                 repo: raw.name,
                 repoUrl: raw.html_url,
-                desc: raw.description ? replaceEmoji(replaceLink(encodeHTML(raw.description))) : '',
+                desc: raw.description ? replaceEmoji(replaceLink(encodeHTML`${raw.description}`)) : '',
                 language: raw.language,
                 stars: formatNumber(raw.stargazers_count),
                 forks: formatNumber(raw.forks_count),
@@ -477,14 +516,14 @@ $(() => {
                         if (username && repo) {
                             fullRepo = username + '/' + repo;
                             if (issue) {
-                                elem.html(slug.replace('#' + issue, `#<span>${issue}</span>`));
+                                elem.html(slug.replace('#' + issue, encodeHTML`#<span>${issue}</span>`));
                                 slug = elem.html();
                             }
                             if (username === me || username === current) {
-                                elem.html(slug.replace(fullRepo, `${username}/<span>${repo}</span>`));
+                                elem.html(slug.replace(fullRepo, encodeHTML`${username}/<span>${repo}</span>`));
                                 markExtracted(elem.children().first(), EXTRACT_TYPE.REPO, fullRepo);
                             } else {
-                                elem.html(slug.replace(fullRepo, `<span>${username}</span>/<span>${repo}</span>`));
+                                elem.html(slug.replace(fullRepo, encodeHTML`<span>${username}</span>/<span>${repo}</span>`));
                                 markExtracted(elem.children().first(), EXTRACT_TYPE.USER, username);
                                 markExtracted(elem.children().first().next(), EXTRACT_TYPE.REPO, fullRepo);
                             }
@@ -655,14 +694,14 @@ $(() => {
                                     break;
                                 case 401:
                                     title = 'Invalid token';
-                                    message = `<a href="${CREATE_TOKEN_PATH}" class="token-link" target="_blank">Create a new access token</a>, paste it back here and try again.`;
+                                    message = encodeHTML`<a href="${CREATE_TOKEN_PATH}" class="token-link" target="_blank">Create a new access token</a>, paste it back here and try again.`;
                                     needToken = true;
                                     break;
                                 case 403:
                                     if (xhr.getAllResponseHeaders().indexOf('X-RateLimit-Remaining: 0') !== -1) {
                                         title = 'API limit exceeded';
                                         if (!localStorage.getItem(TOKEN_KEY)) {
-                                            message = `API rate limit exceeded for current IP. <a href="${CREATE_TOKEN_PATH}" class="token-link" target="_blank">Create a new access token</a> and paste it back here to get a higher rate limit.`;
+                                            message = encodeHTML`API rate limit exceeded for current IP. <a href="${CREATE_TOKEN_PATH}" class="token-link" target="_blank">Create a new access token</a> and paste it back here to get a higher rate limit.`;
                                         }
                                     } else {
                                         let response = xhr.responseJSON;
@@ -671,7 +710,7 @@ $(() => {
                                             message = 'Repository unavailable due to DMCA takedown.';
                                         } else {
                                             title = 'Forbidden';
-                                            message = `You are not allowed to access GitHub API. <a href="${CREATE_TOKEN_PATH}" class="token-link" target="_blank">Create a new access token</a>, paste it back here and try again.`;
+                                            message = encodeHTML`You are not allowed to access GitHub API. <a href="${CREATE_TOKEN_PATH}" class="token-link" target="_blank">Create a new access token</a>, paste it back here and try again.`;
                                         }
                                     }
                                     needToken = true;
@@ -679,7 +718,7 @@ $(() => {
                                 case 404:
                                     title = 'Not found';
                                     if (type === EXTRACT_TYPE.REPO) {
-                                        message = `The repository doesn\'t exist or is private. <a href="${CREATE_TOKEN_PATH}" class="token-link" target="_blank">Create a new access token</a>, paste it back here and try again.`;
+                                        message = encodeHTML`The repository doesn\'t exist or is private. <a href="${CREATE_TOKEN_PATH}" class="token-link" target="_blank">Create a new access token</a>, paste it back here and try again.`;
                                         needToken = true;
                                     } else if (type === EXTRACT_TYPE.USER) {
                                         message = 'The user doesn\'t exist.';
@@ -689,7 +728,7 @@ $(() => {
                                     title = 'Error';
                                     let response = xhr.responseJSON;
                                     if (response) {
-                                        message = encodeHTML(response.message || '');
+                                        message = encodeHTML`${response.message}` || '';
                                     }
                                     break;
                             }
