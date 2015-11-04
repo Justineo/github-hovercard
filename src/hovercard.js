@@ -407,7 +407,7 @@ $(() => {
                 isClosed: raw.state === 'closed',
                 userUrl: raw.user.html_url,
                 user: raw.user.login,
-                state: raw.state,
+                state: !!raw.pull_request && raw.state === 'closed' ? 'merged' : raw.state,
                 avatar: raw.user.avatar_url,
                 createTime: formatTime(raw.created_at)
             };
