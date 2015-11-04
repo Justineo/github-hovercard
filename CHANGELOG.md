@@ -1,6 +1,10 @@
 Changelog
 ---
 
+## 0.3.2
+
+* Added "Merged" state in issue card.
+
 ## 0.3.1
 
 * Fixed several potential XSS vulnerabilities.
