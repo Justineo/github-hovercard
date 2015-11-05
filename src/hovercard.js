@@ -280,8 +280,8 @@ $(() => {
                          'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
     function formatTime(time) {
-        var t = new Date(time);
-        var formatted = MONTH_NAMES[t.getMonth()] + ' ' + t.getDate() + ', ' + t.getFullYear();
+        let t = new Date(time);
+        let formatted = MONTH_NAMES[t.getMonth()] + ' ' + t.getDate() + ', ' + t.getFullYear();
         return encodeHTML`<time datetime="${time}">${formatted}</time>`;
     }
 
@@ -294,6 +294,26 @@ $(() => {
             return `<img class="emoji" title="${match}" alt="${match}"
                 src="${url}" width="18" height="18">`;
         });
+    }
+
+    const TASK_PATTERN = /^\[([ x])\] (.*)/;
+    function replaceCheckbox(html) {
+        let fragment = $('<div>').append(html);
+        fragment.find('li').each(function () {
+            let content = $(this).html();
+            if (TASK_PATTERN.test(content)) {
+                $(this)
+                    .html(content.replace(TASK_PATTERN, (match, checked, remaining) => {
+                        return `
+                            <input class="hovercard-task-checker"
+                                type="checkbox"${checked === 'x' ? ' checked' : ''}
+                                disabled> ${remaining}`;
+                    }))
+                    .addClass('hovercard-task');
+            }
+        });
+
+        return fragment.html();
     }
 
     function replaceLink(text) {
@@ -345,9 +365,9 @@ $(() => {
 
     // Tagged template function
     function encodeHTML(pieces) {
-        var result = pieces[0];
-        var substitutions = [].slice.call(arguments, 1);
-        for (var i = 0; i < substitutions.length; ++i) {
+        let result = pieces[0];
+        let substitutions = [].slice.call(arguments, 1);
+        for (let i = 0; i < substitutions.length; ++i) {
             result += htmlUtil.escape(substitutions[i]) + pieces[i + 1];
         }
 
@@ -398,9 +418,26 @@ $(() => {
                 };
             }
         } else if (type === EXTRACT_TYPE.ISSUE) {
+            let md = new Remarkable({
+                html: true,
+                linkify: true,
+                highlight: function (str, lang) {
+                    if (lang && hljs.getLanguage(lang)) {
+                        try {
+                            return hljs.highlight(lang, str).value;
+                        } catch (err) {}
+                    }
+
+                    try {
+                        return hljs.highlightAuto(str).value;
+                    } catch (err) {}
+
+                    return ''; // use external default escaping
+                }
+            });
             data = {
                 title: raw.title,
-                body: raw.body ? marked(replaceEmoji(raw.body)) : '',
+                body: raw.body ? replaceEmoji(replaceCheckbox(md.render(raw.body))) : '',
                 issueUrl: raw.html_url,
                 number: raw.number,
                 isPullRequest: !!raw.pull_request,
@@ -414,25 +451,7 @@ $(() => {
         }
 
         let html = Mustache.render(CARD_TPL[type], data);
-        let result = $(html);
-        const LANG_PATTERN = /lang-(.+)/;
-        if (type === EXTRACT_TYPE.ISSUE) {
-            result.find('pre code').each(function () {
-                let code = $(this);
-                let className = code.attr('class');
-                let match;
-                if (className) {
-                    match = className.match(LANG_PATTERN);
-                }
-                if (match) {
-                    code.html(hljs.highlight(match[1], code.text()).value);
-                } else {
-                    code.html(hljs.highlightAuto(code.text()).value);
-                }
-            });
-        }
-
-        return result;
+        return $(html);
     }
 
     function getErrorHTML(error) {
@@ -650,7 +669,7 @@ $(() => {
                 if (raw) {
                     elem.tooltipster('content', getCardHTML(type, raw));
                 } else {
-                    var apiPath;
+                    let apiPath;
                     switch (type) {
                         case EXTRACT_TYPE.USER:
                             apiPath = `users/${value}`;

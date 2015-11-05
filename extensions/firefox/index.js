@@ -14,7 +14,7 @@ pageMod.PageMod({
     data.url('jquery.js'),
     data.url('mustache.js'),
     data.url('tooltipster.js'),
-    data.url('marked.js'),
+    data.url('remarkable.js'),
     data.url('highlight.pack.js'),
     data.url('hovercard.js')
   ],

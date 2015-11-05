@@ -4,6 +4,8 @@ Changelog
 ## 0.3.2
 
 * Added "Merged" state in issue card.
+* Replaced marked with Remarkable.
+* Added task list support.
 
 ## 0.3.1
 

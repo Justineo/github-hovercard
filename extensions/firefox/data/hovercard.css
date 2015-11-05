@@ -300,6 +300,13 @@
 .hovercard-issue-body pre tt {
   background-color: transparent;
 }
+.hovercard-task {
+  list-style-type: none;
+}
+.hovercard-task-checker {
+  margin-right: 0.3em;
+  margin-left: -1.5em;
+}
 /**********
  * Error
  **********/

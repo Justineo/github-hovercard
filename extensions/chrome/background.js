@@ -4,7 +4,7 @@ let contentJS = [
     'jquery.js',
     'mustache.js',
     'tooltipster.js',
-    'marked.js',
+    'remarkable.js',
     'highlight.pack.js',
     'hovercard.js'
 ];
