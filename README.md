@@ -46,5 +46,5 @@ Authentication is supported from v0.0.7.
 
 * Thank [Tooltipster](https://github.com/iamceege/tooltipster/) for the awesome tooltip component
 * Thank [jQuery](https://github.com/jquery/jquery) for basic operations.
-* Thank [marked](https://github.com/chjj/marked) for Markdown support.
+* Thank [Remarkable](https://github.com/jonschlinkert/remarkable) for Markdown support.
 * Thank [highlight.js](https://github.com/isagalaev/highlight.js) for neat code styles.
