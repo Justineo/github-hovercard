@@ -1,6 +1,10 @@
 Changelog
 ---
 
+## 0.3.3
+
+* Improved table styling in issue card.
+
 ## 0.3.2
 
 * Added "Merged" state in issue card.

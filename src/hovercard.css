@@ -271,7 +271,12 @@
   font-weight: 700;
 }
 .hovercard-issue-body th,
+.hovercard-issue-body tr:nth-child(even) td {
+  background-color: rgba(108,108,108,0.5);
+}
+.hovercard-issue-body th,
 .hovercard-issue-body td {
+  border: 1px solid #777;
   padding: 0.5em 1em;
 }
 .hovercard-issue-body img {
