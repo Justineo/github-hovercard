@@ -535,15 +535,33 @@ $(() => {
                         issue = trim(match && match[3]);
                         if (username && repo) {
                             fullRepo = username + '/' + repo;
+
+                            // special case for code search highlight
+                            // save contents before replacing
+                            let contents = elem.find('em').length
+                                ? elem.contents().map(function () { return this.textContent }).toArray()
+                                : null;
+                            if (contents) {
+                                contents[2] = contents[2] || '';
+                            }
+
                             if (issue) {
                                 elem.html(slug.replace('#' + issue, encodeHTML`#<span>${issue}</span>`));
                                 slug = elem.html();
                             }
                             if (username === me || username === current) {
-                                elem.html(slug.replace(fullRepo, encodeHTML`${username}/<span>${repo}</span>`));
+                                if (contents) {
+                                    elem.html(slug.replace(fullRepo, encodeHTML`${username}/<span><em>${contents[1]}</em>${contents[2]}</span>`));
+                                } else {
+                                    elem.html(slug.replace(fullRepo, encodeHTML`${username}/<span>${repo}</span>`));
+                                }
                                 markExtracted(elem.children().first(), EXTRACT_TYPE.REPO, fullRepo);
                             } else {
-                                elem.html(slug.replace(fullRepo, encodeHTML`<span>${username}</span>/<span>${repo}</span>`));
+                                if (contents) {
+                                    elem.html(slug.replace(fullRepo, encodeHTML`<span>${username}</span>/<span><em>${contents[1]}</em>${contents[2]}</span>`));
+                                } else {
+                                    elem.html(slug.replace(fullRepo, encodeHTML`<span>${username}</span>/<span>${repo}</span>`));
+                                }
                                 markExtracted(elem.children().first(), EXTRACT_TYPE.USER, username);
                                 markExtracted(elem.children().first().next(), EXTRACT_TYPE.REPO, fullRepo);
                             }
@@ -763,7 +781,7 @@ $(() => {
                 }
             },
             interactive: true
-        });
+        }).css('opacity', '.9999');
 
         // Listen for future mutations but not ones happens
         // in current extraction process

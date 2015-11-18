@@ -4,6 +4,8 @@ Changelog
 ## 0.3.3
 
 * Improved table styling in issue card.
+* Fixed the problem that code search highlights are lost during slug extraction.
+* Fixed a WebKit related bug that might break tooltip positioning for inline elements.
 
 ## 0.3.2
 
