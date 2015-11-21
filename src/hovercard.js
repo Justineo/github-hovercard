@@ -296,8 +296,8 @@ $(() => {
         });
     }
 
-    const TASK_PATTERN = /^\[([ x])\] (.*)/;
     function replaceCheckbox(html) {
+        const TASK_PATTERN = /^\[([ x])\] (.*)/;
         let fragment = $('<div>').append(html);
         fragment.find('li').each(function () {
             let content = $(this).html();
@@ -314,6 +314,16 @@ $(() => {
         });
 
         return fragment.html();
+    }
+
+    function replacePlugins(text) {
+        const BOUNTYSOURCE_PATTERN = /<\/?bountysource-plugin>/g;
+        var result = text;
+
+        // deal with Bountysource
+        result = result.replace(BOUNTYSOURCE_PATTERN, '');
+
+        return result;
     }
 
     function replaceLink(text) {
@@ -437,7 +447,7 @@ $(() => {
             });
             data = {
                 title: raw.title,
-                body: raw.body ? replaceEmoji(replaceCheckbox(md.render(raw.body))) : '',
+                body: raw.body ? replaceEmoji(replaceCheckbox(md.render(replacePlugins(raw.body)))) : '',
                 issueUrl: raw.html_url,
                 number: raw.number,
                 isPullRequest: !!raw.pull_request,
@@ -781,7 +791,7 @@ $(() => {
                 }
             },
             interactive: true
-        }).css('opacity', '.9999');
+        }).css('opacity', '.9999'); // why? see https://github.com/iamceege/tooltipster/issues/491
 
         // Listen for future mutations but not ones happens
         // in current extraction process
