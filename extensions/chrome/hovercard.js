@@ -139,7 +139,8 @@ $(() => {
         '.repo-nav a',
         '.tabnav-tab',
         '.discussion-item .timestamp',
-        '.file-wrap a'
+        '.file-wrap a',
+        '.reponav-item' // new UI
     ].join(', ');
 
     const CARD_TPL = {
@@ -791,7 +792,7 @@ $(() => {
                 }
             },
             interactive: true
-        }).css('opacity', '.9999'); // why?
+        }).css('opacity', '.9999'); // why? see https://github.com/iamceege/tooltipster/issues/491
 
         // Listen for future mutations but not ones happens
         // in current extraction process

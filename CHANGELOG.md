@@ -6,6 +6,8 @@ Changelog
 * Improved table styling in issue card.
 * Fixed the problem that code search highlights are lost during slug extraction.
 * Fixed a WebKit related bug that might break tooltip positioning for inline elements.
+* Fixed unhandled elements after GitHub UI updates.
+* Fixed a severe problem that the add-on didn't work for Firefox on Windows due to different default pref value datatypes.
 
 ## 0.3.2
 

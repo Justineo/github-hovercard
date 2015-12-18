@@ -1,5 +1,5 @@
 let data = require('sdk/self').data;
-let domains = require('sdk/simple-prefs').prefs.domains;
+let domains = require('sdk/simple-prefs').prefs.domains || '';
 let pageMod = require('sdk/page-mod');
 
 domains = domains.split(/[,\s]/)

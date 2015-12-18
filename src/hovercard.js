@@ -139,7 +139,8 @@ $(() => {
         '.repo-nav a',
         '.tabnav-tab',
         '.discussion-item .timestamp',
-        '.file-wrap a'
+        '.file-wrap a',
+        '.reponav-item' // new UI
     ].join(', ');
 
     const CARD_TPL = {
