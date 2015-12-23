@@ -13615,7 +13615,7 @@ $(() => {
     setInstalling();
 
     if (ua.browser === 'chrome') {
-      chrome.webstore.install(WEBSTORE_URL, setInstalled.bind(null, true), reset);
+      chrome.webstore.install(VENDOR_URL, setInstalled.bind(null, true), reset);
     } else if (ua.browser === 'mozilla') {
       var result = InstallTrigger.install({
         "GitHub Hovercard": {
