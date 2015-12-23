@@ -972,6 +972,16 @@ body > main::after {
   box-shadow: inset 0 2px 4px rgba(0,0,0,0.15);
 }
 
+.btn:disabled,
+.btn:disabled:hover {
+  color: rgba(102,102,102,0.5);
+  cursor: default;
+  background-color: rgba(229,229,229,0.5);
+  background-image: none;
+  border-color: rgba(197,197,197,0.5);
+  box-shadow: none;
+}
+
 .btn-primary {
   color: #fff;
   text-shadow: 0 -1px 0 rgba(0,0,0,0.15);
@@ -994,6 +1004,15 @@ body > main::after {
   background-color: #569e3d;
   background-image: none;
   border-color: #418737;
+}
+
+.btn-primary:disabled,
+.btn-primary:disabled:hover {
+    color: #fefefe;
+    background-color: #add39f;
+    background-image: -webkit-linear-gradient(#c3ecb4, #add39f);
+    background-image: linear-gradient(#c3ecb4, #add39f);
+    border-color: #b9dcac #b9dcac #a7c89b;
 }
 
 .btn-sm {

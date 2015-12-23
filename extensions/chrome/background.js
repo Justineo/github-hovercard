@@ -115,7 +115,7 @@ function installer(details) {
 }
 
 chrome.webNavigation.onCommitted.addListener(installer, {
-    url: {
+    url: [{
         urlContains: 'justineo.github.io/github-hovercard'
-    }
+    }]
 });
