@@ -105,3 +105,17 @@ chrome.runtime.onMessage.addListener((message, sender, respond) => {
 });
 
 init();
+
+const installDomain = 'justineo.github.io';
+
+function installer(details) {
+    console.log('Injecting into install page...');
+    let tab = details.tabId;
+    injectJS(tab, ['installer.js']);
+}
+
+chrome.webNavigation.onCommitted.addListener(installer, {
+    url: {
+        urlContains: 'justineo.github.io/github-hovercard'
+    }
+});
