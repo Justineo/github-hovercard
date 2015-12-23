@@ -131,6 +131,7 @@ $(() => {
         '.profilecols .repo-list-name a': EXTRACTOR.ANCESTOR_URL_REPO,
         '.conversation-list-heading:has(.octicon-git-commit) + .simple-conversation-list a': EXTRACTOR.SLUG,
         '.discussion-item-ref strong': EXTRACTOR.SLUG,
+        '.issue-link': EXTRACTOR.SLUG,
         'a': EXTRACTOR.URL
     };
 
@@ -801,7 +802,7 @@ $(() => {
         }, 0);
     }
 
-    // __EMOJI_DATA__ will be replaced after build
+    // EMOJI_DATA will be replaced after build
     // JSON resource URL in Chrome, JSON data in Firefox
     let emojiURLs = __EMOJI_DATA__;
     if (typeof emojiURLs === 'string') {

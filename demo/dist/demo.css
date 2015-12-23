@@ -1,0 +1,1310 @@
+/* GENERAL STRUCTURE RULES (do not edit this section) */
+
+.tooltipster-base {
+	/* this ensures that a constrained height set by functionPosition,
+	if greater that the natural height of the tooltip, will be enforced
+	in browsers that support display:flex */
+	display: flex;
+	pointer-events: none;
+	/* this may be overriden in JS for fixed position origins */
+	position: absolute;
+}
+
+.tooltipster-box {
+	/* see .tooltipster-base. flex-shrink 1 is only necessary for IE10-
+	and flex-basis 0 for IE11- (at least) */
+	flex: 1 1 0;
+}
+
+.tooltipster-content {
+	/* these make sure we'll be able to detect any overflow */
+	max-height: 100%;
+	max-width: 100%;
+	overflow: auto;
+}
+
+.tooltipster-sizer {
+	/* these let us test the size of the tooltip without overflowing the window */
+	bottom: 0;
+	left: 0;
+	overflow: hidden;
+	position: fixed;
+	right: 0;
+	top: 0;
+	visibility: hidden;
+}
+
+/* ANIMATIONS */
+
+/* fade */
+
+.tooltipster-fade {
+	opacity: 0;
+	-webkit-transition-property: opacity;
+	-moz-transition-property: opacity;
+	-o-transition-property: opacity;
+	-ms-transition-property: opacity;
+	transition-property: opacity;
+}
+.tooltipster-fade.tooltipster-show {
+	opacity: 1;
+}
+
+/* grow */
+
+.tooltipster-grow {
+	-webkit-transform: scale(0,0);
+	-moz-transform: scale(0,0);
+	-o-transform: scale(0,0);
+	-ms-transform: scale(0,0);
+	transform: scale(0,0);
+	-webkit-transition-property: -webkit-transform;
+	-moz-transition-property: -moz-transform;
+	-o-transition-property: -o-transform;
+	-ms-transition-property: -ms-transform;
+	transition-property: transform;
+	-webkit-backface-visibility: hidden;
+}
+.tooltipster-grow.tooltipster-show {
+	-webkit-transform: scale(1,1);
+	-moz-transform: scale(1,1);
+	-o-transform: scale(1,1);
+	-ms-transform: scale(1,1);
+	transform: scale(1,1);
+	-webkit-transition-timing-function: cubic-bezier(0.175, 0.885, 0.320, 1);
+	-webkit-transition-timing-function: cubic-bezier(0.175, 0.885, 0.320, 1.15);
+	-moz-transition-timing-function: cubic-bezier(0.175, 0.885, 0.320, 1.15);
+	-ms-transition-timing-function: cubic-bezier(0.175, 0.885, 0.320, 1.15);
+	-o-transition-timing-function: cubic-bezier(0.175, 0.885, 0.320, 1.15);
+	transition-timing-function: cubic-bezier(0.175, 0.885, 0.320, 1.15);
+}
+
+/* swing */
+
+.tooltipster-swing {
+	opacity: 0;
+	-webkit-transform: rotateZ(4deg);
+	-moz-transform: rotateZ(4deg);
+	-o-transform: rotateZ(4deg);
+	-ms-transform: rotateZ(4deg);
+	transform: rotateZ(4deg);
+	-webkit-transition-property: -webkit-transform, opacity;
+	-moz-transition-property: -moz-transform;
+	-o-transition-property: -o-transform;
+	-ms-transition-property: -ms-transform;
+	transition-property: transform;
+}
+.tooltipster-swing.tooltipster-show {
+	opacity: 1;
+	-webkit-transform: rotateZ(0deg);
+	-moz-transform: rotateZ(0deg);
+	-o-transform: rotateZ(0deg);
+	-ms-transform: rotateZ(0deg);
+	transform: rotateZ(0deg);
+	-webkit-transition-timing-function: cubic-bezier(0.230, 0.635, 0.495, 1);
+	-webkit-transition-timing-function: cubic-bezier(0.230, 0.635, 0.495, 2.4);
+	-moz-transition-timing-function: cubic-bezier(0.230, 0.635, 0.495, 2.4);
+	-ms-transition-timing-function: cubic-bezier(0.230, 0.635, 0.495, 2.4);
+	-o-transition-timing-function: cubic-bezier(0.230, 0.635, 0.495, 2.4);
+	transition-timing-function: cubic-bezier(0.230, 0.635, 0.495, 2.4);
+}
+
+/* fall */
+
+.tooltipster-fall {
+	-webkit-transition-property: top;
+	-moz-transition-property: top;
+	-o-transition-property: top;
+	-ms-transition-property: top;
+	transition-property: top;
+	-webkit-transition-timing-function: cubic-bezier(0.175, 0.885, 0.320, 1);
+	-webkit-transition-timing-function: cubic-bezier(0.175, 0.885, 0.320, 1.15);
+	-moz-transition-timing-function: cubic-bezier(0.175, 0.885, 0.320, 1.15);
+	-ms-transition-timing-function: cubic-bezier(0.175, 0.885, 0.320, 1.15);
+	-o-transition-timing-function: cubic-bezier(0.175, 0.885, 0.320, 1.15);
+	transition-timing-function: cubic-bezier(0.175, 0.885, 0.320, 1.15);
+}
+.tooltipster-fall.tooltipster-initial {
+	top: 0 !important;
+}
+.tooltipster-fall.tooltipster-show {
+}
+.tooltipster-fall.tooltipster-dying {
+	-webkit-transition-property: all;
+	-moz-transition-property: all;
+	-o-transition-property: all;
+	-ms-transition-property: all;
+	transition-property: all;
+	top: 0 !important;
+	opacity: 0;
+}
+
+/* slide */
+
+.tooltipster-slide {
+	-webkit-transition-property: left;
+	-moz-transition-property: left;
+	-o-transition-property: left;
+	-ms-transition-property: left;
+	transition-property: left;
+	-webkit-transition-timing-function: cubic-bezier(0.175, 0.885, 0.320, 1);
+	-webkit-transition-timing-function: cubic-bezier(0.175, 0.885, 0.320, 1.15);
+	-moz-transition-timing-function: cubic-bezier(0.175, 0.885, 0.320, 1.15);
+	-ms-transition-timing-function: cubic-bezier(0.175, 0.885, 0.320, 1.15);
+	-o-transition-timing-function: cubic-bezier(0.175, 0.885, 0.320, 1.15);
+	transition-timing-function: cubic-bezier(0.175, 0.885, 0.320, 1.15);
+}
+.tooltipster-slide.tooltipster-initial {
+	left: -40px !important;
+}
+.tooltipster-slide.tooltipster-show {
+}
+.tooltipster-slide.tooltipster-dying {
+	-webkit-transition-property: all;
+	-moz-transition-property: all;
+	-o-transition-property: all;
+	-ms-transition-property: all;
+	transition-property: all;
+	left: 0 !important;
+	opacity: 0;
+}
+
+/* changing content : CSS transition for when content is changing in a tooltip
+that is still open. The only properties that will NOT transition are:
+width, height, top, and left */
+
+.tooltipster-content-changing {
+	opacity: 0.5;
+	-webkit-transform: scale(1.1, 1.1);
+	-moz-transform: scale(1.1, 1.1);
+	-o-transform: scale(1.1, 1.1);
+	-ms-transform: scale(1.1, 1.1);
+	transform: scale(1.1, 1.1);
+}
+
+
+
+
+
+
+
+
+/* DEFAULT THEME OF THE DEFAULT DISPLAY PLUGIN */
+
+/* .tooltipster-box */
+
+.tooltipster-box {
+	background: rgba(0, 0, 0, .8);
+	color: #fff;
+	border-radius: 3px;
+}
+
+.tooltipster-box .loading {
+	display: inline-block;
+	width: 32px;
+	height: 32px;
+	margin: 0 32px;
+    background: url(../assets/spinner.svg) no-repeat center center;
+    background-size: 24px auto;
+}
+
+.tooltipster-box .tooltipster-content {
+	font-family: inherit;
+	font-size: 11px;
+	line-height: 16px;
+	padding: 8px 10px;
+	overflow: hidden;
+}
+
+.tooltipster-bottom .tooltipster-box {
+	margin-top: 8px;
+}
+
+.tooltipster-left .tooltipster-box {
+	margin-right: 8px;
+}
+
+.tooltipster-right .tooltipster-box {
+	margin-left: 8px;
+}
+
+.tooltipster-top .tooltipster-box {
+	margin-bottom: 8px;
+}
+
+
+/* .tooltipster-content */
+
+.tooltipster-content {
+	color: white;
+	line-height: 18px;
+	padding: 6px 14px;
+}
+
+/* .tooltipster-arrow : will keep only the zone of .tooltipster-arrow-uncropped that
+corresponds to the arrow we want to display */
+
+.tooltipster-arrow {
+	overflow: hidden;
+	position: absolute;
+}
+
+.tooltipster-bottom .tooltipster-arrow {
+	height: 8px;
+	/* half the width, for centering */
+	margin-left: -8px;
+	top: 0;
+	width: 16px;
+}
+
+.tooltipster-left .tooltipster-arrow {
+	height: 16px;
+	margin-top: -8px;
+	right: 0;
+	/* top 0 to keep the arrow from overflowing .tooltipster-base when it has not
+	been positioned yet */
+	top: 0;
+	width: 8px;
+}
+
+.tooltipster-right .tooltipster-arrow {
+	height: 16px;
+	margin-top: -8px;
+	left: 0;
+	/* same as .tooltipster-left .tooltipster-arrow */
+	top: 0;
+	width: 8px;
+}
+
+.tooltipster-top .tooltipster-arrow {
+	bottom: 0;
+	height: 8px;
+	margin-left: -8px;
+	width: 16px;
+}
+
+/* common rules between .tooltipster-arrow-background and .tooltipster-arrow-border */
+
+.tooltipster-arrow-background, .tooltipster-arrow-border {
+	height: 0;
+	position: absolute;
+	width: 0;
+}
+
+/* .tooltipster-arrow-background */
+
+.tooltipster-arrow-background {
+	display: none;
+}
+/* .tooltipster-arrow-border */
+
+.tooltipster-arrow-border {
+	border: 8px solid transparent;
+	left: 0;
+	top: 0;
+}
+
+.tooltipster-bottom .tooltipster-arrow-border {
+	border-bottom-color: rgba(0, 0, 0, .8);
+}
+
+.tooltipster-left .tooltipster-arrow-border {
+	border-left-color: rgba(0, 0, 0, .8);
+}
+
+.tooltipster-right .tooltipster-arrow-border {
+	border-right-color: rgba(0, 0, 0, .8);
+}
+
+.tooltipster-top .tooltipster-arrow-border {
+	border-top-color: rgba(0, 0, 0, .8);
+}
+
+/* tooltipster-arrow-uncropped */
+
+.tooltipster-arrow-uncropped {
+	position: relative;
+}
+
+.tooltipster-bottom .tooltipster-arrow-uncropped {
+	top: -8px;
+}
+
+.tooltipster-right .tooltipster-arrow-uncropped {
+	left: -8px;
+}
+
+/*
+
+Zenburn style from voldmar.ru (c) Vladimir Epifanov <voldmar@voldmar.ru>
+based on dark.css by Ivan Sagalaev
+
+*/
+
+.hljs {
+  display: block;
+  overflow-x: auto;
+  padding: 0.5em;
+  background: #3f3f3f;
+  color: #dcdcdc;
+  -webkit-text-size-adjust: none;
+}
+
+.hljs-keyword,
+.hljs-tag,
+.css .hljs-class,
+.css .hljs-id,
+.lisp .hljs-title,
+.nginx .hljs-title,
+.hljs-request,
+.hljs-status,
+.clojure .hljs-attribute {
+  color: #e3ceab;
+}
+
+.django .hljs-template_tag,
+.django .hljs-variable,
+.django .hljs-filter .hljs-argument {
+  color: #dcdcdc;
+}
+
+.hljs-number,
+.hljs-date {
+  color: #8cd0d3;
+}
+
+.dos .hljs-envvar,
+.dos .hljs-stream,
+.hljs-variable,
+.apache .hljs-sqbracket,
+.hljs-name {
+  color: #efdcbc;
+}
+
+.dos .hljs-flow,
+.diff .hljs-change,
+.python .exception,
+.python .hljs-built_in,
+.hljs-literal,
+.tex .hljs-special {
+  color: #efefaf;
+}
+
+.diff .hljs-chunk,
+.hljs-subst {
+  color: #8f8f8f;
+}
+
+.dos .hljs-keyword,
+.hljs-decorator,
+.hljs-title,
+.hljs-type,
+.diff .hljs-header,
+.ruby .hljs-class .hljs-parent,
+.apache .hljs-tag,
+.nginx .hljs-built_in,
+.tex .hljs-command,
+.hljs-prompt {
+  color: #efef8f;
+}
+
+.dos .hljs-winutils,
+.ruby .hljs-symbol,
+.ruby .hljs-symbol .hljs-string,
+.ruby .hljs-string {
+  color: #dca3a3;
+}
+
+.diff .hljs-deletion,
+.hljs-string,
+.hljs-tag .hljs-value,
+.hljs-preprocessor,
+.hljs-pragma,
+.hljs-built_in,
+.smalltalk .hljs-class,
+.smalltalk .hljs-localvars,
+.smalltalk .hljs-array,
+.css .hljs-rule .hljs-value,
+.hljs-attr_selector,
+.hljs-pseudo,
+.apache .hljs-cbracket,
+.tex .hljs-formula,
+.coffeescript .hljs-attribute {
+  color: #cc9393;
+}
+
+.hljs-shebang,
+.diff .hljs-addition,
+.hljs-comment,
+.hljs-annotation,
+.hljs-pi,
+.hljs-doctype {
+  color: #7f9f7f;
+}
+
+.coffeescript .javascript,
+.javascript .xml,
+.tex .hljs-formula,
+.xml .javascript,
+.xml .vbscript,
+.xml .css,
+.xml .hljs-cdata {
+  opacity: 0.5;
+}
+
+
+/**********
+ * Utils
+ **********/
+.hovercard-repo {
+  position: relative;
+  float: left;
+  margin-top: 2px;
+  margin-bottom: 6px;
+  padding-left: 24px;
+}
+.hovercard-repo .octicon {
+  position: absolute;
+  top: 0;
+  left: 0;
+  font-size: 24px;
+  line-height: 1;
+}
+.hovercard-issue-body > :first-child {
+  margin-top: 0;
+}
+.hovercard-issue-body > :last-child {
+  margin-bottom: 0;
+}
+/**********
+ * Global
+ **********/
+.hovercard {
+  max-width: 320px;
+  min-width: 160px;
+  font-style: normal;
+  line-height: 2;
+}
+.hovercard.extended {
+  max-width: 640px;
+}
+.hovercard p {
+  margin: 0 0 4px;
+  vertical-align: middle;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  clear: both;
+}
+.hovercard a {
+  color: #bdf;
+}
+.hovercard strong {
+  font-size: 120%;
+}
+.hovercard small {
+  opacity: 0.8;
+}
+/**********
+ * More
+ **********/
+.hovercard-more {
+  clear: left;
+}
+.hovercard-more p {
+  position: relative;
+  padding-left: 18px;
+  line-height: 18px;
+}
+.hovercard-more .hovercard-repo-desc {
+  white-space: normal;
+  height: auto;
+}
+.hovercard-more .emoji {
+  vertical-align: middle;
+}
+.hovercard-more .octicon {
+  position: absolute;
+  top: 2px;
+  left: 0;
+  margin: 0;
+  font-size: 14px;
+  opacity: 0.8;
+}
+/**********
+ * User
+ **********/
+.hovercard-person {
+  float: left;
+}
+.hovercard-avatar {
+  float: left;
+  width: 32px;
+  height: 32px;
+  margin: 0 8px 8px 0;
+  border: 2px solid rgba(255,255,255,0.1);
+  border-radius: 2px;
+  background-color: #fff;
+}
+/**********
+ * Repo
+ **********/
+.hovercard-repo p:first-of-type {
+  font-size: 13px;
+}
+.hovercard-stats {
+  display: flex;
+  min-width: 180px;
+  margin-bottom: 10px;
+  padding: 3px;
+  border-radius: 2px;
+  background-color: rgba(255,255,255,0.15);
+  line-height: 1;
+}
+.hovercard-stats strong,
+.hovercard-stats span {
+  display: block;
+  padding: 2px 4px;
+  line-height: 1;
+  text-align: center;
+}
+.hovercard-stats span {
+  font-style: 70%;
+  color: #fff;
+  opacity: 0.8;
+}
+.hovercard-stats a {
+  display: block;
+  flex: 1 1 auto;
+}
+.hovercard-stats a:hover {
+  text-decoration: none;
+}
+/**********
+ * Issue
+ **********/
+.hovercard-issue p,
+.hovercard-issue-meta p {
+  line-height: 16px;
+}
+.hovercard-issue .state,
+.hovercard-issue-meta .state {
+  margin-right: 5px;
+  padding: 0 4px;
+  text-transform: capitalize;
+}
+.hovercard-issue .state .octicon,
+.hovercard-issue-meta .state .octicon {
+  margin-right: 4px;
+  font-size: 12px;
+}
+.hovercard-issue .hovercard-avatar,
+.hovercard-issue-meta .hovercard-avatar {
+  margin: 0 5px 0 0;
+  width: 16px;
+  height: 16px;
+  border-width: 1px;
+  vertical-align: middle;
+  line-height: 1.2;
+}
+.hovercard-issue-body {
+  clear: left;
+  overflow: auto;
+  max-height: 280px;
+  margin: 8px 0 3px;
+  padding: 8px 10px;
+  border-radius: 2px;
+  background-color: rgba(255,255,255,0.15);
+  font-family: "Helvetica Neue", Helvetica, "Segoe UI", Arial, freesans, sans-serif;
+  font-size: 12px;
+  line-height: 1.6;
+  word-wrap: break-word;
+}
+.hovercard-issue-body h1,
+.hovercard-issue-body h2,
+.hovercard-issue-body h3,
+.hovercard-issue-body h4,
+.hovercard-issue-body h5,
+.hovercard-issue-body h6 {
+  margin-top: 1em;
+  margin-bottom: 12px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+.hovercard-issue-body h1 tt,
+.hovercard-issue-body h2 tt,
+.hovercard-issue-body h3 tt,
+.hovercard-issue-body h4 tt,
+.hovercard-issue-body h5 tt,
+.hovercard-issue-body h6 tt,
+.hovercard-issue-body h1 code,
+.hovercard-issue-body h2 code,
+.hovercard-issue-body h3 code,
+.hovercard-issue-body h4 code,
+.hovercard-issue-body h5 code,
+.hovercard-issue-body h6 code {
+  font-size: inherit;
+}
+.hovercard-issue-body h1 {
+  font-size: 1.5em;
+}
+.hovercard-issue-body h2 {
+  font-size: 1.4em;
+}
+.hovercard-issue-body h3 {
+  font-size: 1.3em;
+}
+.hovercard-issue-body h4 {
+  font-size: 1.2em;
+}
+.hovercard-issue-body h5 {
+  font-size: 1.1em;
+}
+.hovercard-issue-body h6 {
+  font-size: 1em;
+}
+.hovercard-issue-body p,
+.hovercard-issue-body blockquote,
+.hovercard-issue-body ul,
+.hovercard-issue-body ol,
+.hovercard-issue-body dl,
+.hovercard-issue-body table,
+.hovercard-issue-body pre {
+  margin-top: 0;
+  margin-bottom: 1em;
+}
+.hovercard-issue-body hr {
+  height: 2px;
+  padding: 0;
+  margin: 16px 0;
+  background-color: #ccc;
+  border: 0 none;
+}
+.hovercard-issue-body a:not([href]) {
+  color: inherit;
+}
+.hovercard-issue-body p {
+  white-space: normal;
+}
+.hovercard-issue-body ul,
+.hovercard-issue-body ol {
+  padding-left: 2em;
+}
+.hovercard-issue-body ul ol,
+.hovercard-issue-body ol ol,
+.hovercard-issue-body ul ul,
+.hovercard-issue-body ol ul {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+.hovercard-issue-body dl {
+  padding: 0;
+}
+.hovercard-issue-body dt {
+  padding: 0;
+  margin-top: 1em;
+  font-size: 1em;
+  font-style: italic;
+  font-weight: 700;
+}
+.hovercard-issue-body dd {
+  padding: 0 1em;
+  margin-bottom: 1em;
+}
+.hovercard-issue-body blockquote {
+  padding: 0 1em;
+  border-left: 3px solid #ccc;
+}
+.hovercard-issue-body table {
+  width: 100%;
+  overflow: auto;
+  word-break: normal;
+  word-break: keep-all;
+}
+.hovercard-issue-body th {
+  font-weight: 700;
+}
+.hovercard-issue-body th,
+.hovercard-issue-body tr:nth-child(even) td {
+  background-color: rgba(108,108,108,0.5);
+}
+.hovercard-issue-body th,
+.hovercard-issue-body td {
+  border: 1px solid #777;
+  padding: 0.5em 1em;
+}
+.hovercard-issue-body img {
+  max-width: 100%;
+}
+.hovercard-issue-body code,
+.hovercard-issue-body tt {
+  padding: 0.2em 0;
+  margin: 0;
+  background-color: rgba(0,0,0,0.04);
+  border-radius: 2px;
+}
+.hovercard-issue-body code br,
+.hovercard-issue-body tt br {
+  display: none;
+}
+.hovercard-issue-body pre {
+  padding: 0.6em;
+  overflow: auto;
+  line-height: 1.45;
+  background-color: rgba(108,108,108,0.5);
+  border-radius: 2px;
+  word-wrap: normal;
+}
+.hovercard-issue-body pre code,
+.hovercard-issue-body pre tt {
+  background-color: transparent;
+}
+.hovercard-task {
+  list-style-type: none;
+}
+.hovercard-task-checker {
+  margin-right: 0.3em;
+  margin-left: -1.5em;
+}
+/**********
+ * Error
+ **********/
+.hovercard-error {
+  max-width: 320px;
+}
+.hovercard-error p {
+  line-height: 1.6;
+  white-space: normal;
+}
+.hovercard-error .octicon {
+  display: inline-block;
+  position: static;
+  margin-right: 5px;
+}
+/**********
+ * Overlay
+ **********/
+.hovercard-overlay {
+  position: fixed;
+  z-index: 10000000;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background-color: rgba(0,0,0,0.6);
+}
+.hovercard-overlay form {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border: 3px solid rgba(0,0,0,0.75);
+  padding: 0 20px;
+  border-radius: 5px;
+  background-color: #fff;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font: 13px / 1.4 Helvetica, arial, nimbussansl, liberationsans, freesans, clean, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  color: #333;
+  background-color: #fff;
+}
+
+a {
+  color: #4078c0;
+  text-decoration: none;
+}
+
+a:active,
+a:hover,
+button {
+  outline: 0;
+}
+
+button::-moz-focus-inner,
+input::-moz-focus-inner {
+  border: 0;
+  padding: 0;
+}
+
+img {
+  border: none;
+}
+
+blockquote {
+  color: #666;
+}
+
+ul,
+ol {
+  padding: 0;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+tt,
+code {
+  font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
+  font-size: 12px;
+}
+
+input {
+  line-height: normal;
+}
+
+button,
+input,
+optgroup,
+select,
+textarea {
+  color: inherit;
+  font: inherit;
+  margin: 0;
+}
+
+input,
+select,
+textarea,
+button {
+  font: 13px / 1.4 Helvetica, arial, nimbussansl, liberationsans, freesans, clean, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+}
+
+input[type="text"],
+input[type="password"],
+input[type="email"],
+input[type="number"],
+input[type="tel"],
+input[type="url"],
+select,
+textarea {
+  min-height: 34px;
+  padding: 7px 8px;
+  font-size: 13px;
+  color: #333;
+  vertical-align: middle;
+  background-color: #fff;
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  outline: none;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.075);
+}
+
+body > header {
+  padding-top: 6px;
+  padding-bottom: 6px;
+  min-width: 1000px;
+  background-color: #f5f5f5;
+  border-bottom: 1px solid #e5e5e5;
+}
+
+header > h1 {
+  width: 980px;
+  margin: 0 auto;
+  background: url(../../icon.png) no-repeat left center;
+  background-size: 36px 36px;
+  padding-left: 54px;
+  line-height: 36px;
+  font-size: 16px;
+  font-weight: 400;
+}
+
+body > main {
+  width: 980px;
+  margin: 0 auto;
+}
+
+body > main::before,
+body > main::after {
+  content: "";
+  display: table;
+}
+
+body > main::after {
+  clear: both;
+}
+
+.btn {
+  position: relative;
+  display: inline-block;
+  padding: 6px 12px;
+  font-size: 13px;
+  font-weight: bold;
+  line-height: 20px;
+  color: #333;
+  white-space: nowrap;
+  vertical-align: middle;
+  cursor: pointer;
+  background-color: #eee;
+  background-image: -webkit-linear-gradient(#fcfcfc, #eee);
+  background-image: linear-gradient(#fcfcfc, #eee);
+  border: 1px solid #d5d5d5;
+  border-radius: 3px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-appearance: none;
+}
+
+.btn:hover,
+.btn:active {
+  text-decoration: none;
+  background-color: #ddd;
+  background-image: -webkit-linear-gradient(#eee, #ddd);
+  background-image: linear-gradient(#eee, #ddd);
+  border-color: #ccc;
+}
+
+.btn:active {
+  background-color: #dcdcdc;
+  background-image: none;
+  border-color: #b5b5b5;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.15);
+}
+
+.btn-primary {
+  color: #fff;
+  text-shadow: 0 -1px 0 rgba(0,0,0,0.15);
+  background-color: #60b044;
+  background-image: -webkit-linear-gradient(#8add6d, #60b044);
+  background-image: linear-gradient(#8add6d, #60b044);
+  border-color: #5ca941;
+}
+
+.btn-primary:hover {
+  color: #fff;
+  background-color: #569e3d;
+  background-image: -webkit-linear-gradient(#79d858, #569e3d);
+  background-image: linear-gradient(#79d858, #569e3d);
+  border-color: #4a993e;
+}
+
+.btn-primary:active {
+  text-shadow: 0 1px 0 rgba(0,0,0,0.15);
+  background-color: #569e3d;
+  background-image: none;
+  border-color: #418737;
+}
+
+.btn-sm {
+  padding: 2px 10px;
+}
+
+.text-small {
+  font-size: 12px;
+}
+
+.text-muted {
+  color: #767676;
+}
+
+.octicon {
+  font: 16px/1 octicons;
+  display: inline-block;
+  text-decoration: none;
+  text-rendering: auto;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.mega-octicon {
+  position: absolute;
+  top: 14px;
+  left: 0;
+  width: 32px;
+  height: 32px;
+  padding: 3px;
+  color: #bbb;
+}
+
+main > article {
+  float: left;
+  width: 66.666667%;
+  padding-right: 10px;
+}
+
+.intro {
+  margin-top: 10px;
+  line-height: 1.6;
+}
+
+.intro > section {
+  border-top: 1px solid #f1f1f1;
+}
+
+.intro > section:first-child {
+  border-top: none;
+}
+
+.news {
+  margin-top: 20px;
+}
+
+.news blockquote {
+  margin: 0;
+}
+
+.news .message,
+.news li blockquote {
+  display: inline;
+  font-size: 13px;
+  color: #666;
+}
+
+.news .alert {
+  position: relative;
+  padding: 0 0 1em 45px;
+  overflow: hidden;
+  border-top: 1px solid #f1f1f1;
+}
+
+.news .alert .title {
+  font-weight: 700;
+}
+
+.news .alert .body {
+  padding: 1em 0 0;
+  overflow: hidden;
+  font-size: 14px;
+  border-bottom: 0;
+}
+
+.news .alert .gravatar {
+  float: left;
+  margin-right: 0.6em;
+  line-height: 0;
+  background-color: #fff;
+  border-radius: 3px;
+}
+
+.news .alert .commits {
+  padding-left: 40px;
+}
+
+.news .commits li {
+  margin-top: 0.15em;
+  list-style-type: none;
+}
+
+.news .commits li img {
+  margin: 0 1px 0 0;
+  vertical-align: middle;
+  background-color: #fff;
+  border-radius: 2px;
+}
+
+.news .simple .title {
+  display: inline-block;
+  font-size: 13px;
+  font-weight: normal;
+  color: #666;
+}
+
+.news .simple .octicon {
+  position: absolute;
+  left: 11px;
+  width: 16px;
+  height: 16px;
+  color: #bbb;
+}
+
+.news .time {
+  display: inline-block;
+  font-size: 12px;
+  color: #bbb;
+}
+
+.sidebar {
+  float: right;
+  width: 33.333333%;
+  padding-left: 10px;
+}
+
+.sidebar .boxed-group {
+  position: relative;
+  margin-top: 20px;
+  border-radius: 3px;
+}
+
+.boxed-group > h3 {
+  display: block;
+  background-color: #f5f5f5;
+  margin: 0;
+  border-radius: 3px 3px 0 0;
+  border: 1px solid #d8d8d8;
+  border-bottom: 0;
+  padding: 9px 10px 10px;
+  font-size: 14px;
+  line-height: 17px;
+}
+
+.boxed-group-action {
+  float: right;
+  margin: 6px 10px 0 0;
+  position: relative;
+  z-index: 2;
+}
+
+.counter {
+  display: inline-block;
+  padding: 2px 5px;
+  font-size: 11px;
+  font-weight: bold;
+  line-height: 1;
+  color: #666;
+  background-color: #eee;
+  border-radius: 20px;
+}
+
+.boxed-group .counter {
+  color: #fff;
+  background-color: #babec0;
+}
+
+.boxed-group-inner {
+  padding: 1px 10px;
+  background: #fff;
+  border: 1px solid #d8d8d8;
+  border-bottom-left-radius: 3px;
+  border-bottom-right-radius: 3px;
+  color: #666;
+  font-size: 13px;
+}
+
+.boxed-group.flush .boxed-group-inner {
+  padding: 0;
+}
+
+.mini-repo-list {
+  list-style: none;
+  padding: 0;
+}
+
+.mini-repo-list a {
+  position: relative;
+  display: block;
+  padding: 6px 64px 6px 30px;
+  font-size: 14px;
+  border-top: 1px solid #e5e5e5;
+}
+
+.mini-repo-list > li:first-child a {
+  border-top: 0;
+}
+
+.mini-repo-list .repo-icon {
+  float: left;
+  margin-top: 2px;
+  margin-left: -20px;
+  color: #666;
+}
+
+.mini-repo-list .repo-and-owner {
+  display: inline-block;
+  max-width: 220px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  vertical-align: top;
+}
+
+.mini-repo-list .stars {
+  position: absolute;
+  top: 0;
+  right: 10px;
+  margin-top: 6px;
+  font-size: 12px;
+  color: #888;
+}
+
+.mini-repo-list .repo {
+  font-weight: 700;
+}
+
+.filter-bar {
+  padding: 10px;
+  background-color: #fafafa;
+  border-bottom: 1px solid #e5e5e5;
+  text-align: center;
+}
+
+.filter-repos {
+  overflow: hidden;
+  padding-bottom: 0;
+  text-align: center;
+}
+
+.filter-bar .filter-input {
+  width: 100%;
+  min-height: 26px;
+  padding: 3px 10px;
+  font-size: 11px;
+  border-radius: 12px;
+}
+
+.repo-filterer {
+  display: inline-block;
+  margin-top: 6px;
+  list-style: none;
+}
+
+.repo-filterer li {
+  display: inline-block;
+}
+
+.repo-filterer .repo-filter {
+  display: inline-block;
+  padding: 5px 5px 6px;
+  margin-right: 5px;
+  border-bottom: 2px solid transparent;
+}
+
+.repo-filterer .repo-filter.filter-selected {
+  color: #333;
+  text-decoration: none;
+  border-bottom-color: #d26911;
+  outline: none;
+}
+
+.state {
+  display: inline-block;
+  padding: 4px 8px;
+  font-weight: bold;
+  line-height: 20px;
+  color: #fff;
+  text-align: center;
+  border-radius: 3px;
+  background-color: #999
+}
+
+.state-open,
+.state-proposed,
+.state-reopened {
+  background-color: #6cc644
+}
+
+.state-merged {
+  background-color: #6e5494
+}
+
+.state-closed {
+  background-color: #bd2c00
+}
+
+.state-renamed {
+  background-color: #fffa5d
+}

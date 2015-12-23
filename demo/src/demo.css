@@ -1,0 +1,503 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font: 13px / 1.4 Helvetica, arial, nimbussansl, liberationsans, freesans, clean, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  color: #333;
+  background-color: #fff;
+}
+
+a {
+  color: #4078c0;
+  text-decoration: none;
+}
+
+a:active,
+a:hover,
+button {
+  outline: 0;
+}
+
+button::-moz-focus-inner,
+input::-moz-focus-inner {
+  border: 0;
+  padding: 0;
+}
+
+img {
+  border: none;
+}
+
+blockquote {
+  color: #666;
+}
+
+ul,
+ol {
+  padding: 0;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+tt,
+code {
+  font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
+  font-size: 12px;
+}
+
+input {
+  line-height: normal;
+}
+
+button,
+input,
+optgroup,
+select,
+textarea {
+  color: inherit;
+  font: inherit;
+  margin: 0;
+}
+
+input,
+select,
+textarea,
+button {
+  font: 13px / 1.4 Helvetica, arial, nimbussansl, liberationsans, freesans, clean, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+}
+
+input[type="text"],
+input[type="password"],
+input[type="email"],
+input[type="number"],
+input[type="tel"],
+input[type="url"],
+select,
+textarea {
+  min-height: 34px;
+  padding: 7px 8px;
+  font-size: 13px;
+  color: #333;
+  vertical-align: middle;
+  background-color: #fff;
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  outline: none;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.075);
+}
+
+body > header {
+  padding-top: 6px;
+  padding-bottom: 6px;
+  min-width: 1000px;
+  background-color: #f5f5f5;
+  border-bottom: 1px solid #e5e5e5;
+}
+
+header > h1 {
+  width: 980px;
+  margin: 0 auto;
+  background: url(../../icon.png) no-repeat left center;
+  background-size: 36px 36px;
+  padding-left: 54px;
+  line-height: 36px;
+  font-size: 16px;
+  font-weight: 400;
+}
+
+body > main {
+  width: 980px;
+  margin: 0 auto;
+}
+
+body > main::before,
+body > main::after {
+  content: "";
+  display: table;
+}
+
+body > main::after {
+  clear: both;
+}
+
+.btn {
+  position: relative;
+  display: inline-block;
+  padding: 6px 12px;
+  font-size: 13px;
+  font-weight: bold;
+  line-height: 20px;
+  color: #333;
+  white-space: nowrap;
+  vertical-align: middle;
+  cursor: pointer;
+  background-color: #eee;
+  background-image: -webkit-linear-gradient(#fcfcfc, #eee);
+  background-image: linear-gradient(#fcfcfc, #eee);
+  border: 1px solid #d5d5d5;
+  border-radius: 3px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-appearance: none;
+}
+
+.btn:hover,
+.btn:active {
+  text-decoration: none;
+  background-color: #ddd;
+  background-image: -webkit-linear-gradient(#eee, #ddd);
+  background-image: linear-gradient(#eee, #ddd);
+  border-color: #ccc;
+}
+
+.btn:active {
+  background-color: #dcdcdc;
+  background-image: none;
+  border-color: #b5b5b5;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.15);
+}
+
+.btn-primary {
+  color: #fff;
+  text-shadow: 0 -1px 0 rgba(0,0,0,0.15);
+  background-color: #60b044;
+  background-image: -webkit-linear-gradient(#8add6d, #60b044);
+  background-image: linear-gradient(#8add6d, #60b044);
+  border-color: #5ca941;
+}
+
+.btn-primary:hover {
+  color: #fff;
+  background-color: #569e3d;
+  background-image: -webkit-linear-gradient(#79d858, #569e3d);
+  background-image: linear-gradient(#79d858, #569e3d);
+  border-color: #4a993e;
+}
+
+.btn-primary:active {
+  text-shadow: 0 1px 0 rgba(0,0,0,0.15);
+  background-color: #569e3d;
+  background-image: none;
+  border-color: #418737;
+}
+
+.btn-sm {
+  padding: 2px 10px;
+}
+
+.text-small {
+  font-size: 12px;
+}
+
+.text-muted {
+  color: #767676;
+}
+
+.octicon {
+  font: 16px/1 octicons;
+  display: inline-block;
+  text-decoration: none;
+  text-rendering: auto;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.mega-octicon {
+  position: absolute;
+  top: 14px;
+  left: 0;
+  width: 32px;
+  height: 32px;
+  padding: 3px;
+  color: #bbb;
+}
+
+main > article {
+  float: left;
+  width: 66.666667%;
+  padding-right: 10px;
+}
+
+.intro {
+  margin-top: 10px;
+  line-height: 1.6;
+}
+
+.intro > section {
+  border-top: 1px solid #f1f1f1;
+}
+
+.intro > section:first-child {
+  border-top: none;
+}
+
+.news {
+  margin-top: 20px;
+}
+
+.news blockquote {
+  margin: 0;
+}
+
+.news .message,
+.news li blockquote {
+  display: inline;
+  font-size: 13px;
+  color: #666;
+}
+
+.news .alert {
+  position: relative;
+  padding: 0 0 1em 45px;
+  overflow: hidden;
+  border-top: 1px solid #f1f1f1;
+}
+
+.news .alert .title {
+  font-weight: 700;
+}
+
+.news .alert .body {
+  padding: 1em 0 0;
+  overflow: hidden;
+  font-size: 14px;
+  border-bottom: 0;
+}
+
+.news .alert .gravatar {
+  float: left;
+  margin-right: 0.6em;
+  line-height: 0;
+  background-color: #fff;
+  border-radius: 3px;
+}
+
+.news .alert .commits {
+  padding-left: 40px;
+}
+
+.news .commits li {
+  margin-top: 0.15em;
+  list-style-type: none;
+}
+
+.news .commits li img {
+  margin: 0 1px 0 0;
+  vertical-align: middle;
+  background-color: #fff;
+  border-radius: 2px;
+}
+
+.news .simple .title {
+  display: inline-block;
+  font-size: 13px;
+  font-weight: normal;
+  color: #666;
+}
+
+.news .simple .octicon {
+  position: absolute;
+  left: 11px;
+  width: 16px;
+  height: 16px;
+  color: #bbb;
+}
+
+.news .time {
+  display: inline-block;
+  font-size: 12px;
+  color: #bbb;
+}
+
+.sidebar {
+  float: right;
+  width: 33.333333%;
+  padding-left: 10px;
+}
+
+.sidebar .boxed-group {
+  position: relative;
+  margin-top: 20px;
+  border-radius: 3px;
+}
+
+.boxed-group > h3 {
+  display: block;
+  background-color: #f5f5f5;
+  margin: 0;
+  border-radius: 3px 3px 0 0;
+  border: 1px solid #d8d8d8;
+  border-bottom: 0;
+  padding: 9px 10px 10px;
+  font-size: 14px;
+  line-height: 17px;
+}
+
+.boxed-group-action {
+  float: right;
+  margin: 6px 10px 0 0;
+  position: relative;
+  z-index: 2;
+}
+
+.counter {
+  display: inline-block;
+  padding: 2px 5px;
+  font-size: 11px;
+  font-weight: bold;
+  line-height: 1;
+  color: #666;
+  background-color: #eee;
+  border-radius: 20px;
+}
+
+.boxed-group .counter {
+  color: #fff;
+  background-color: #babec0;
+}
+
+.boxed-group-inner {
+  padding: 1px 10px;
+  background: #fff;
+  border: 1px solid #d8d8d8;
+  border-bottom-left-radius: 3px;
+  border-bottom-right-radius: 3px;
+  color: #666;
+  font-size: 13px;
+}
+
+.boxed-group.flush .boxed-group-inner {
+  padding: 0;
+}
+
+.mini-repo-list {
+  list-style: none;
+  padding: 0;
+}
+
+.mini-repo-list a {
+  position: relative;
+  display: block;
+  padding: 6px 64px 6px 30px;
+  font-size: 14px;
+  border-top: 1px solid #e5e5e5;
+}
+
+.mini-repo-list > li:first-child a {
+  border-top: 0;
+}
+
+.mini-repo-list .repo-icon {
+  float: left;
+  margin-top: 2px;
+  margin-left: -20px;
+  color: #666;
+}
+
+.mini-repo-list .repo-and-owner {
+  display: inline-block;
+  max-width: 220px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  vertical-align: top;
+}
+
+.mini-repo-list .stars {
+  position: absolute;
+  top: 0;
+  right: 10px;
+  margin-top: 6px;
+  font-size: 12px;
+  color: #888;
+}
+
+.mini-repo-list .repo {
+  font-weight: 700;
+}
+
+.filter-bar {
+  padding: 10px;
+  background-color: #fafafa;
+  border-bottom: 1px solid #e5e5e5;
+  text-align: center;
+}
+
+.filter-repos {
+  overflow: hidden;
+  padding-bottom: 0;
+  text-align: center;
+}
+
+.filter-bar .filter-input {
+  width: 100%;
+  min-height: 26px;
+  padding: 3px 10px;
+  font-size: 11px;
+  border-radius: 12px;
+}
+
+.repo-filterer {
+  display: inline-block;
+  margin-top: 6px;
+  list-style: none;
+}
+
+.repo-filterer li {
+  display: inline-block;
+}
+
+.repo-filterer .repo-filter {
+  display: inline-block;
+  padding: 5px 5px 6px;
+  margin-right: 5px;
+  border-bottom: 2px solid transparent;
+}
+
+.repo-filterer .repo-filter.filter-selected {
+  color: #333;
+  text-decoration: none;
+  border-bottom-color: #d26911;
+  outline: none;
+}
+
+.state {
+  display: inline-block;
+  padding: 4px 8px;
+  font-weight: bold;
+  line-height: 20px;
+  color: #fff;
+  text-align: center;
+  border-radius: 3px;
+  background-color: #999
+}
+
+.state-open,
+.state-proposed,
+.state-reopened {
+  background-color: #6cc644
+}
+
+.state-merged {
+  background-color: #6e5494
+}
+
+.state-closed {
+  background-color: #bd2c00
+}
+
+.state-renamed {
+  background-color: #fffa5d
+}

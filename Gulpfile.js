@@ -2,6 +2,8 @@ var gulp = require('gulp');
 var fs = require('fs');
 var merge = require('merge-stream');
 var exec = require('child_process').exec;
+var replace = require('gulp-replace');
+var concat = require('gulp-concat');
 var pack = JSON.parse(fs.readFileSync('./package.json', { encoding: 'utf8' }));
 var version = pack.version;
 
@@ -13,7 +15,6 @@ gulp.task('css', function () {
 });
 
 gulp.task('cp', ['css'], function () {
-  var replace = require('gulp-replace');
   var srcChrome = gulp.src('./src/*')
     .pipe(replace('__EMOJI_DATA__', 'chrome.extension.getURL(\'emoji.json\')'))
     .pipe(replace(/spinner.svg/, 'chrome-extension://__MSG_@@extension_id__/spinner.svg'))
@@ -61,6 +62,34 @@ gulp.task('pack-firefox-addon', ['cp'], function (cb) {
       cb();
     }
   });
+});
+
+gulp.task('demo', ['css'], function (cb) {
+  var jsSrc = gulp.src([
+      './src/jquery.js',
+      './src/mustache.js',
+      './src/tooltipster.js',
+      './src/remarkable.js',
+      './src/highlight.pack.js',
+      './src/hovercard.js',
+      './demo/src/demo.js'
+    ])
+    .pipe(replace('__EMOJI_DATA__', JSON.stringify(require('./assets/emoji.json'))))
+    .pipe(replace('location.host', '\'github.com\''))
+    .pipe(concat('demo.js'))
+    .pipe(gulp.dest('./demo/dist'));
+
+  var cssSrc = gulp.src([
+      './src/tooltipster.css',
+      './src/highlight.css',
+      './src/hovercard.css',
+      './demo/src/demo.css'
+    ])
+    .pipe(replace(/spinner.svg/, '../assets/spinner.svg'))
+    .pipe(concat('demo.css'))
+    .pipe(gulp.dest('./demo/dist'));
+
+  return merge(jsSrc, cssSrc);
 });
 
 gulp.task('extensions', ['pack-chrome-extension', 'pack-firefox-addon']);
