@@ -85,7 +85,7 @@ gulp.task('demo', ['css'], function (cb) {
       './src/hovercard.css',
       './demo/src/demo.css'
     ])
-    .pipe(replace(/spinner.svg/, '../assets/spinner.svg'))
+    .pipe(replace(/spinner.svg/, '../../assets/spinner.svg'))
     .pipe(concat('demo.css'))
     .pipe(gulp.dest('./demo/dist'));
 
