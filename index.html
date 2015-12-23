@@ -21,10 +21,30 @@
       </section>
       <section class="installation">
         <h1>Installation</h1>
-        <p><button class="btn btn-primary" id="chrome-install">Add to Chrome</button> or download from <a href="https://chrome.google.com/webstore/detail/github-hovercard/mmoahbbnojgkclgceahhakhnccimnplk">Chrome Webstore</a>.</p>
-        <p class="alt">Need Firefox version? </p>
+        <script>
+          var ua = uaMatch(navigator.userAgent);
+          document.write('<style>#' + ua.browser + ' { display: block; }</style>');
+
+          function uaMatch(ua) {
+            ua = ua.toLowerCase();
+            var t = /(chrome)[ \/]([\w.]+)/.exec(ua) || /(webkit)[ \/]([\w.]+)/.exec(ua) || /(opera)(?:.*version|)[ \/]([\w.]+)/.exec(ua) || /(msie) ([\w.]+)/.exec(ua) || 0 > ua.indexOf('compatible') && /(mozilla)(?:.*? rv:([\w.]+)|)/.exec(ua) || [];
+            return {
+                browser: t[1] || '',
+                version: t[2] || '0'
+            };
+          }
+        </script>
+        <div id="chrome" class="install-panel">
+          <p><button class="btn btn-primary install">Add to Chrome</button> <span class="hint">or download from <a href="https://chrome.google.com/webstore/detail/github-hovercard/mmoahbbnojgkclgceahhakhnccimnplk">Chrome Webstore</a>.</span></p>
+          <p class="alt text-muted">Supports Chrome and Firefox. <a href="https://addons.mozilla.org/en-US/firefox/addon/github-hovercard/">Need Firefox version? </a></p>
+        </div>
+        <div id="mozilla" class="install-panel">
+          <p><button class="btn btn-primary install">Add to Firefox</button> <span class="hint">or download from <a href="https://addons.mozilla.org/en-US/firefox/addon/github-hovercard/">Mozilla Add-ons</a>.</span></p>
+          <p class="alt text-muted">Supports Chrome and Firefox. <a href="https://chrome.google.com/webstore/detail/github-hovercard/mmoahbbnojgkclgceahhakhnccimnplk">Need Chrome version? </a></p>
+        </div>
       </section>
       <section class="tryout">
+        <h1>Try yourself</h1>
         <p>Try it out around this page. Have fun!</p>
       </section>
     </section>
@@ -244,9 +264,30 @@
         </ul>
       </div>
     </div>
+    <div class="boxed-group flush features">
+      <h3>Features</h3>
+      <ul class="boxed-group-inner">
+        <li><span class="octicon octicon-check"></span> Extracts users, repos and issues almost everywhere around GitHub</li>
+        <li><span class="octicon octicon-check"></span> Friendly emoji display in repo descriptions and issue contents</li>
+        <li><span class="octicon octicon-check"></span> Markdown conversion for issue contents</li>
+        <li><span class="octicon octicon-check"></span> Supports binding access token to increase API request limit</li>
+        <li><span class="octicon octicon-check"></span> Supports GitHub's task lists in Markdown</li>
+        <li><span class="octicon octicon-check"></span> Supports GitHub Enterprise</li>
+      </ul>
+    </div>
   </aside>
+</main>
+<script>
+(function () {
+  var content = '';
+  if (ua.browser === 'chrome') {
+    content = '<script src="demo/dist/demo.js"><\/script>'
+  } else if (ua.browser === 'mozilla') {
+    content = '<script src="demo/dist/demo.js" type="application/javascript;version=1.7"><\/script>';
+  }
 
-</article>
-<script src="demo/dist/demo.js"></script>
+  document.write(content);
+})();
+</script>
 </body>
 </html>

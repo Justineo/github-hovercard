@@ -973,7 +973,9 @@ body > main::after {
 }
 
 .btn:disabled,
-.btn:disabled:hover {
+.btn:disabled:hover,
+.btn.disabled,
+.btn.disabled:hover {
   color: rgba(102,102,102,0.5);
   cursor: default;
   background-color: rgba(229,229,229,0.5);
@@ -1007,7 +1009,9 @@ body > main::after {
 }
 
 .btn-primary:disabled,
-.btn-primary:disabled:hover {
+.btn-primary:disabled:hover,
+.btn-primary.disabled,
+.btn-primary.disabled:hover {
     color: #fefefe;
     background-color: #add39f;
     background-image: -webkit-linear-gradient(#c3ecb4, #add39f);
@@ -1054,6 +1058,12 @@ main > article {
   float: left;
   width: 66.666667%;
   padding-right: 10px;
+}
+
+article > section > section > h1 {
+  font-size: 1.33em;
+  margin-top: 1em;
+  margin-bottom: 1em;
 }
 
 .intro {
@@ -1299,6 +1309,35 @@ main > article {
   outline: none;
 }
 
+.features {
+  margin-top: 20px;
+  line-height: 1.6;
+}
+
+.features ul {
+  list-style: none;
+}
+
+.features li {
+  position: relative;
+  display: block;
+  padding: 6px 12px 6px 30px;
+  border-top: 1px solid #e5e5e5;
+  font-size: 12px;
+}
+
+.features li:first-child {
+  border-top: none;
+}
+
+.features .octicon {
+  float: left;
+  margin-top: 2px;
+  margin-left: -20px;
+  font-size: 14px;
+  color: #666;
+}
+
 .state {
   display: inline-block;
   padding: 4px 8px;
@@ -1326,4 +1365,20 @@ main > article {
 
 .state-renamed {
   background-color: #fffa5d
+}
+
+.install-panel {
+  display: none;
+}
+
+.install {
+  margin-right: 5px;
+}
+
+.hint {
+  color: #767676;
+}
+
+.alt {
+  color: #bbb;
 }
