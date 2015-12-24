@@ -586,6 +586,7 @@ article > section > section > h1 {
 }
 
 .install {
+  width: 120px;
   margin-right: 5px;
 }
 

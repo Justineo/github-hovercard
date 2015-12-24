@@ -22,20 +22,17 @@
       <section class="installation">
         <h1>Installation</h1>
         <script>
-          var ua = uaMatch(navigator.userAgent);
-          if (ua.browser === 'chrome' || ua.browser === 'mozilla') {
-            document.write('<style>#' + ua.browser + ' { display: block; }</style>');
-          } else {
-            document.write('<style>.fallback { display: block !important; } .news, .contributions, .repos { opacity: 0.5; } .tryout p { text-decoration: strike-through; } .support { display: none; }</style>');
+          var browser = 'other';
+          if (window.chrome && chrome.webstore && typeof chrome.webstore.install === 'function') {
+            browser = 'chrome';
+          } else if (window.InstallTrigger && typeof InstallTrigger.install === 'function') {
+            browser = 'mozilla';
           }
 
-          function uaMatch(ua) {
-            ua = ua.toLowerCase();
-            var t = /(chrome)[ \/]([\w.]+)/.exec(ua) || /(webkit)[ \/]([\w.]+)/.exec(ua) || /(opera)(?:.*version|)[ \/]([\w.]+)/.exec(ua) || /(msie) ([\w.]+)/.exec(ua) || 0 > ua.indexOf('compatible') && /(mozilla)(?:.*? rv:([\w.]+)|)/.exec(ua) || [];
-            return {
-                browser: t[1] || '',
-                version: t[2] || '0'
-            };
+          if (browser === 'chrome' || browser === 'mozilla') {
+            document.write('<style>#' + browser + ' { display: block; }</style>');
+          } else {
+            document.write('<style>.fallback { display: block !important; } .news, .contributions, .repos { opacity: 0.5; } .tryout p { text-decoration: strike-through; } .support { display: none; }</style>');
           }
         </script>
         <div id="chrome" class="install-panel">
@@ -347,9 +344,9 @@
 <script>
 (function () {
   var content = '';
-  if (ua.browser === 'chrome') {
+  if (browser === 'chrome') {
     content = '<script src="demo/dist/demo.js"><\/script>'
-  } else if (ua.browser === 'mozilla') {
+  } else if (browser === 'mozilla') {
     content = '<script src="demo/dist/demo.js" type="application/javascript;version=1.7"><\/script>';
   }
 

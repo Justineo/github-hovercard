@@ -1,29 +1,29 @@
 $(() => {
   'use strict';
 
-  let ua = window.ua;
-  let $installBtn = $(`#${ua.browser} .install`);
-  let $hint = $(`#${ua.browser} .hint`);
+  let browser = window.browser;
+  let $installBtn = $(`#${browser} .install`);
+  let $hint = $(`#${browser} .hint`);
 
-  const VENDOR_URL = ua.browser === 'chrome'
+  const VENDOR_URL = browser === 'chrome'
     ? 'https://chrome.google.com/webstore/detail/mmoahbbnojgkclgceahhakhnccimnplk'
     : 'https://addons.mozilla.org/en-US/firefox/addon/github-hovercard/';
-  const VENDOR_NAME = ua.browser === 'chrome'
+  const VENDOR_NAME = browser === 'chrome'
     ? 'Chrome Webstore' : 'Mozilla Add-ons';
 
   $installBtn.on('click', function () {
-    setInstalling();
 
-    if (ua.browser === 'chrome') {
+    if (browser === 'chrome') {
+      setInstalling();
       chrome.webstore.install(VENDOR_URL, setInstalled.bind(null, true), reset);
-    } else if (ua.browser === 'mozilla') {
+    } else if (browser === 'mozilla') {
       var result = InstallTrigger.install({
         "GitHub Hovercard": {
           URL: 'https://addons.mozilla.org/firefox/downloads/latest/641356/addon-641356-latest.xpi',
           HASH: 'sha256:60d831956ddf766b38eb873adc323d8ce1355f0be9a34cd4657edf6249d5b720',
           ICON_URL: 'https://addons.cdn.mozilla.net/user-media/addon_icons/641/641356-32.png?modified=1450363198'
         }
-      }, setInstalled.bind(null, true));
+      });
     }
   });
 
