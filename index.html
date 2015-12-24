@@ -23,7 +23,11 @@
         <h1>Installation</h1>
         <script>
           var ua = uaMatch(navigator.userAgent);
-          document.write('<style>#' + ua.browser + ' { display: block; }</style>');
+          if (ua.browser === 'chrome' || ua.browser === 'mozilla') {
+            document.write('<style>#' + ua.browser + ' { display: block; }</style>');
+          } else {
+            document.write('<style>.fallback { display: block !important; } .news, .contributions, .repos { opacity: 0.5; } .tryout p { text-decoration: strike-through; } .support { display: none; }</style>');
+          }
 
           function uaMatch(ua) {
             ua = ua.toLowerCase();
@@ -42,10 +46,15 @@
           <p><button class="btn btn-primary install">Add to Firefox</button> <span class="hint">or download from <a href="https://addons.mozilla.org/en-US/firefox/addon/github-hovercard/">Mozilla Add-ons</a>.</span></p>
           <p class="alt text-muted">Supports Chrome and Firefox. <a href="https://chrome.google.com/webstore/detail/github-hovercard/mmoahbbnojgkclgceahhakhnccimnplk">Need Chrome version? </a></p>
         </div>
+        <div class="fallback">
+          <p>Your browser is not supported. Go to our <a href="//github.com/Justineo/github-hovercard">GitHub repo</a> for further information.</p>
+        </div>
+        <div>
       </section>
       <section class="tryout">
         <h1>Try yourself</h1>
-        <p>Try it out around this page. Have fun!</p>
+        <p class="support">Try it out around this page. Have fun!</p>
+        <p class="fallback">Please switch to Chrome or Firefox and try it out around this page.</p>
       </section>
     </section>
     <section class="news">
@@ -83,6 +92,33 @@
         </div>
       </div>
 
+      <div class="alert issues_opened">
+        <div class="body">
+          <span class="mega-octicon octicon-git-pull-request" aria-label="Pull request"></span>
+
+          <div class="time">
+            <time datetime="2015-12-17T07:56:08Z" is="relative-time" title="2015年12月17日 GMT+8下午3:56">A few days ago</time>
+          </div>
+
+          <div class="title">
+            <a class="author" href="//github.com/errorrik">errorrik</a> opened pull request <a class="notifications-repo-link" href="/ecomfe/ecomfe.github.io/pull/38">ecomfe/ecomfe.github.io#38</a>
+          </div>
+
+          <div class="details">
+            <a href="//github.com/errorrik"><img alt="@errorrik" class="gravatar" height="30" src="https://avatars1.githubusercontent.com/u/2851010?v=3&amp;s=60" width="30"></a>
+            <div class="message">
+              <blockquote>add &lt;esl error message&gt; post</blockquote>
+                <div class="pull-info">
+                  <span class="octicon octicon-git-commit"></span>
+                  <em>1</em> commit with
+                  <em>237</em> additions and
+                  <em>0</em> deletions
+                </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div class="alert fork simple">
         <div class="body">
           <div class="simple">
@@ -96,6 +132,29 @@
               <time datetime="2015-12-21T04:48:18Z" title="2015年12月21日 GMT+8下午12:48">A few days ago</time>
             </div>
         </div>
+        </div>
+      </div>
+
+      <div class="alert issues_comment">
+        <div class="body">
+          <span class="mega-octicon octicon-comment-discussion" aria-label="Issue comment"></span>
+
+          <div class="time">
+            <time datetime="2015-10-05T13:56:40Z" title="2015年10月5日 GMT+8下午9:56">A few days ago</time>
+          </div>
+
+          <div class="title">
+            <a href="//github.com/Psidium">Psidium</a> commented on issue <a class="notifications-repo-link" href="//github.com/Justineo/github-hovercard/issues/6#issuecomment-154392034" title="Add support to Github Enterprise">Justineo/github-hovercard#6</a>
+          </div>
+
+          <div class="details">
+            <a href="//github.com/Psidium"><img alt="@Psidium" class="gravatar hovercard-user-x tooltipstered" height="30" src="https://avatars3.githubusercontent.com/u/2848323?v=3&amp;s=60" width="30"></a>
+            <div class="message markdown-body">
+              <blockquote>
+                Hey! sorry for the late response, but it works like a charm in github enterprise <img class="emoji" title=":+1:" alt=":+1:" src="https://assets-cdn.github.com/images/icons/emoji/unicode/1f44d.png" height="20" width="20" align="absmiddle"> thaankssss
+              </blockquote>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -137,6 +196,7 @@
           </div>
         </div>
       </div>
+
       <div class="alert create simple">
         <div class="body">
           <div class="simple">
@@ -150,11 +210,12 @@
           </div>
         </div>
       </div>
+
     </section>
   </article>
 
   <aside class="sidebar">
-    <div class="boxed-group flush" role="navigation">
+    <div class="boxed-group flush contributions" role="navigation">
       <h3>Repositories you contribute to</h3>
       <ul class="boxed-group-inner mini-repo-list">
         <li class="public source">
@@ -204,7 +265,7 @@
         </li>
       </ul>
     </div>
-    <div class="boxed-group flush" role="navigation">
+    <div class="boxed-group flush repos" role="navigation">
       <div class="boxed-group-action">
         <a href="//github.com/new" class="btn btn-sm btn-primary"><span class="octicon octicon-plus"></span> New repository</a>
       </div>
@@ -276,6 +337,12 @@
       </ul>
     </div>
   </aside>
+
+  <footer role="contentinfo">
+    <img class="logo" src="icon.png" width="28" height="28">
+    <span>Made by <a href="//github.com/Justineo">@Justineo</a>.</span>
+    <span style="float: right">Built upon <a href="//github.com/jquery/jquery">jQuery</a>, <a href="//github.com/iamceege/tooltipster/">Tooltipster</a>, <a href="//github.com/jonschlinkert/remarkable">Remarkable</a> and <a href="//github.com/isagalaev/highlight.js">highlight.js</a>.
+  </footer>
 </main>
 <script>
 (function () {

@@ -1,6 +1,10 @@
 Changelog
 ---
 
+## 0.3.4
+
+* Add install detection support for project homepage.
+
 ## 0.3.3
 
 * Improved table styling in issue card.

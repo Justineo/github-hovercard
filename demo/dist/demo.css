@@ -1124,6 +1124,27 @@ article > section > section > h1 {
   padding-left: 40px;
 }
 
+.news .alert .octicon {
+  width: 16px;
+  height: 16px;
+  color: #bbb;
+}
+
+.news .alert .pull-info {
+  display: inline-block;
+  padding: 3px 7px;
+  margin-top: 5px;
+  font-size: 12px;
+  color: rgba(0,0,0,0.5);
+  background: #e8f1f6;
+  border-radius: 3px;
+}
+
+.news .alert .pull-info em {
+  font-style: normal;
+  font-weight: 700;
+}
+
 .news .commits li {
   margin-top: 0.15em;
   list-style-type: none;
@@ -1381,4 +1402,27 @@ article > section > section > h1 {
 
 .alt {
   color: #bbb;
+}
+
+main > footer {
+  position: relative;
+  clear: both;
+  margin-top: 40px;
+  padding-top: 40px;
+  padding-bottom: 40px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: #767676;
+  border-top: 1px solid #eee;
+}
+
+main > footer img {
+  position: absolute;
+  top: 35px;
+  left: 50%;
+  margin-left: -14px;
+}
+
+.fallback {
+  display: none;
 }
