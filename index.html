@@ -10,7 +10,10 @@
 </head>
 <body>
 <header role="banner">
-  <h1>GitHub Hovercard</h1>
+  <div>
+    <h1>GitHub Hovercard</h1>
+    <div id="social"></div>
+  </div>
 </header>
 <main>
   <article>
@@ -221,7 +224,7 @@
             <span class="repo-and-owner">
               <span class="owner">Justineo</span>/<span class="repo">github-hovercard</span>
             </span>
-            <span class="stars">191 <span class="octicon octicon-star "></span></span>
+            <span class="stars"><span class="ghh-stars">191</span> <span class="octicon octicon-star "></span></span>
           </a>
         </li>
         <li class="public source">
@@ -343,6 +346,57 @@
 </main>
 <script>
 (function () {
+  /**
+   * Load social buttons
+   */
+  var API_URL = '//api.github.com/repos/Justineo/github-hovercard';
+  var REPO_URL = '//github.com/Justineo/github-hovercard';
+  var options = {
+    url: API_URL,
+    dataType: 'json'
+  };
+
+  var xhr = new XMLHttpRequest();
+  xhr.open('GET', API_URL, true);
+  xhr.send();
+  xhr.onreadystatechange = function() {
+    if (xhr.readyState === 4 && xhr.status === 200) {
+      var raw = JSON.parse(xhr.responseText);
+      setCount('star', raw.stargazers_count);
+      setCount('fork', raw.forks_count);
+    }
+  };
+
+  var SOCIAL_CONFIG = {
+    star: {
+      url: '//github.com/Justineo/github-hovercard/stargazers',
+      text: 'Star'
+    },
+    fork: {
+      url: '//github.com/Justineo/github-hovercard/network',
+      text: 'Fork'
+    }
+  };
+
+  function setCount(type, count) {
+    var config = SOCIAL_CONFIG[type];
+
+    var html = [
+      '<div class="social">',
+        '<a href="' + REPO_URL + '" class="btn btn-sm btn-with-count" aria-label="' + config.text + ' this repository" title="' + config.text + 'Justineo/github-hovercard">',
+          '<span class="octicon octicon-star"></span> ' + config.text,
+        '</a>',
+        '<a class="social-count" href="' + config.url + '">' + count + '</a>',
+      '</div>'
+    ].join('');
+
+    document.getElementById('social').innerHTML += html;
+
+    Array.prototype.slice.call(document.querySelectorAll('.ghh-' + type + 's')).forEach(function (elem) {
+      elem.textContent = count;
+    });
+  }
+
   var content = '';
   if (browser === 'chrome') {
     content = '<script src="demo/dist/demo.js"><\/script>'

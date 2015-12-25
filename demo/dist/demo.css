@@ -907,15 +907,20 @@ body > header {
   border-bottom: 1px solid #e5e5e5;
 }
 
-header > h1 {
+header > div {
   width: 980px;
   margin: 0 auto;
   background: url(../../icon.png) no-repeat left center;
   background-size: 36px 36px;
   padding-left: 54px;
   line-height: 36px;
-  font-size: 16px;
-  font-weight: 400;
+}
+
+header h1 {
+  display: inline-block;
+  margin: 0;
+  font-size: 13px;
+  font-weight: 700;
 }
 
 body > main {
@@ -1422,6 +1427,37 @@ main > footer img {
   top: 35px;
   left: 50%;
   margin-left: -14px;
+}
+
+#social {
+  float: right;
+}
+
+.social {
+  display: inline-block;
+  margin-left: 10px;
+  vertical-align: middle;
+}
+
+.btn-with-count {
+  float: left;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.social-count {
+  float: left;
+  padding: 2px 7px;
+  font-size: 11px;
+  font-weight: bold;
+  line-height: 20px;
+  color: #333;
+  vertical-align: middle;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-left: 0;
+  border-top-right-radius: 3px;
+  border-bottom-right-radius: 3px;
 }
 
 .fallback {

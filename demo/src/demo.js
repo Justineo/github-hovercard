@@ -1,6 +1,9 @@
 $(() => {
   'use strict';
 
+  /**
+   * Check browsers
+   */
   let browser = window.browser;
   let $installBtn = $(`#${browser} .install`);
   let $hint = $(`#${browser} .hint`);
@@ -17,7 +20,7 @@ $(() => {
       setInstalling();
       chrome.webstore.install(VENDOR_URL, setInstalled.bind(null, true), reset);
     } else if (browser === 'mozilla') {
-      var result = InstallTrigger.install({
+      let result = InstallTrigger.install({
         "GitHub Hovercard": {
           URL: 'https://addons.mozilla.org/firefox/downloads/latest/641356/addon-641356-latest.xpi',
           HASH: 'sha256:60d831956ddf766b38eb873adc323d8ce1355f0be9a34cd4657edf6249d5b720',
@@ -28,6 +31,7 @@ $(() => {
   });
 
   let timer = setInterval(checkInstalled, 100);
+
   function checkInstalled() {
     if (document.body.getAttribute('data-github-hovercard')) {
       setInstalled();
