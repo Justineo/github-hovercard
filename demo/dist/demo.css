@@ -1080,7 +1080,20 @@ article > section > section > h1 {
   border-top: 1px solid #f1f1f1;
 }
 
-.intro > section:first-child {
+.intro .disclaimer {
+  position: relative;
+  margin-top: 20px;
+  padding: 0 10px 0 48px;
+  border: 1px solid #d8d8d8;
+  border-radius: 3px;
+  background-color: #f5f5f5;
+}
+
+.disclaimer .mega-octicon {
+  left: 6px;
+}
+
+.intro .desc {
   border-top: none;
 }
 
