@@ -3,7 +3,8 @@ Changelog
 
 ## 0.3.4
 
-* Add install detection support for project homepage.
+* Added install detection support for project homepage.
+* Fixed incorrect result in repo search results.
 
 ## 0.3.3
 
