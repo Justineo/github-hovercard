@@ -1,7 +1,7 @@
 {
   "title": "GitHub Hovercard",
   "name": "github-hovercard",
-  "version": "0.3.3",
+  "version": "0.3.4",
   "description": "Quick user/repo hovercard for GitHub.",
   "main": "index.js",
   "author": "Justineo",
