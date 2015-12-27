@@ -13334,29 +13334,26 @@ $(() => {
                             // special case for code search highlight
                             // save contents before replacing
                             let contents = elem.find('em').length
-                                ? elem.contents().map(function () { return this.textContent }).toArray()
+                                ? elem.contents().map(function (i) {
+                                    let text = i === 0 ? (this.textContent.split('/')[1] || '') : this.textContent;
+                                    // whitelisting <em>s for safety
+                                    return this.nodeName.toLowerCase() === 'em'
+                                        ? `<em>${text}</em>`
+                                        : text;
+                                }).toArray().join('')
                                 : null;
-                            if (contents) {
-                                contents[2] = contents[2] || '';
-                            }
 
                             if (issue) {
                                 elem.html(slug.replace('#' + issue, encodeHTML`#<span>${issue}</span>`));
                                 slug = elem.html();
                             }
+
+                            let repoContents = contents || repo; // safe HTML or plain text
                             if (username === me || username === current) {
-                                if (contents) {
-                                    elem.html(slug.replace(fullRepo, encodeHTML`${username}/<span><em>${contents[1]}</em>${contents[2]}</span>`));
-                                } else {
-                                    elem.html(slug.replace(fullRepo, encodeHTML`${username}/<span>${repo}</span>`));
-                                }
+                                elem.html(slug.replace(fullRepo, encodeHTML`${username}/<span>` + repoContents + '</span>'));
                                 markExtracted(elem.children().first(), EXTRACT_TYPE.REPO, fullRepo);
                             } else {
-                                if (contents) {
-                                    elem.html(slug.replace(fullRepo, encodeHTML`<span>${username}</span>/<span><em>${contents[1]}</em>${contents[2]}</span>`));
-                                } else {
-                                    elem.html(slug.replace(fullRepo, encodeHTML`<span>${username}</span>/<span>${repo}</span>`));
-                                }
+                                elem.html(slug.replace(fullRepo, encodeHTML`<span>${username}</span>/<span>` + repoContents + '</span>'));
                                 markExtracted(elem.children().first(), EXTRACT_TYPE.USER, username);
                                 markExtracted(elem.children().first().next(), EXTRACT_TYPE.REPO, fullRepo);
                             }
@@ -13468,7 +13465,8 @@ $(() => {
             .map(className => `.${className}`)
             .join(',');
 
-        $(tipSelector).tooltipster({
+        let tipped = $(tipSelector);
+        tipped.tooltipster({
             updateAnimation: false,
             contentAsHTML: true,
             debug: false,
@@ -13576,7 +13574,11 @@ $(() => {
                 }
             },
             interactive: true
-        }).css('opacity', '.9999'); // why? see https://github.com/iamceege/tooltipster/issues/491
+        });
+
+        if ('webkitTransform' in document.body.style) {
+            tipped.css('opacity', '.9999'); // why? see https://github.com/iamceege/tooltipster/issues/491
+        }
 
         // Listen for future mutations but not ones happens
         // in current extraction process

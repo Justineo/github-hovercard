@@ -682,7 +682,8 @@ $(() => {
             .map(className => `.${className}`)
             .join(',');
 
-        $(tipSelector).tooltipster({
+        let tipped = $(tipSelector);
+        tipped.tooltipster({
             updateAnimation: false,
             contentAsHTML: true,
             debug: false,
@@ -790,7 +791,11 @@ $(() => {
                 }
             },
             interactive: true
-        }).css('opacity', '.9999'); // why? see https://github.com/iamceege/tooltipster/issues/491
+        });
+
+        if ('webkitTransform' in document.body.style) {
+            tipped.css('opacity', '.9999'); // why? see https://github.com/iamceege/tooltipster/issues/491
+        }
 
         // Listen for future mutations but not ones happens
         // in current extraction process
