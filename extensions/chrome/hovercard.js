@@ -476,7 +476,7 @@ $(() => {
     let tokenField = tokenForm.find('.hovercard-token');
     tokenForm.find('button').on('click', (e) => {
         if ($(e.target).is('.hovercard-save') && tokenField.val()) {
-            localStorage.setItem(TOKEN_KEY, tokenField.val());
+            localStorage.setItem(TOKEN_KEY, tokenField.val().trim());
         }
         tokenForm.detach();
         return false;
