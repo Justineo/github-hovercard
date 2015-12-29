@@ -5,6 +5,7 @@ Changelog
 
 * Added install detection support for project homepage.
 * Fixed incorrect result in repo search results.
+* Trim tokens before saving into localStorage.
 
 ## 0.3.3
 
