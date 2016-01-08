@@ -470,7 +470,7 @@ $(() => {
             });
             data = {
                 title: raw.title,
-                body: raw.body ? filterXSS(replaceEmoji(replaceCheckbox(md.render(replacePlugins(raw.body)))), {
+                body: raw.body ? replaceEmoji(replaceCheckbox(md.render(replacePlugins(filterXSS(raw.body)))), {
                     stripIgnoreTagBody: true
                 }) : '',
                 issueUrl: raw.html_url,

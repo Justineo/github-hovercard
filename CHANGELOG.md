@@ -1,6 +1,11 @@
 Changelog
 ---
 
+
+## 0.3.5
+
+* Fixed the problem that styles and inputs are filtered by XSS protection module.
+
 ## 0.3.4
 
 * Tokens can be set in options page prefer `chrome.storage.sync` over `localStorage` now.

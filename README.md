@@ -48,3 +48,4 @@ Authentication is supported from v0.0.7.
 * Thank [jQuery](https://github.com/jquery/jquery) for basic operations.
 * Thank [Remarkable](https://github.com/jonschlinkert/remarkable) for Markdown support.
 * Thank [highlight.js](https://github.com/isagalaev/highlight.js) for neat code styles.
+* Thank [js-xss](https://github.com/leizongmin/js-xss) for XSS filtering.
