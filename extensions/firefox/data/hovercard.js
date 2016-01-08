@@ -55,7 +55,28 @@ $(() => {
         ISSUE: 'issue',
         SKIP: 'skip'
     };
+
     const TOKEN_KEY = 'hovercard-token';
+    let token = '';
+    let chrome = window.chrome;
+
+    // Use Chrome storage over localStorage
+    // Read localStorage when Chrome storage is not set for ackward compatibility
+    if (chrome && chrome.storage) {
+        chrome.storage.sync.get({token: ''}, (item) => {
+            token = item.token;
+            if (!token) {
+                token = localStorage.getItem(TOKEN_KEY);
+
+                if (token) {
+                    chrome.storage.sync.set({token: token});
+                }
+            }
+            localStorage.removeItem(TOKEN_KEY);
+        });
+    } else {
+        token = localStorage.getItem(TOKEN_KEY);
+    }
 
     const EXTRACTOR = {
         SLUG: 1, // {{user}}/{{repo}}#{{issue}}
@@ -449,7 +470,9 @@ $(() => {
             });
             data = {
                 title: raw.title,
-                body: raw.body ? replaceEmoji(replaceCheckbox(md.render(replacePlugins(raw.body)))) : '',
+                body: raw.body ? filterXSS(replaceEmoji(replaceCheckbox(md.render(replacePlugins(raw.body)))), {
+                    stripIgnoreTagBody: true
+                }) : '',
                 issueUrl: raw.html_url,
                 number: raw.number,
                 isPullRequest: !!raw.pull_request,
@@ -476,7 +499,12 @@ $(() => {
     let tokenField = tokenForm.find('.hovercard-token');
     tokenForm.find('button').on('click', (e) => {
         if ($(e.target).is('.hovercard-save') && tokenField.val()) {
-            localStorage.setItem(TOKEN_KEY, tokenField.val().trim());
+            token = tokenField.val().trim();
+            if (chrome && chrome.storage) {
+                chrome.storage.sync.set({token: token});
+            } else {
+                localStorage.setItem(TOKEN_KEY, token);
+            }
         }
         tokenForm.detach();
         return false;
@@ -718,7 +746,6 @@ $(() => {
                         datatype: 'json'
                     };
 
-                    let token = localStorage.getItem(TOKEN_KEY);
                     if (token) {
                         requestOptions.headers = {
                             Authorization: `token ${token}`

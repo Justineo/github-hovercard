@@ -2,10 +2,10 @@
   "title": "GitHub Hovercard",
   "name": "github-hovercard",
   "version": "0.3.4",
-  "description": "Quick user/repo hovercard for GitHub.",
+  "description": "Neat user/repo/issue hovercard for GitHub.",
   "main": "index.js",
   "author": "Justineo",
-  "homepage": "https://github.com/Justineo/github-hovercard",
+  "homepage": "https://justineo.github.io/github-hovercard/",
   "preferences": [
     {
       "name": "domains",

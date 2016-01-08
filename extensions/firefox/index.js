@@ -16,6 +16,7 @@ pageMod.PageMod({
     data.url('tooltipster.js'),
     data.url('remarkable.js'),
     data.url('highlight.pack.js'),
+    data.url('js-xss.js'),
     data.url('hovercard.js')
   ],
   contentStyleFile: [
@@ -27,7 +28,6 @@ pageMod.PageMod({
     emojiURLs: JSON.parse(data.load('emoji.json'))
   }
 });
-
 
 let installerDomains = [
   'http://justineo.github.io/github-hovercard/*',

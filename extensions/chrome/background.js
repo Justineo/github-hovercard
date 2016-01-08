@@ -6,6 +6,7 @@ let contentJS = [
     'tooltipster.js',
     'remarkable.js',
     'highlight.pack.js',
+    'js-xss.js',
     'hovercard.js'
 ];
 
@@ -105,18 +106,3 @@ chrome.runtime.onMessage.addListener((message, sender, respond) => {
 });
 
 init();
-
-const installDomain = 'justineo.github.io';
-
-function installer(details) {
-    console.log('Injecting into install page...');
-    let tab = details.tabId;
-    injectJS(tab, ['installer.js']);
-}
-
-chrome.webNavigation.onCommitted.addListener(installer, {
-    url: [
-        { urlContains: 'justineo.github.io/github-hovercard' },
-        { hostEquals: 'localhost' }
-    ]
-});

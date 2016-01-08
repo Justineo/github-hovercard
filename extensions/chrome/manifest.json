@@ -17,6 +17,9 @@
     "tabs",
     "storage",
     "activeTab",
+    "https://github.com/*"
+  ],
+  "optional_permissions": [
     "<all_urls>"
   ],
   "web_accessible_resources": [

@@ -3,9 +3,9 @@ Changelog
 
 ## 0.3.4
 
-* Added install detection support for project homepage.
+* Tokens can be set in options page prefer `chrome.storage.sync` over `localStorage` now.
 * Fixed incorrect result in repo search results.
-* Trim tokens before saving into localStorage.
+* Fixed a XSS vulnerability for issue body (GitHub API returns the original code user wrote, unfiltered).
 
 ## 0.3.3
 
