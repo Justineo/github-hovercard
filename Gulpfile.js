@@ -71,6 +71,7 @@ gulp.task('demo', ['css'], function (cb) {
       './src/tooltipster.js',
       './src/remarkable.js',
       './src/highlight.pack.js',
+      './src/js-xss.js',
       './src/hovercard.js',
       './demo/src/demo.js'
     ])
