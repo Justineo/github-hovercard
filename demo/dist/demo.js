@@ -12838,7 +12838,28 @@ $(() => {
         ISSUE: 'issue',
         SKIP: 'skip'
     };
+
     const TOKEN_KEY = 'hovercard-token';
+    let token = '';
+    let chrome = window.chrome;
+
+    // Use Chrome storage over localStorage
+    // Read localStorage when Chrome storage is not set for ackward compatibility
+    if (chrome && chrome.storage) {
+        chrome.storage.sync.get({token: ''}, (item) => {
+            token = item.token;
+            if (!token) {
+                token = localStorage.getItem(TOKEN_KEY);
+
+                if (token) {
+                    chrome.storage.sync.set({token: token});
+                }
+            }
+            localStorage.removeItem(TOKEN_KEY);
+        });
+    } else {
+        token = localStorage.getItem(TOKEN_KEY);
+    }
 
     const EXTRACTOR = {
         SLUG: 1, // {{user}}/{{repo}}#{{issue}}
@@ -13232,7 +13253,9 @@ $(() => {
             });
             data = {
                 title: raw.title,
-                body: raw.body ? replaceEmoji(replaceCheckbox(md.render(replacePlugins(raw.body)))) : '',
+                body: raw.body ? replaceEmoji(replaceCheckbox(md.render(replacePlugins(filterXSS(raw.body)))), {
+                    stripIgnoreTagBody: true
+                }) : '',
                 issueUrl: raw.html_url,
                 number: raw.number,
                 isPullRequest: !!raw.pull_request,
@@ -13259,7 +13282,12 @@ $(() => {
     let tokenField = tokenForm.find('.hovercard-token');
     tokenForm.find('button').on('click', (e) => {
         if ($(e.target).is('.hovercard-save') && tokenField.val()) {
-            localStorage.setItem(TOKEN_KEY, tokenField.val().trim());
+            token = tokenField.val().trim();
+            if (chrome && chrome.storage) {
+                chrome.storage.sync.set({token: token});
+            } else {
+                localStorage.setItem(TOKEN_KEY, token);
+            }
         }
         tokenForm.detach();
         return false;
@@ -13501,7 +13529,6 @@ $(() => {
                         datatype: 'json'
                     };
 
-                    let token = localStorage.getItem(TOKEN_KEY);
                     if (token) {
                         requestOptions.headers = {
                             Authorization: `token ${token}`
@@ -13617,7 +13644,6 @@ $(() => {
     ? 'Chrome Webstore' : 'Mozilla Add-ons';
 
   $installBtn.on('click', function () {
-
     if (browser === 'chrome') {
       setInstalling();
       chrome.webstore.install(VENDOR_URL, setInstalled.bind(null, true), reset);
@@ -13625,19 +13651,26 @@ $(() => {
       let result = InstallTrigger.install({
         "GitHub Hovercard": {
           URL: 'https://addons.mozilla.org/firefox/downloads/latest/641356/addon-641356-latest.xpi',
-          HASH: 'sha256:60d831956ddf766b38eb873adc323d8ce1355f0be9a34cd4657edf6249d5b720',
           ICON_URL: 'https://addons.cdn.mozilla.net/user-media/addon_icons/641/641356-32.png?modified=1450363198'
         }
       });
     }
   });
 
-  let timer = setInterval(checkInstalled, 100);
-
   function checkInstalled() {
-    if (document.body.getAttribute('data-github-hovercard')) {
-      setInstalled();
-      clearTimeout(timer);
+    if (browser === 'chrome') {
+      chrome.runtime.sendMessage('aeehfinlgilcfjhakedafkmdnbcoagid', { message: 'version' }, (resp) => {
+        if (resp) {
+          setInstalled();
+        }
+      });
+    } else if (browser === 'mozilla') {
+      let timer = setInterval(() => {
+        if (document.body.getAttribute('data-github-hovercard')) {
+          setInstalled();
+          clearTimeout(timer);
+        }
+      }, 100);
     }
   }
 

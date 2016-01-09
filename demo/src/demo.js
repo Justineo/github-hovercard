@@ -15,7 +15,6 @@ $(() => {
     ? 'Chrome Webstore' : 'Mozilla Add-ons';
 
   $installBtn.on('click', function () {
-
     if (browser === 'chrome') {
       setInstalling();
       chrome.webstore.install(VENDOR_URL, setInstalled.bind(null, true), reset);
@@ -23,19 +22,26 @@ $(() => {
       let result = InstallTrigger.install({
         "GitHub Hovercard": {
           URL: 'https://addons.mozilla.org/firefox/downloads/latest/641356/addon-641356-latest.xpi',
-          HASH: 'sha256:60d831956ddf766b38eb873adc323d8ce1355f0be9a34cd4657edf6249d5b720',
           ICON_URL: 'https://addons.cdn.mozilla.net/user-media/addon_icons/641/641356-32.png?modified=1450363198'
         }
       });
     }
   });
 
-  let timer = setInterval(checkInstalled, 100);
-
   function checkInstalled() {
-    if (document.body.getAttribute('data-github-hovercard')) {
-      setInstalled();
-      clearTimeout(timer);
+    if (browser === 'chrome') {
+      chrome.runtime.sendMessage('aeehfinlgilcfjhakedafkmdnbcoagid', { message: 'version' }, (resp) => {
+        if (resp) {
+          setInstalled();
+        }
+      });
+    } else if (browser === 'mozilla') {
+      let timer = setInterval(() => {
+        if (document.body.getAttribute('data-github-hovercard')) {
+          setInstalled();
+          clearTimeout(timer);
+        }
+      }, 100);
     }
   }
 
