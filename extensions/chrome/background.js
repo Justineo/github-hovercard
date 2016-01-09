@@ -108,7 +108,7 @@ chrome.runtime.onMessage.addListener((message, sender, respond) => {
 init();
 
 chrome.runtime.onMessageExternal.addListener((request, sender, sendResponse) => {
-    console.log('On message external');
+    console.log('Message from "' + sender.url + '"...');
     if (request) {
         if (request.message) {
             if (request.message === 'version') {
@@ -116,5 +116,4 @@ chrome.runtime.onMessageExternal.addListener((request, sender, sendResponse) => 
             }
         }
     }
-    return true;
 });

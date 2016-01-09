@@ -13637,8 +13637,9 @@ $(() => {
   let $installBtn = $(`#${browser} .install`);
   let $hint = $(`#${browser} .hint`);
 
+  const CHROME_EXT_ID = 'mmoahbbnojgkclgceahhakhnccimnplk';
   const VENDOR_URL = browser === 'chrome'
-    ? 'https://chrome.google.com/webstore/detail/mmoahbbnojgkclgceahhakhnccimnplk'
+    ? `https://chrome.google.com/webstore/detail/${CHROME_EXT_ID}`
     : 'https://addons.mozilla.org/en-US/firefox/addon/github-hovercard/';
   const VENDOR_NAME = browser === 'chrome'
     ? 'Chrome Webstore' : 'Mozilla Add-ons';
@@ -13657,9 +13658,12 @@ $(() => {
     }
   });
 
+  checkInstalled();
+
   function checkInstalled() {
     if (browser === 'chrome') {
-      chrome.runtime.sendMessage('aeehfinlgilcfjhakedafkmdnbcoagid', { message: 'version' }, (resp) => {
+      chrome.runtime.sendMessage(CHROME_EXT_ID, { message: 'version' }, (resp) => {
+        console.log(resp);
         if (resp) {
           setInstalled();
         }
