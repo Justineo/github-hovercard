@@ -3,6 +3,9 @@ Changelog
 
 ## 0.4.0
 
+* Fixed repo homepage URLs for no protocal provided.
+* Rearrange the order of issue body handlers to make results correct.
+
 ## 0.3.5
 
 * Fixed the problem that styles and inputs are filtered by XSS protection module.

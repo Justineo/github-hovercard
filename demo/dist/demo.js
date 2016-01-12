@@ -14661,7 +14661,7 @@ $(() => {
 
     function replaceCheckbox(html) {
         const TASK_PATTERN = /^\[([ x])\] (.*)/;
-        let fragment = $('<div>').append(html);
+        let fragment = $('<div>').html(html);
         fragment.find('li').each(function () {
             let content = $(this).html();
             if (TASK_PATTERN.test(content)) {
@@ -14692,6 +14692,26 @@ $(() => {
     function replaceLink(text) {
         return text.replace(/\b(https?:\/\/[^\s]+)/ig, `<a href="$1">$1</a>`);
     }
+
+    function xss(html) {
+        return filterXSS(html, {
+            stripIgnoreTagBody: true
+        });
+    }
+
+    // Code via underscore's _.compose
+    function compose() {
+        var args = arguments;
+        var start = args.length - 1;
+        return function() {
+            var i = start;
+            var result = args[start].apply(this, arguments);
+            while (i--) {
+                result = args[i].call(this, result);
+            }
+            return result;
+        };
+    };
 
     // Code via https://developers.google.com/web/updates/2015/01/ES6-Template-Strings
     // HTML Escape helper utility
@@ -14773,13 +14793,15 @@ $(() => {
                 ownerUrl: raw.owner.html_url,
                 repo: raw.name,
                 repoUrl: raw.html_url,
-                desc: raw.description ? replaceEmoji(replaceLink(encodeHTML`${raw.description}`)) : '',
+                desc: raw.description ? compose(replaceEmoji, replaceLink)(encodeHTML`${raw.description}`) : '',
                 language: raw.language,
                 stars: formatNumber(raw.stargazers_count),
                 forks: formatNumber(raw.forks_count),
                 issues: formatNumber(raw.open_issues_count),
                 hasIssues: raw.has_issues,
-                homepage: raw.homepage,
+                homepage: raw.homepage
+                    ? raw.homepage.match(/^https?:\/\//) ? raw.homepage : `http://${raw.homepage}`
+                    : null,
                 starsUrl: `//${GH_DOMAIN}/${raw.full_name}/stargazers`,
                 forksUrl: `//${GH_DOMAIN}/${raw.full_name}/network`,
                 issuesUrl: `//${GH_DOMAIN}/${raw.full_name}/issues`
@@ -14810,9 +14832,7 @@ $(() => {
             });
             data = {
                 title: raw.title,
-                body: raw.body ? replaceEmoji(replaceCheckbox(md.render(replacePlugins(filterXSS(raw.body)))), {
-                    stripIgnoreTagBody: true
-                }) : '',
+                body: raw.body ? compose(replaceEmoji, md.render.bind(md), replacePlugins, replaceCheckbox, xss)(raw.body) : '',
                 issueUrl: raw.html_url,
                 number: raw.number,
                 isPullRequest: !!raw.pull_request,

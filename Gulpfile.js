@@ -94,4 +94,4 @@ gulp.task('demo', ['css'], function (cb) {
 });
 
 gulp.task('extensions', ['pack-chrome-extension', 'pack-firefox-addon']);
-gulp.task('default', ['extensions']);
+gulp.task('default', ['extensions', 'demo']);
