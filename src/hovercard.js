@@ -63,13 +63,14 @@ $(() => {
     // Use Chrome storage over localStorage
     // Read localStorage when Chrome storage is not set for ackward compatibility
     if (chrome && chrome.storage) {
-        chrome.storage.sync.get({token: ''}, (item) => {
+        let storage = chrome.storage.sync || chrome.storage.local;
+        storage.get({token: ''}, (item) => {
             token = item.token;
             if (!token) {
                 token = localStorage.getItem(TOKEN_KEY);
 
                 if (token) {
-                    chrome.storage.sync.set({token: token});
+                    storage.set({token: token});
                 }
             }
             localStorage.removeItem(TOKEN_KEY);
@@ -492,7 +493,7 @@ $(() => {
             });
             data = {
                 title: raw.title,
-                body: raw.body ? compose(replaceEmoji, md.render.bind(md), replacePlugins, replaceCheckbox, xss)(raw.body) : '',
+                body: raw.body ? compose(replaceEmoji, replaceCheckbox, md.render.bind(md), replacePlugins, xss)(raw.body) : '',
                 issueUrl: raw.html_url,
                 number: raw.number,
                 isPullRequest: !!raw.pull_request,
@@ -521,7 +522,8 @@ $(() => {
         if ($(e.target).is('.hovercard-save') && tokenField.val()) {
             token = tokenField.val().trim();
             if (chrome && chrome.storage) {
-                chrome.storage.sync.set({token: token});
+                let storage = chrome.storage.sync || chrome.storage.local;
+                storage.set({token: token});
             } else {
                 localStorage.setItem(TOKEN_KEY, token);
             }
