@@ -1,6 +1,6 @@
 {
   "name": "github-hovercard",
-  "version": "0.4.0",
+  "version": "0.3.6",
   "description": "Neat user/repo/issue hovercard for GitHub.",
   "repository": {
     "type": "git",
@@ -15,7 +15,7 @@
   "devDependencies": {
     "gulp": "^3.8.9",
     "gulp-concat": "^2.6.0",
-    "gulp-rename": "~1.2.0",
+    "gulp-rename": "^1.2.2",
     "gulp-replace": "^0.5.4",
     "gulp-stylus": "^2.1.0",
     "merge-stream": "^1.0.0"

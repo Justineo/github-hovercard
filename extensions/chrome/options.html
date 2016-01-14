@@ -8,10 +8,6 @@ body {
     padding-bottom: 36px;
 }
 
-p {
-    line-height: inherit;
-}
-
 :-webkit-any(#form, #actions) button {
     margin-left: 10px;
 }
@@ -73,7 +69,6 @@ p {
     flex-grow: 1;
     color: #666;
     line-height: 24px;
-    margin-left: 5px;
 }
 
 #save:not(:focus) {
@@ -83,8 +78,6 @@ p {
 </head>
 <body>
 <section id="form">
-    <h3>GitHub Access Token</h3>
-    <p><input type="text" id="token" size="40"></p>
     <h3>Applicable Domains</h3>
     <ul id="domains">
         <li><input type="text" value="github.com (required)" readonly class="fixed"></li>

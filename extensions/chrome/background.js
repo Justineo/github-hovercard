@@ -21,6 +21,8 @@ const INJECTORS = {
     css: chrome.tabs.insertCSS.bind(chrome.tabs)
 };
 
+let storage = chrome.storage.sync || chrome.storage.local;
+
 function inject(id, files, type, callback) {
     let injector = INJECTORS[type];
     if (!injector) {
@@ -44,7 +46,6 @@ function inject(id, files, type, callback) {
             injector(id, {
                 file: files[index]
             }, () => {
-                console.log(files[index] + ' injected.');
                 index++;
                 remaining--;
                 injectNext();
@@ -69,7 +70,6 @@ function injectCSS(id, content, callback) {
 const GITHUB_DOMAIN = 'github.com';
 
 function injector(details) {
-    console.log('Injecting...');
     let tab = details.tabId;
     injectJS(tab, contentJS);
     injectCSS(tab, contentCSS);
@@ -82,17 +82,14 @@ function bindInjector(domains) {
     }
     let filters = domains.map((domain) => { return { hostEquals: domain }; });
     if (chrome.webNavigation.onCommitted.hasListener(injector)) {
-        console.log('Removing old injector...');
         chrome.webNavigation.onCommitted.removeListener(injector);
     }
     // rebind injector with different domains
-    console.log('Binding new injector...');
     chrome.webNavigation.onCommitted.addListener(injector, { url: filters });
 }
 
 function init() {
-    console.log('Loading options...');
-    chrome.storage.sync.get({
+    storage.get({
         domains: []
     }, (items) => bindInjector(items.domains));
 }
@@ -108,7 +105,6 @@ chrome.runtime.onMessage.addListener((message, sender, respond) => {
 init();
 
 chrome.runtime.onMessageExternal.addListener((request, sender, sendResponse) => {
-    console.log('Message from "' + sender.url + '"...');
     if (request) {
         if (request.message) {
             if (request.message === 'version') {

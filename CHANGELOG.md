@@ -3,8 +3,10 @@ Changelog
 
 ## 0.4.0
 
-* Fixed repo homepage URLs for no protocal provided.
+* Added Opera support.
+* Fixed repo homepage URLs when protocals are not provided.
 * Rearrange the order of issue body handlers to make results correct.
+* Reverted token storage to `localStorage` because the options page lacks proper design for GitHub Enterprise tokens.
 
 ## 0.3.5
 

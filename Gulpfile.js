@@ -1,9 +1,11 @@
 var gulp = require('gulp');
 var fs = require('fs');
+var path = require('path');
 var merge = require('merge-stream');
 var exec = require('child_process').exec;
 var replace = require('gulp-replace');
 var concat = require('gulp-concat');
+var rename = require('gulp-rename');
 var pack = JSON.parse(fs.readFileSync('./package.json', { encoding: 'utf8' }));
 var version = pack.version;
 
@@ -31,23 +33,25 @@ gulp.task('cp', ['css'], function () {
   return merge(srcChrome, srcFirefox, assets, icon);
 });
 
-gulp.task('pack-chrome-extension', ['cp'], function (cb) {
+gulp.task('chrome.zip', ['cp'], function (cb) {
   var manifestPath = './extensions/chrome/manifest.json';
   var manifest = JSON.parse(fs.readFileSync(manifestPath, { encoding: 'utf8' }));
   manifest.version = version;
   fs.writeFileSync(manifestPath, JSON.stringify(manifest, null, '  '));
-  exec('find . -path \'*/.*\' -prune -o -type f -print | zip ../packed/github-hovercard.zip -@', {
-    cwd: 'extensions/chrome'
-  }, function (error, stdout, stderr) {
-    if (error) {
-      return cb(error);
-    } else {
-      cb();
+  exec(
+    'find . -path \'*/.*\' -prune -o -type f -print | zip ../packed/github-hovercard.zip -@',
+    { cwd: 'extensions/chrome' },
+    function (error, stdout, stderr) {
+      if (error) {
+        return cb(error);
+      } else {
+        cb();
+      }
     }
-  });
+  );
 });
 
-gulp.task('pack-firefox-addon', ['cp'], function (cb) {
+gulp.task('firefox.xpi', ['cp'], function (cb) {
   var fxPackPath = './extensions/firefox/package.json';
   var fxPack = JSON.parse(fs.readFileSync(fxPackPath, { encoding: 'utf8' }));
   fxPack.version = version;
@@ -62,6 +66,22 @@ gulp.task('pack-firefox-addon', ['cp'], function (cb) {
       cb();
     }
   });
+});
+
+gulp.task('opera.nex', ['chrome.zip'], function (cb) {
+  exec(''
+    + '"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"'
+    + ' --pack-extension=' + path.join(__dirname, 'extensions/chrome')
+    + ' --pack-extension-key=' + path.join(process.env.HOME, '.ssh/chrome.pem'),
+    function (error, stdout, stderr) {
+      if (error) {
+        return cb(error);
+      } else {
+        fs.renameSync('./extensions/chrome.crx', './extensions/packed/github-hovercard.nex');
+        cb();
+      }
+    }
+  );
 });
 
 gulp.task('demo', ['css'], function (cb) {
@@ -93,5 +113,5 @@ gulp.task('demo', ['css'], function (cb) {
   return merge(jsSrc, cssSrc);
 });
 
-gulp.task('extensions', ['pack-chrome-extension', 'pack-firefox-addon']);
+gulp.task('extensions', ['chrome.zip', 'firefox.xpi', 'opera.nex']);
 gulp.task('default', ['extensions', 'demo']);

@@ -60,19 +60,19 @@ $(() => {
     let token = '';
     let chrome = window.chrome;
 
-    // Use Chrome storage over localStorage
-    // Read localStorage when Chrome storage is not set for ackward compatibility
+    // Revert to localStorage
+    // May switch back to chrome.storage when options are properly designed
+    // In Firefox options are not so flexible so keep it in localStorage
     if (chrome && chrome.storage) {
-        chrome.storage.sync.get({token: ''}, (item) => {
+        let storage = chrome.storage.sync || chrome.storage.local;
+        storage.get({token: ''}, (item) => {
             token = item.token;
-            if (!token) {
+            if (token) {
+                localStorage.setItem(TOKEN_KEY, token);
+                storage.remove('token');
+            } else {
                 token = localStorage.getItem(TOKEN_KEY);
-
-                if (token) {
-                    chrome.storage.sync.set({token: token});
-                }
             }
-            localStorage.removeItem(TOKEN_KEY);
         });
     } else {
         token = localStorage.getItem(TOKEN_KEY);
@@ -492,7 +492,7 @@ $(() => {
             });
             data = {
                 title: raw.title,
-                body: raw.body ? compose(replaceEmoji, md.render.bind(md), replacePlugins, replaceCheckbox, xss)(raw.body) : '',
+                body: raw.body ? compose(replaceEmoji, replaceCheckbox, md.render.bind(md), replacePlugins, xss)(raw.body) : '',
                 issueUrl: raw.html_url,
                 number: raw.number,
                 isPullRequest: !!raw.pull_request,
@@ -519,11 +519,10 @@ $(() => {
     let tokenField = tokenForm.find('.hovercard-token');
     tokenForm.find('button').on('click', (e) => {
         if ($(e.target).is('.hovercard-save') && tokenField.val()) {
-            token = tokenField.val().trim();
-            if (chrome && chrome.storage) {
-                chrome.storage.sync.set({token: token});
-            } else {
-                localStorage.setItem(TOKEN_KEY, token);
+            let newToken = tokenField.val().trim();
+            if (newToken) {
+                localStorage.setItem(TOKEN_KEY, newToken);
+                token = newToken;
             }
         }
         tokenForm.detach();

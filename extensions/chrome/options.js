@@ -1,18 +1,18 @@
 'use strict';
 
-const ITEM_TPL = `{{#domains}}<li><input type="text" class="domain" value="{{.}}" placeholder=""><button type="button" class="remove">✕</button></li>{{/domains}}`;
+const ITEM_TPL = `{{#domains}}<li><input type="text" class="domain" value="{{.}}" placeholder="github.mydomain.com"><button type="button" class="remove">✕</button></li>{{/domains}}`;
 const GH_DOMAIN = 'github.com';
 
-let token = $('#token');
 let list = $('#domains');
 let saveBtn = $('#save');
 let cancelBtn = $('#cancel');
 let addBtn = $('#add');
 let msg = $('#message');
 let current;
+let storage = chrome.storage.sync || chrome.storage.local;
 
-function toOrigins(domain) {
-    return [`http://${domain}/*`, `https://${domain}/*`];
+function toOrigins(name) {
+    return [`http://${name}/*`, `https://${name}/*`];
 }
 
 function concat(a, b) {
@@ -20,22 +20,17 @@ function concat(a, b) {
 }
 
 function restore() {
-    chrome.storage.sync.get({ domains: [], token: '' }, items => {
-        token.val(items.token);
-
+    storage.get({ domains: [] }, items => {
         current = items.domains;
         list.append(Mustache.render(ITEM_TPL, { domains: current }));
     });
 }
 
 function save() {
-    let token = $('#token').val().trim();
-
     let domains = [];
-    let inputs = $('.domain');
-    inputs.each(function () {
+    $('.domain').each(function () {
         let domain = $(this).val().trim();
-        if (domain && domains.indexOf(domain) === -1 && domain !== GH_DOMAIN) {
+        if (domains.indexOf(domain) === -1 && domain !== GH_DOMAIN) {
             domains.push(domain);
         }
     });
@@ -56,8 +51,7 @@ function save() {
                 return;
             }
 
-            chrome.storage.sync.set({
-                token: token,
+            storage.set({
                 domains: domains
             }, () => {
                 current = domains;
