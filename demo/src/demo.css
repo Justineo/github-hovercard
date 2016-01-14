@@ -252,6 +252,10 @@ body > main::after {
   color: #bbb;
 }
 
+main {
+  display: block;
+}
+
 main > article {
   float: left;
   width: 66.666667%;
