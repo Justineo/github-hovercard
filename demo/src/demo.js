@@ -9,11 +9,16 @@ $(() => {
   let $hint = $(`#${browser} .hint`);
 
   const CHROME_EXT_ID = 'mmoahbbnojgkclgceahhakhnccimnplk';
-  const VENDOR_URL = browser === 'chrome'
-    ? `https://chrome.google.com/webstore/detail/${CHROME_EXT_ID}`
-    : 'https://addons.mozilla.org/en-US/firefox/addon/github-hovercard/';
-  const VENDOR_NAME = browser === 'chrome'
-    ? 'Chrome Webstore' : 'Mozilla Add-ons';
+  const VENDOR_URL = {
+    chrome: `https://chrome.google.com/webstore/detail/${CHROME_EXT_ID}`,
+    mozilla: 'https://addons.mozilla.org/en-US/firefox/addon/github-hovercard/',
+    opera: ''
+  }[browser];
+  const VENDOR_NAME = {
+    chrome: 'Chrome Webstore',
+    mozilla: 'Mozilla Add-ons',
+    opera: 'Opera Extensions'
+  }[browser];
 
   $installBtn.on('click', function () {
     if (browser === 'chrome') {
@@ -34,7 +39,6 @@ $(() => {
   function checkInstalled() {
     if (browser === 'chrome') {
       chrome.runtime.sendMessage(CHROME_EXT_ID, { message: 'version' }, (resp) => {
-        console.log(resp);
         if (resp) {
           setInstalled();
         }

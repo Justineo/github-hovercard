@@ -517,20 +517,22 @@ $(() => {
     // prepare token form
     let tokenForm = $(CARD_TPL.form);
     let tokenField = tokenForm.find('.hovercard-token');
-    tokenForm.find('button').on('click', (e) => {
-        if ($(e.target).is('.hovercard-save') && tokenField.val()) {
-            let newToken = tokenField.val().trim();
-            if (newToken) {
-                localStorage.setItem(TOKEN_KEY, newToken);
-                token = newToken;
-            }
+    tokenForm.find('.hovercard-save').on('click', () => {
+        let newToken = tokenField.val().trim();
+        if (newToken) {
+            localStorage.setItem(TOKEN_KEY, newToken);
+            token = newToken;
         }
+        return false;
+    });
+    tokenForm.find('.hovercard-cancel').on('click', () => {
         tokenForm.detach();
         return false;
     });
-    tokenForm.find('.hovercard-cancel').on('click')
     $('body').on('click', '.token-link', () => {
         tokenForm.appendTo($('body'));
+        tokenField.focus();
+        return false;
     });
 
     // prepare cache objects

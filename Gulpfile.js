@@ -2,10 +2,13 @@ var gulp = require('gulp');
 var fs = require('fs');
 var path = require('path');
 var merge = require('merge-stream');
+var del = require('del');
 var exec = require('child_process').exec;
 var replace = require('gulp-replace');
 var concat = require('gulp-concat');
-var rename = require('gulp-rename');
+var uglify = require('gulp-uglify');
+var cssnano = require('gulp-cssnano');
+var babel = require('gulp-babel');
 var pack = JSON.parse(fs.readFileSync('./package.json', { encoding: 'utf8' }));
 var version = pack.version;
 
@@ -84,7 +87,21 @@ gulp.task('opera.nex', ['chrome.zip'], function (cb) {
   );
 });
 
-gulp.task('demo', ['css'], function (cb) {
+gulp.task('demo:prepare', function () {
+  var main = gulp.src('./src/hovercard.js')
+    .pipe(replace('__EMOJI_DATA__', JSON.stringify(require('./assets/emoji.json'))))
+    .pipe(replace('location.host', '\'github.com\''))
+    .pipe(babel({ presets: ['es2015'] }))
+    .pipe(gulp.dest('./tmp'));
+
+  var demo = gulp.src('./demo/src/demo.js')
+    .pipe(babel({ presets: ['es2015'] }))
+    .pipe(gulp.dest('./tmp'));
+
+  return merge(main, demo);
+});
+
+gulp.task('demo', ['css', 'demo:prepare'], function () {
   var jsSrc = gulp.src([
       './src/jquery.js',
       './src/mustache.js',
@@ -92,12 +109,11 @@ gulp.task('demo', ['css'], function (cb) {
       './src/remarkable.js',
       './src/highlight.pack.js',
       './src/js-xss.js',
-      './src/hovercard.js',
-      './demo/src/demo.js'
+      './tmp/hovercard.js',
+      './tmp/demo.js'
     ])
-    .pipe(replace('__EMOJI_DATA__', JSON.stringify(require('./assets/emoji.json'))))
-    .pipe(replace('location.host', '\'github.com\''))
     .pipe(concat('demo.js'))
+    .pipe(uglify())
     .pipe(gulp.dest('./demo/dist'));
 
   var cssSrc = gulp.src([
@@ -108,10 +124,15 @@ gulp.task('demo', ['css'], function (cb) {
     ])
     .pipe(replace(/spinner.svg/, '../../assets/spinner.svg'))
     .pipe(concat('demo.css'))
+    .pipe(cssnano({ zindex: false }))
     .pipe(gulp.dest('./demo/dist'));
 
   return merge(jsSrc, cssSrc);
 });
 
+gulp.task('demo:clean', ['demo'], function (cb) {
+  return del(['./tmp']);
+});
+
 gulp.task('extensions', ['chrome.zip', 'firefox.xpi', 'opera.nex']);
-gulp.task('default', ['extensions', 'demo']);
+gulp.task('default', ['extensions', 'demo:clean']);

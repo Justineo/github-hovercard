@@ -43,9 +43,11 @@
             browser = 'chrome';
           } else if (window.InstallTrigger && typeof InstallTrigger.install === 'function') {
             browser = 'mozilla';
+          } else if (window.opr && opr.addons && typeof opr.addons.installExtension === 'function') {
+            browser = 'opera';
           }
 
-          if (browser === 'chrome' || browser === 'mozilla') {
+          if (browser !== 'other') {
             document.write('<style>#' + browser + ' { display: block; }</style>');
           } else {
             document.write('<style>.fallback { display: block !important; } .news, .contributions, .repos { opacity: 0.5; } .tryout p { text-decoration: strike-through; } .support { display: none; }</style>');
@@ -53,16 +55,18 @@
         </script>
         <div id="chrome" class="install-panel">
           <p><button class="btn btn-primary install">Add to Chrome</button> <span class="hint">or download from <a href="https://chrome.google.com/webstore/detail/github-hovercard/mmoahbbnojgkclgceahhakhnccimnplk">Chrome Webstore</a>.</span></p>
-          <p class="alt text-muted">Supports Chrome and Firefox. <a href="https://addons.mozilla.org/en-US/firefox/addon/github-hovercard/">Need Firefox version? </a></p>
+          <p class="alt text-muted">Also supports <a href="https://addons.mozilla.org/en-US/firefox/addon/github-hovercard/">Firefox</a><!-- and Opera-->.</p>
         </div>
         <div id="mozilla" class="install-panel">
           <p><button class="btn btn-primary install">Add to Firefox</button> <span class="hint">or download from <a href="https://addons.mozilla.org/en-US/firefox/addon/github-hovercard/">Mozilla Add-ons</a>.</span></p>
-          <p class="alt text-muted">Supports Chrome and Firefox. <a href="https://chrome.google.com/webstore/detail/github-hovercard/mmoahbbnojgkclgceahhakhnccimnplk">Need Chrome version? </a></p>
+          <p class="alt text-muted">Also supports <a href="https://chrome.google.com/webstore/detail/github-hovercard/mmoahbbnojgkclgceahhakhnccimnplk">Chrome</a><!--  and Opera -->.</p>
+        </div>
+        <div id="opera" class="install-panel">
+          <p class="alt text-muted">Support for Opera is underway.</p>
         </div>
         <div class="fallback">
           <p>Your browser is not supported. Go to our <a href="//github.com/Justineo/github-hovercard">GitHub repo</a> for further information.</p>
         </div>
-        <div>
       </section>
       <section class="tryout">
         <h1>Try yourself</h1>
@@ -354,7 +358,7 @@
   <footer role="contentinfo">
     <img class="logo" src="icon.png" width="28" height="28">
     <span>Made by <a href="//github.com/Justineo">@Justineo</a>.</span>
-    <span style="float: right">Built upon <a href="//github.com/jquery/jquery">jQuery</a>, <a href="//github.com/iamceege/tooltipster/">Tooltipster</a>, <a href="//github.com/jonschlinkert/remarkable">Remarkable</a> and <a href="//github.com/isagalaev/highlight.js">highlight.js</a>.
+    <span style="float: right">Built upon <a href="//github.com/jquery/jquery">jQuery</a>, <a href="//github.com/iamceege/tooltipster/">Tooltipster</a>, <a href="//github.com/jonschlinkert/remarkable">Remarkable</a> and <a href="//github.com/isagalaev/highlight.js">highlight.js</a>.</span>
   </footer>
 </main>
 <script>
@@ -411,10 +415,10 @@
   }
 
   var content = '';
-  if (browser === 'chrome') {
-    content = '<script src="demo/dist/demo.js"><\/script>'
-  } else if (browser === 'mozilla') {
+  if (browser === 'mozilla') {
     content = '<script src="demo/dist/demo.js" type="application/javascript;version=1.7"><\/script>';
+  } else {
+    content = '<script src="demo/dist/demo.js"><\/script>'
   }
 
   document.write(content);
