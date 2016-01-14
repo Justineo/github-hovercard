@@ -4,7 +4,7 @@
 	/* this ensures that a constrained height set by functionPosition,
 	if greater that the natural height of the tooltip, will be enforced
 	in browsers that support display:flex */
-	display: flex;
+	display: block;
 	pointer-events: none;
 	/* this may be overriden in JS for fixed position origins */
 	position: absolute;
@@ -13,7 +13,7 @@
 .tooltipster-box {
 	/* see .tooltipster-base. flex-shrink 1 is only necessary for IE10-
 	and flex-basis 0 for IE11- (at least) */
-	flex: 1 1 0;
+	/*flex: 1 1 0;*/
 }
 
 .tooltipster-content {

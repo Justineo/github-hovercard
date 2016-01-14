@@ -8,9 +8,13 @@ $(() => {
   let $installBtn = $(`#${browser} .install`);
   let $hint = $(`#${browser} .hint`);
 
-  const CHROME_EXT_ID = 'mmoahbbnojgkclgceahhakhnccimnplk';
+  const EXT_ID = {
+    chrome: 'mmoahbbnojgkclgceahhakhnccimnplk',
+    mozilla: '641356',
+    opera: ''
+  }[browser];
   const VENDOR_URL = {
-    chrome: `https://chrome.google.com/webstore/detail/${CHROME_EXT_ID}`,
+    chrome: `https://chrome.google.com/webstore/detail/${EXT_ID}`,
     mozilla: 'https://addons.mozilla.org/en-US/firefox/addon/github-hovercard/',
     opera: ''
   }[browser];
@@ -27,8 +31,8 @@ $(() => {
     } else if (browser === 'mozilla') {
       let result = InstallTrigger.install({
         "GitHub Hovercard": {
-          URL: 'https://addons.mozilla.org/firefox/downloads/latest/641356/addon-641356-latest.xpi',
-          ICON_URL: 'https://addons.cdn.mozilla.net/user-media/addon_icons/641/641356-32.png?modified=1450363198'
+          URL: 'https://addons.mozilla.org/firefox/downloads/latest/' + EXT_ID + '/addon-' + EXT_ID + '-latest.xpi',
+          ICON_URL: 'https://addons.cdn.mozilla.net/user-media/addon_icons/641/' + EXT_ID + '.png?modified=1450363198'
         }
       });
     }
@@ -37,19 +41,23 @@ $(() => {
   checkInstalled();
 
   function checkInstalled() {
-    if (browser === 'chrome') {
-      chrome.runtime.sendMessage(CHROME_EXT_ID, { message: 'version' }, (resp) => {
-        if (resp) {
-          setInstalled();
-        }
-      });
-    } else if (browser === 'mozilla') {
-      let timer = setInterval(() => {
-        if (document.body.getAttribute('data-github-hovercard')) {
-          setInstalled();
-          clearTimeout(timer);
-        }
-      }, 100);
+    switch (browser) {
+      case 'chrome':
+      case 'opera': {
+        chrome.runtime.sendMessage(EXT_ID, { message: 'version' }, (resp) => {
+          if (resp) {
+            setInstalled();
+          }
+        });
+      }
+      case 'mozilla': {
+        let timer = setInterval(() => {
+          if (document.body.getAttribute('data-github-hovercard')) {
+            setInstalled();
+            clearTimeout(timer);
+          }
+        }, 100);
+      }
     }
   }
 

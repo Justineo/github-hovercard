@@ -1,42 +1,109 @@
 var gulp = require('gulp');
 var fs = require('fs');
 var path = require('path');
+var run = require('run-sequence');
 var merge = require('merge-stream');
 var del = require('del');
 var exec = require('child_process').exec;
 var replace = require('gulp-replace');
+var rename = require('gulp-rename');
 var concat = require('gulp-concat');
 var uglify = require('gulp-uglify');
+var stylus = require('gulp-stylus');
 var cssnano = require('gulp-cssnano');
 var babel = require('gulp-babel');
 var pack = JSON.parse(fs.readFileSync('./package.json', { encoding: 'utf8' }));
 var version = pack.version;
 
-gulp.task('css', function () {
-  var stylus = require('gulp-stylus');
+gulp.task('css:prepare', function () {
+  return gulp.src('./src/tooltipster.css')
+    .pipe(replace(
+      'spinner.svg',
+      '"data:image/svg+xml;utf8,'
+        + encodeURIComponent(fs.readFileSync('./assets/spinner.svg', { encoding: 'utf8' }))
+        + '"'
+    ))
+    .pipe(gulp.dest('./tmp'));
+});
+
+gulp.task('css:compile', function () {
   return gulp.src('./src/*.styl')
     .pipe(stylus())
     .pipe(gulp.dest('./src'));
 });
 
-gulp.task('cp', ['css'], function () {
-  var srcChrome = gulp.src('./src/*')
-    .pipe(replace('__EMOJI_DATA__', 'chrome.extension.getURL(\'emoji.json\')'))
-    .pipe(replace(/spinner.svg/, 'chrome-extension://__MSG_@@extension_id__/spinner.svg'))
+gulp.task('css', ['css:prepare', 'css:compile']);
+
+gulp.task('cp', ['css', 'hovercard:prepare'], function () {
+  var targets = [
+    './src/*', '!./src/hovercard.js', './tmp/hovercard.js',
+    '!./src/*.styl', '!./src/tooltipster.css', './tmp/tooltipster.css'
+  ];
+  var srcChrome = gulp.src(targets)
     .pipe(gulp.dest('./extensions/chrome'));
-  var srcFirefox = gulp.src('./src/*')
-    .pipe(replace('__EMOJI_DATA__', 'self.options.emojiURLs'))
+  var srcFirefox = gulp.src(targets)
     .pipe(gulp.dest('./extensions/firefox/data'));
-  var assets = gulp.src('./assets/*')
-    .pipe(gulp.dest('./extensions/firefox/data'))
-    .pipe(gulp.dest('./extensions/chrome'));
   var icon = gulp.src('./icon.png')
     .pipe(gulp.dest('./extensions/firefox'))
     .pipe(gulp.dest('./extensions/chrome'));
-  return merge(srcChrome, srcFirefox, assets, icon);
+  return merge(srcChrome, srcFirefox, icon);
 });
 
-gulp.task('chrome.zip', ['cp'], function (cb) {
+gulp.task('hovercard:prepare', function () {
+  return gulp.src('./src/hovercard.js')
+    .pipe(replace('\'__EMOJI_DATA__\'', JSON.stringify(require('./assets/emoji.json'))))
+    .pipe(gulp.dest('./tmp'));
+});
+
+gulp.task('userscript:prepare', ['hovercard:prepare'], function () {
+  return gulp.src('./tmp/hovercard.js')
+    .pipe(babel({ presets: ['es2015'] }))
+    .pipe(rename('hovercard.userscript.js'))
+    .pipe(gulp.dest('./tmp'));
+});
+
+gulp.task('userscript:styles', function () {
+  return gulp.src([
+      './tmp/tooltipster.css',
+      './src/highlight.css',
+      './src/hovercard.css'
+    ])
+    .pipe(concat('userscript.css'))
+    .pipe(cssnano({ zindex: false }))
+    .pipe(gulp.dest('./tmp'));
+});
+
+gulp.task('userscript:inject-styles', ['userscript:styles'], function () {
+  return gulp.src('./userscript/src/inject-styles.js')
+    .pipe(replace('__USER_SCRIPT_STYLES__', fs.readFileSync('./tmp/userscript.css', { encoding: 'utf8' }).replace(/'/g, '\\\'')))
+    .pipe(gulp.dest('./tmp'));
+});
+
+gulp.task('userscript', ['userscript:inject-styles', 'userscript:prepare'], function () {
+  return gulp.src([
+      './tmp/inject-styles.js',
+      './src/jquery.js',
+      './src/mustache.js',
+      './src/tooltipster.js',
+      './src/remarkable.js',
+      './src/highlight.pack.js',
+      './src/js-xss.js',
+      './tmp/hovercard.userscript.js'
+    ])
+    .pipe(concat('userscript.js'))
+    .pipe(uglify())
+    .pipe(gulp.dest('./userscript/dist'));
+});
+
+gulp.task('extensions:prepare', function () {
+  return gulp.src([
+      './src/hovercard.js'
+    ])
+    .pipe(replace('\'__EMOJI_DATA__\'', JSON.stringify(require('./assets/emoji.json'))))
+    .pipe(gulp.dest('./tmp'));
+});
+
+gulp.task('chrome:zip', ['cp'], function (cb) {
   var manifestPath = './extensions/chrome/manifest.json';
   var manifest = JSON.parse(fs.readFileSync(manifestPath, { encoding: 'utf8' }));
   manifest.version = version;
@@ -54,7 +121,7 @@ gulp.task('chrome.zip', ['cp'], function (cb) {
   );
 });
 
-gulp.task('firefox.xpi', ['cp'], function (cb) {
+gulp.task('firefox:xpi', ['cp'], function (cb) {
   var fxPackPath = './extensions/firefox/package.json';
   var fxPack = JSON.parse(fs.readFileSync(fxPackPath, { encoding: 'utf8' }));
   fxPack.version = version;
@@ -71,7 +138,7 @@ gulp.task('firefox.xpi', ['cp'], function (cb) {
   });
 });
 
-gulp.task('opera.nex', ['chrome.zip'], function (cb) {
+gulp.task('opera:nex', ['chrome:zip'], function (cb) {
   exec(''
     + '"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"'
     + ' --pack-extension=' + path.join(__dirname, 'extensions/chrome')
@@ -87,18 +154,18 @@ gulp.task('opera.nex', ['chrome.zip'], function (cb) {
   );
 });
 
-gulp.task('demo:prepare', function () {
-  var main = gulp.src('./src/hovercard.js')
-    .pipe(replace('__EMOJI_DATA__', JSON.stringify(require('./assets/emoji.json'))))
+gulp.task('demo:prepare', ['hovercard:prepare'], function () {
+  var hovercard = gulp.src('./tmp/hovercard.js')
     .pipe(replace('location.host', '\'github.com\''))
     .pipe(babel({ presets: ['es2015'] }))
+    .pipe(rename('hovercard.demo.js'))
     .pipe(gulp.dest('./tmp'));
 
   var demo = gulp.src('./demo/src/demo.js')
     .pipe(babel({ presets: ['es2015'] }))
     .pipe(gulp.dest('./tmp'));
 
-  return merge(main, demo);
+  return merge(hovercard, demo);
 });
 
 gulp.task('demo', ['css', 'demo:prepare'], function () {
@@ -109,7 +176,7 @@ gulp.task('demo', ['css', 'demo:prepare'], function () {
       './src/remarkable.js',
       './src/highlight.pack.js',
       './src/js-xss.js',
-      './tmp/hovercard.js',
+      './tmp/hovercard.demo.js',
       './tmp/demo.js'
     ])
     .pipe(concat('demo.js'))
@@ -117,12 +184,11 @@ gulp.task('demo', ['css', 'demo:prepare'], function () {
     .pipe(gulp.dest('./demo/dist'));
 
   var cssSrc = gulp.src([
-      './src/tooltipster.css',
+      './tmp/tooltipster.css',
       './src/highlight.css',
       './src/hovercard.css',
       './demo/src/demo.css'
     ])
-    .pipe(replace(/spinner.svg/, '../../assets/spinner.svg'))
     .pipe(concat('demo.css'))
     .pipe(cssnano({ zindex: false }))
     .pipe(gulp.dest('./demo/dist'));
@@ -130,9 +196,12 @@ gulp.task('demo', ['css', 'demo:prepare'], function () {
   return merge(jsSrc, cssSrc);
 });
 
-gulp.task('demo:clean', ['demo'], function (cb) {
+gulp.task('cleanup', function (cb) {
   return del(['./tmp']);
 });
 
-gulp.task('extensions', ['chrome.zip', 'firefox.xpi', 'opera.nex']);
-gulp.task('default', ['extensions', 'demo:clean']);
+gulp.task('extensions', ['chrome:zip', 'firefox:xpi', 'opera:nex']);
+gulp.task('build', ['extensions', 'demo', 'userscript']);
+gulp.task('default', function (cb) {
+  run('build', 'cleanup', cb);
+});

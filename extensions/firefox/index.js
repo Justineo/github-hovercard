@@ -23,10 +23,7 @@ pageMod.PageMod({
     data.url('tooltipster.css'),
     data.url('highlight.css'),
     data.url('hovercard.css')
-  ],
-  contentScriptOptions: {
-    emojiURLs: JSON.parse(data.load('emoji.json'))
-  }
+  ]
 });
 
 let installerDomains = [

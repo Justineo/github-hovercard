@@ -310,7 +310,7 @@ $(() => {
 
     function replaceEmoji(text) {
         return text.replace(/:([a-z0-9+\-_]+):/ig, (match, key) => {
-            let url = emojiURLs[key];
+            let url = emojiMap[key];
             if (!url) {
                 return match;
             }
@@ -355,7 +355,8 @@ $(() => {
 
     function xss(html) {
         return filterXSS(html, {
-            stripIgnoreTagBody: true
+            stripIgnoreTagBody: true,
+            escapeHtml: html => html
         });
     }
 
@@ -523,6 +524,7 @@ $(() => {
             localStorage.setItem(TOKEN_KEY, newToken);
             token = newToken;
         }
+        tokenForm.detach();
         return false;
     });
     tokenForm.find('.hovercard-cancel').on('click', () => {
@@ -532,7 +534,6 @@ $(() => {
     $('body').on('click', '.token-link', () => {
         tokenForm.appendTo($('body'));
         tokenField.focus();
-        return false;
     });
 
     // prepare cache objects
@@ -852,15 +853,6 @@ $(() => {
         }, 0);
     }
 
-    // EMOJI_DATA will be replaced after build
-    // JSON resource URL in Chrome, JSON data in Firefox
-    let emojiURLs = __EMOJI_DATA__;
-    if (typeof emojiURLs === 'string') {
-        $.getJSON(emojiURLs).done((emojis) => {
-            emojiURLs = emojis;
-            extract();
-        });
-    } else {
-        extract();
-    }
+    let emojiMap = '__EMOJI_DATA__';
+    extract();
 });

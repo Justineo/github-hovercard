@@ -22,7 +22,9 @@
     "gulp-replace": "^0.5.4",
     "gulp-stylus": "^2.1.0",
     "gulp-uglify": "^1.5.1",
-    "merge-stream": "^1.0.0"
+    "merge-stream": "^1.0.0",
+    "rename": "^1.0.3",
+    "run-sequence": "^1.1.5"
   },
   "author": "Justineo",
   "license": "MIT",

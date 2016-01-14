@@ -22,10 +22,6 @@
   "optional_permissions": [
     "<all_urls>"
   ],
-  "web_accessible_resources": [
-    "spinner.svg",
-    "emoji.json"
-  ],
   "externally_connectable": {
     "matches": [
       "*://justineo.github.io/*"

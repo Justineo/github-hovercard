@@ -55,14 +55,15 @@
         </script>
         <div id="chrome" class="install-panel">
           <p><button class="btn btn-primary install">Add to Chrome</button> <span class="hint">or download from <a href="https://chrome.google.com/webstore/detail/github-hovercard/mmoahbbnojgkclgceahhakhnccimnplk">Chrome Webstore</a>.</span></p>
-          <p class="alt text-muted">Also supports <a href="https://addons.mozilla.org/en-US/firefox/addon/github-hovercard/">Firefox</a><!-- and Opera-->.</p>
+          <p class="alt text-muted">For other browsers: <a href="https://addons.mozilla.org/en-US/firefox/addon/github-hovercard/">Firefox</a><!-- and Opera--></p>
         </div>
         <div id="mozilla" class="install-panel">
           <p><button class="btn btn-primary install">Add to Firefox</button> <span class="hint">or download from <a href="https://addons.mozilla.org/en-US/firefox/addon/github-hovercard/">Mozilla Add-ons</a>.</span></p>
-          <p class="alt text-muted">Also supports <a href="https://chrome.google.com/webstore/detail/github-hovercard/mmoahbbnojgkclgceahhakhnccimnplk">Chrome</a><!--  and Opera -->.</p>
+          <p class="alt text-muted">For other browsers: <a href="https://chrome.google.com/webstore/detail/github-hovercard/mmoahbbnojgkclgceahhakhnccimnplk">Chrome</a><!--  and Opera -->.</p>
         </div>
         <div id="opera" class="install-panel">
-          <p class="alt text-muted">Support for Opera is underway.</p>
+          <p>Opera support is underway.</p>
+          <p class="alt text-muted">For other browsers: <a href="https://chrome.google.com/webstore/detail/github-hovercard/mmoahbbnojgkclgceahhakhnccimnplk">Chrome</a> / <a href="https://addons.mozilla.org/en-US/firefox/addon/github-hovercard/">Firefox</a></p>
         </div>
         <div class="fallback">
           <p>Your browser is not supported. Go to our <a href="//github.com/Justineo/github-hovercard">GitHub repo</a> for further information.</p>
@@ -358,7 +359,7 @@
   <footer role="contentinfo">
     <img class="logo" src="icon.png" width="28" height="28">
     <span>Made by <a href="//github.com/Justineo">@Justineo</a>.</span>
-    <span style="float: right">Built upon <a href="//github.com/jquery/jquery">jQuery</a>, <a href="//github.com/iamceege/tooltipster/">Tooltipster</a>, <a href="//github.com/jonschlinkert/remarkable">Remarkable</a> and <a href="//github.com/isagalaev/highlight.js">highlight.js</a>.</span>
+    <span style="float: right">Built upon <a href="//github.com/jquery/jquery">jQuery</a>, <a href="//github.com/iamceege/tooltipster/">Tooltipster</a>, <a href="//github.com/jonschlinkert/remarkable">Remarkable</a>, <a href="//github.com/isagalaev/highlight.js">highlight.js</a> and <a href="//github.com/leizongmin/js-xss/">js-xss</a>.</span>
   </footer>
 </main>
 <script>
@@ -387,11 +388,13 @@
   var SOCIAL_CONFIG = {
     star: {
       url: '//github.com/Justineo/github-hovercard/stargazers',
-      text: 'Star'
+      text: 'Star',
+      icon: 'star'
     },
     fork: {
       url: '//github.com/Justineo/github-hovercard/network',
-      text: 'Fork'
+      text: 'Fork',
+      icon: 'repo-forked'
     }
   };
 
@@ -401,7 +404,7 @@
     var html = [
       '<div class="social">',
         '<a href="' + REPO_URL + '" class="btn btn-sm btn-with-count" aria-label="' + config.text + ' this repository" title="' + config.text + 'Justineo/github-hovercard">',
-          '<span class="octicon octicon-star"></span> ' + config.text,
+          '<span class="octicon octicon-' + config.icon + '"></span> ' + config.text,
         '</a>',
         '<a class="social-count" href="' + config.url + '">' + count + '</a>',
       '</div>'
