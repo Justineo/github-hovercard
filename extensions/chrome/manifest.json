@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "GitHub Hovercard",
-  "description": "Quick user/repo hovercard for GitHub.",
+  "description": "Neat user/repo/issue hovercard for GitHub.",
   "version": "0.3.6",
   "icons": {
     "128": "icon.png"
@@ -16,7 +16,6 @@
     "webNavigation",
     "tabs",
     "storage",
-    "activeTab",
     "https://github.com/*"
   ],
   "optional_permissions": [
