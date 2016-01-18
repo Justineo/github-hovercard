@@ -500,7 +500,7 @@ $(() => {
                 isClosed: raw.state === 'closed',
                 userUrl: raw.user.html_url,
                 user: raw.user.login,
-                state: !!raw.pull_request && raw.state === 'closed' ? 'merged' : raw.state,
+                state: raw.state,
                 avatar: raw.user.avatar_url,
                 createTime: formatTime(raw.created_at)
             };
@@ -776,6 +776,29 @@ $(() => {
                     $.ajax(requestOptions)
                         .done((raw) => {
                             cache[type][value] = raw;
+
+                            // further requests if necessary
+                            switch(type) {
+                                case EXTRACT_TYPE.ISSUE: {
+                                    if (!raw.pull_request) {
+                                        break;
+                                    }
+                                    apiPath = apiPath.replace(/\/issues\/(\d+)$/, '/pulls/$1');
+                                    requestOptions = {
+                                        url: API_PREFIX + apiPath,
+                                        datatype: 'json'
+                                    };
+                                    $.ajax(requestOptions)
+                                        .done((pull) => {
+                                            if (raw.state === 'closed' && pull.merged_at) {
+                                                raw.state = cache[type][value].state = 'merged';
+                                            }
+                                            elem.tooltipster('content', getCardHTML(type, raw));
+                                        });
+                                    return;
+                                }
+                            }
+
                             elem.tooltipster('content', getCardHTML(type, raw));
                         })
                         .fail((xhr) => {

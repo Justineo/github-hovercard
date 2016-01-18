@@ -1,12 +1,15 @@
 Changelog
 ---
 
-## 0.4.0
+## 0.3.6
 
 * Added Opera support.
+* Added user script support.
 * Fixed repo homepage URLs when protocals are not provided.
 * Rearrange the order of issue body handlers to make results correct.
 * Reverted token storage to `localStorage` because the options page lacks proper design for GitHub Enterprise tokens.
+* Fixed the problem that closed pull requests were displayed as merged.
+* Fixed a display problem for Tooltipster on Microsoft Edge (though it doesn't support extensions or user scripts).
 
 ## 0.3.5
 
