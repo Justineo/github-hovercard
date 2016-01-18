@@ -4,7 +4,6 @@
 // @version 0.3.6
 // @description Neat user/repo/issue hovercard for GitHub.
 // @match https://github.com/*
-// @run-at document-start
 // @grant none
 // @updateURL https://justineo.github.io/github-hovercard/userscript/dist/userscript.js
 // @icon https://justineo.github.io/github-hovercard/icon.png

@@ -62,7 +62,7 @@ gulp.task('userscript:prepare', ['hovercard:prepare'], function () {
     .pipe(gulp.dest('./tmp'));
 });
 
-gulp.task('userscript:styles', function () {
+gulp.task('userscript:styles', ['css'], function () {
   return gulp.src([
       './tmp/tooltipster.css',
       './src/highlight.css',
