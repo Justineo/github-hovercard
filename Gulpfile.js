@@ -80,7 +80,9 @@ gulp.task('userscript:inject-styles', ['userscript:styles'], function () {
 });
 
 gulp.task('userscript', ['userscript:inject-styles', 'userscript:prepare'], function () {
+  var inMetaBlock = false;
   return gulp.src([
+      './userscript/src/metadata.js',
       './tmp/inject-styles.js',
       './src/jquery.js',
       './src/mustache.js',
@@ -90,8 +92,20 @@ gulp.task('userscript', ['userscript:inject-styles', 'userscript:prepare'], func
       './src/js-xss.js',
       './tmp/hovercard.userscript.js'
     ])
-    .pipe(concat('userscript.js'))
-    .pipe(uglify())
+    .pipe(concat('github-hovercard.user.js'))
+    .pipe(uglify({
+      preserveComments: function (node, comment) {
+        if (comment.value.trim() === '==UserScript==') {
+          inMetaBlock = true;
+          return true;
+        }
+        if (comment.value.trim() === '==/UserScript==') {
+          inMetaBlock = false;
+          return true;
+        }
+        return inMetaBlock;
+      }
+    }))
     .pipe(gulp.dest('./userscript/dist'));
 });
 
