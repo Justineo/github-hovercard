@@ -15,6 +15,25 @@ var babel = require('gulp-babel');
 var pack = JSON.parse(fs.readFileSync('./package.json', { encoding: 'utf8' }));
 var version = pack.version;
 
+function getCommentHandler() {
+  var inMetaBlock = false;
+  return function (node, comment) {
+    var value = comment.value.trim();
+    if (comment.type === 'comment2' && value.charAt(0) === '!') {
+      return true;
+    }
+    if (value === '==UserScript==') {
+      inMetaBlock = true;
+      return true;
+    }
+    if (value === '==/UserScript==') {
+      inMetaBlock = false;
+      return true;
+    }
+    return inMetaBlock;
+  }
+}
+
 gulp.task('css:prepare', function () {
   return gulp.src('./src/tooltipster.css')
     .pipe(replace(
@@ -94,17 +113,7 @@ gulp.task('userscript', ['userscript:inject-styles', 'userscript:prepare'], func
     ])
     .pipe(concat('github-hovercard.user.js'))
     .pipe(uglify({
-      preserveComments: function (node, comment) {
-        if (comment.value.trim() === '==UserScript==') {
-          inMetaBlock = true;
-          return true;
-        }
-        if (comment.value.trim() === '==/UserScript==') {
-          inMetaBlock = false;
-          return true;
-        }
-        return inMetaBlock;
-      }
+      preserveComments: getCommentHandler()
     }))
     .pipe(gulp.dest('./userscript/dist'));
 });
@@ -194,7 +203,9 @@ gulp.task('demo', ['css', 'demo:prepare'], function () {
       './tmp/demo.js'
     ])
     .pipe(concat('demo.js'))
-    .pipe(uglify())
+    .pipe(uglify({
+      preserveComments: getCommentHandler()
+    }))
     .pipe(gulp.dest('./demo/dist'));
 
   var cssSrc = gulp.src([
