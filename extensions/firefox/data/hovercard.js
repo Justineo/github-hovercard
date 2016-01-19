@@ -136,7 +136,7 @@ $(() => {
         '.table-list-cell-avatar img': EXTRACTOR.ALT_USER,
         '.author': EXTRACTOR.TEXT_USER,
         '.codesearch-results .repo-list-name a': EXTRACTOR.SLUG,
-        '.code-list-item a:first-child': EXTRACTOR.SLUG,
+        '.code-list-item > a ~ .title a:first-child': EXTRACTOR.SLUG,
         '.issue-list-meta li:first-child a': EXTRACTOR.SLUG,
         '.issue-list-meta li:nth-child(2) a': EXTRACTOR.TEXT_USER,
         '.user-list-info a:first-child': EXTRACTOR.TEXT_USER,

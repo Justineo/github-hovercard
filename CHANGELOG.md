@@ -10,6 +10,7 @@ Changelog
 * Reverted token storage to `localStorage` because the options page lacks proper design for GitHub Enterprise tokens.
 * Fixed the problem that closed pull requests were displayed as merged.
 * Fixed a display problem for Tooltipster on Microsoft Edge (though it doesn't support extensions or user scripts).
+* Fixed the problem that directories were recognized as repo when searching a repo.
 
 ## 0.3.5
 
