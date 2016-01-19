@@ -8,11 +8,13 @@ Neat user/repo/issue hovercard for GitHub.
 
 [Firefox add-on](https://addons.mozilla.org/en-US/firefox/addon/github-hovercard/)
 
+[Userscript](https://justineo.github.io/github-hovercard/userscript/dist/github-hovercard.user.js)
+
 ## FAQ
 
-* Why does the Chrome Extension version require permission for all URLs?
+* Why access token doesn't work?
 
-    To support GitHub Enterprise, the extension have to request permission to a domain according to the domain set in user options. But [Chrome has a bug](https://code.google.com/p/chromium/issues/detail?id=125706) that if `<all_urls>` is set in `optional_permissions` in the extension manifest, the dynamically requested domain permissions will be "forgotten" after Chrome restarts. So the only way to enable this kind of "dynamic injection" of the extension is to request permissions for all domains and handle content script injection by the extension itself.
+    Now GitHub Hovercard is saving user's private access token into `localStorage`. `localStorage` has a limit of 5MB and the problem might be other extensions have consumed too much storage that GitHub Hovercard failed to save access tokens.
 
 ## Screenshots
 
