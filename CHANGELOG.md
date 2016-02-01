@@ -1,6 +1,11 @@
 Changelog
 ---
 
+## 0.3.7
+
+* Fixed the display of GitHub's original CSS tooltip for Chrome.
+* Removed jQuery from user script to prevent conflict.
+
 ## 0.3.6
 
 * Added Opera support.

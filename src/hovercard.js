@@ -866,7 +866,9 @@ $(() => {
         });
 
         if ('webkitTransform' in document.body.style) {
-            tipped.css('opacity', '.9999'); // why? see https://github.com/iamceege/tooltipster/issues/491
+            // why? see https://github.com/iamceege/tooltipster/issues/491
+            // use box-shadow instead to prevent weirder problem...
+            tipped.css('box-shadow', '0 0 transparent');
         }
 
         // Listen for future mutations but not ones happens

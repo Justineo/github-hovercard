@@ -103,7 +103,7 @@ gulp.task('userscript', ['userscript:inject-styles', 'userscript:prepare'], func
   return gulp.src([
       './userscript/src/metadata.js',
       './tmp/inject-styles.js',
-      './src/jquery.js',
+      // './src/jquery.js',
       './src/mustache.js',
       './src/tooltipster.js',
       './src/remarkable.js',
