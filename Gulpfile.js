@@ -75,10 +75,14 @@ gulp.task('hovercard:prepare', function () {
 });
 
 gulp.task('userscript:prepare', ['hovercard:prepare'], function () {
-  return gulp.src('./tmp/hovercard.js')
+  var hovercard = gulp.src('./tmp/hovercard.js')
     .pipe(babel({ presets: ['es2015'] }))
     .pipe(rename('hovercard.userscript.js'))
     .pipe(gulp.dest('./tmp'));
+  var meta = gulp.src('./userscript/src/metadata.js')
+    .pipe(replace('{{version}}', version))
+    .pipe(gulp.dest('./tmp'));
+  return merge(hovercard, meta);
 });
 
 gulp.task('userscript:styles', ['css'], function () {
@@ -101,9 +105,8 @@ gulp.task('userscript:inject-styles', ['userscript:styles'], function () {
 gulp.task('userscript', ['userscript:inject-styles', 'userscript:prepare'], function () {
   var inMetaBlock = false;
   return gulp.src([
-      './userscript/src/metadata.js',
+      './tmp/metadata.js',
       './tmp/inject-styles.js',
-      // './src/jquery.js',
       './src/mustache.js',
       './src/tooltipster.js',
       './src/remarkable.js',
