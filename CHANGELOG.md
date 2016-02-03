@@ -3,6 +3,7 @@ Changelog
 
 ## 0.3.7
 
+* Use SVG version of Octicons to cope with GitHub's recent update which removed icon font version of Octicons.
 * Fixed the display of GitHub's original CSS tooltip for Chrome.
 * Removed jQuery from user script to prevent conflict.
 

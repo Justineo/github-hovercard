@@ -21,6 +21,9 @@
   "optional_permissions": [
     "<all_urls>"
   ],
+  "web_accessible_resources": [
+    "octicons/*"
+  ],
   "externally_connectable": {
     "matches": [
       "*://justineo.github.io/*"

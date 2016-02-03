@@ -20,6 +20,7 @@ pageMod.PageMod({
     data.url('hovercard.js')
   ],
   contentStyleFile: [
+    data.url('octicons/octicons.css'),
     data.url('tooltipster.css'),
     data.url('highlight.css'),
     data.url('hovercard.css')

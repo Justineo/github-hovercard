@@ -11,6 +11,7 @@ let contentJS = [
 ];
 
 let contentCSS = [
+    'octicons/octicons.css',
     'tooltipster.css',
     'highlight.css',
     'hovercard.css'

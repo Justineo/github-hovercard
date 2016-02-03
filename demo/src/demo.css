@@ -229,29 +229,6 @@ body > main::after {
   color: #767676;
 }
 
-.octicon {
-  font: 16px/1 octicons;
-  display: inline-block;
-  text-decoration: none;
-  text-rendering: auto;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-}
-
-.mega-octicon {
-  position: absolute;
-  top: 14px;
-  left: 0;
-  width: 32px;
-  height: 32px;
-  padding: 3px;
-  color: #bbb;
-}
-
 main {
   display: block;
 }
