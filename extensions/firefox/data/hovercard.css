@@ -50,6 +50,9 @@
 .hovercard small {
   opacity: 0.8;
 }
+.hovercard .octicon {
+  fill: currentColor;
+}
 /**********
  * More
  **********/
@@ -322,7 +325,6 @@
 .hovercard-error .octicon {
   display: inline-block;
   position: static;
-  fill: currentColor;
   margin-right: 5px;
 }
 /**********
