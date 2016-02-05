@@ -8,15 +8,16 @@ $(() => {
   let $installBtn = $(`#${browser} .install`);
   let $hint = $(`#${browser} .hint`);
 
+  const EXT_NAME = 'github-hovercard';
   const EXT_ID = {
     chrome: 'mmoahbbnojgkclgceahhakhnccimnplk',
     mozilla: '641356',
-    opera: 'github-hovercard'
+    opera: 'lldmekkknkapaampcfindholkpaeocib'
   }[browser];
   const VENDOR_URL = {
     chrome: `https://chrome.google.com/webstore/detail/${EXT_ID}`,
     mozilla: `https://addons.mozilla.org/en-US/firefox/addon/${EXT_ID}/`,
-    opera: `https://addons.opera.com/extensions/details/${EXT_ID}/`
+    opera: `https://addons.opera.com/extensions/details/${EXT_NAME}/`
   }[browser];
   const VENDOR_NAME = {
     chrome: 'Chrome Webstore',
