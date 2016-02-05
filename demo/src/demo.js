@@ -46,17 +46,13 @@ $(() => {
 
   function checkInstalled() {
     switch (browser) {
-      case 'chrome': {
+      case 'chrome':
+      case 'opera': {
         chrome.runtime.sendMessage(EXT_ID, { message: 'version' }, (resp) => {
           if (resp) {
             setInstalled();
           }
         });
-        break;
-      }
-      case 'opera': {
-        // chrome.runtime is undefined, not as the docs on Dev.Opera described.
-        // So we do nothing here for now.
         break;
       }
       case 'mozilla': {
