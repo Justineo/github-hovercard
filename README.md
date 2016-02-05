@@ -8,6 +8,8 @@ Neat user/repo/issue hovercard for GitHub.
 
 [Firefox add-on](https://addons.mozilla.org/en-US/firefox/addon/github-hovercard/)
 
+[Opera extension](https://addons.opera.com/extensions/details/github-hovercard/)
+
 [Userscript](https://justineo.github.io/github-hovercard/userscript/dist/github-hovercard.user.js)
 
 ## FAQ
