@@ -231,6 +231,7 @@
 }
 .hovercard-issue-body p {
   white-space: normal;
+  line-height: 1.6;
 }
 .hovercard-issue-body ul,
 .hovercard-issue-body ol {
