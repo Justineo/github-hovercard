@@ -88,8 +88,8 @@ gulp.task('userscript:prepare', ['hovercard:prepare'], function () {
 gulp.task('userscript:styles', ['css'], function () {
   return gulp.src([
       './tmp/tooltipster.css',
-      './src/highlight.css',
-      './src/hovercard.css'
+      './src/hovercard.css',
+      './src/tomorrow-night.css'
     ])
     .pipe(concat('userscript.css'))
     .pipe(cssnano({ zindex: false }))
@@ -109,9 +109,6 @@ gulp.task('userscript', ['userscript:inject-styles', 'userscript:prepare'], func
       './tmp/inject-styles.js',
       './src/mustache.js',
       './src/tooltipster.js',
-      './src/remarkable.js',
-      './src/highlight.pack.js',
-      './src/js-xss.js',
       './tmp/hovercard.userscript.js'
     ])
     .pipe(concat('github-hovercard.user.js'))
@@ -199,9 +196,6 @@ gulp.task('demo', ['css', 'demo:prepare'], function () {
       './src/jquery.js',
       './src/mustache.js',
       './src/tooltipster.js',
-      './src/remarkable.js',
-      './src/highlight.pack.js',
-      './src/js-xss.js',
       './tmp/hovercard.demo.js',
       './tmp/demo.js'
     ])
@@ -213,8 +207,8 @@ gulp.task('demo', ['css', 'demo:prepare'], function () {
 
   var cssSrc = gulp.src([
       './tmp/tooltipster.css',
-      './src/highlight.css',
       './src/hovercard.css',
+      './src/tomorrow-night.css',
       './demo/src/demo.css'
     ])
     .pipe(concat('demo.css'))
