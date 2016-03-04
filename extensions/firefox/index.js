@@ -14,16 +14,13 @@ pageMod.PageMod({
     data.url('jquery.js'),
     data.url('mustache.js'),
     data.url('tooltipster.js'),
-    data.url('remarkable.js'),
-    data.url('highlight.pack.js'),
-    data.url('js-xss.js'),
     data.url('hovercard.js')
   ],
   contentStyleFile: [
     data.url('octicons/octicons.css'),
     data.url('tooltipster.css'),
-    data.url('highlight.css'),
-    data.url('hovercard.css')
+    data.url('hovercard.css'),
+    data.url('tomorrow-night.css')
   ]
 });
 

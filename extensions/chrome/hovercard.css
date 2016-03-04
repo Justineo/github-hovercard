@@ -130,21 +130,17 @@
 /**********
  * Issue
  **********/
-.hovercard-issue p,
 .hovercard-issue-meta p {
   line-height: 16px;
 }
-.hovercard-issue .state,
 .hovercard-issue-meta .state {
   margin-right: 5px;
   padding: 0 4px;
   text-transform: capitalize;
 }
-.hovercard-issue .state .octicon,
 .hovercard-issue-meta .state .octicon {
   margin-right: 4px;
 }
-.hovercard-issue .hovercard-avatar,
 .hovercard-issue-meta .hovercard-avatar {
   margin: 0 5px 0 0;
   width: 16px;

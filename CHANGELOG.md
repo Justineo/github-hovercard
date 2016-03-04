@@ -1,6 +1,12 @@
 Changelog
 ---
 
+## 0.4.0
+
+* Switch Markdown rendering to GitHub API's Markdown service.
+* Remove dependencies for Remarkable.js, xss.js and highlight.js (which are no longer required since GitHub has taken care of all related stuff).
+* Now highlight code in issue card using theme "Tomorrow Night" from [GitHub-Dark](https://github.com/StylishThemes/GitHub-Dark).
+
 ## 0.3.7
 
 * Use SVG version of Octicons to cope with GitHub's recent update which removed icon font version of Octicons.

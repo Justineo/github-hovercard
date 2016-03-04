@@ -4,17 +4,14 @@ let contentJS = [
     'jquery.js',
     'mustache.js',
     'tooltipster.js',
-    'remarkable.js',
-    'highlight.pack.js',
-    'js-xss.js',
     'hovercard.js'
 ];
 
 let contentCSS = [
     'octicons/octicons.css',
     'tooltipster.css',
-    'highlight.css',
-    'hovercard.css'
+    'hovercard.css',
+    'tomorrow-night.css'
 ];
 
 const INJECTORS = {

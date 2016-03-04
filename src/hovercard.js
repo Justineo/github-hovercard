@@ -363,13 +363,6 @@ $(() => {
         return text.replace(/\b(https?:\/\/[^\s]+)/ig, `<a href="$1">$1</a>`);
     }
 
-    function xss(html) {
-        return filterXSS(html, {
-            stripIgnoreTagBody: true,
-            escapeHtml: html => html
-        });
-    }
-
     // Code via underscore's _.compose
     function compose() {
         var args = arguments;
@@ -494,26 +487,9 @@ $(() => {
                 };
             }
         } else if (type === EXTRACT_TYPE.ISSUE) {
-            let md = new Remarkable({
-                html: true,
-                linkify: true,
-                highlight: function (str, lang) {
-                    if (lang && hljs.getLanguage(lang)) {
-                        try {
-                            return hljs.highlight(lang, str).value;
-                        } catch (err) {}
-                    }
-
-                    try {
-                        return hljs.highlightAuto(str).value;
-                    } catch (err) {}
-
-                    return ''; // use external default escaping
-                }
-            });
             data = {
                 title: raw.title,
-                body: raw.body ? compose(replaceEmoji, replaceCheckbox, md.render.bind(md), replacePlugins, xss)(raw.body) : '',
+                body: raw.bodyHTML,
                 issueUrl: raw.html_url,
                 number: raw.number,
                 isPullRequest: !!raw.pull_request,
@@ -788,104 +764,135 @@ $(() => {
                     }
                     let requestOptions = {
                         url: API_PREFIX + apiPath,
-                        datatype: 'json'
+                        dataType: 'json'
                     };
 
+                    let authOptions = {};
                     if (token) {
-                        requestOptions.headers = {
-                            Authorization: `token ${token}`
+                        authOptions = {
+                            headers: {
+                                Authorization: `token ${token}`
+                            }
                         };
                     }
-                    $.ajax(requestOptions)
+                    $.ajax(Object.assign(requestOptions, authOptions))
                         .done((raw) => {
                             cache[type][value] = raw;
 
                             // further requests if necessary
                             switch(type) {
                                 case EXTRACT_TYPE.ISSUE: {
-                                    if (!raw.pull_request) {
-                                        break;
+                                    let todo = 0;
+                                    if (raw.body) {
+                                        todo++;
+                                        let options = {
+                                            url: API_PREFIX + 'markdown',
+                                            method: 'POST',
+                                            contentType: 'application/json',
+                                            dataType: 'text',
+                                            data: JSON.stringify({
+                                                text: raw.body,
+                                                mode: 'gfm',
+                                                context: value.split('#')[0]
+                                            })
+                                        }
+                                        $.ajax(Object.assign(requestOptions, options))
+                                            .done((html) => {
+                                                raw.bodyHTML = html;
+                                                if (!--todo) {
+                                                    elem.tooltipster('content', getCardHTML(type, raw));
+                                                }
+                                            })
+                                            .fail(handleError);
                                     }
-                                    apiPath = apiPath.replace(/\/issues\/(\d+)$/, '/pulls/$1');
-                                    requestOptions = {
-                                        url: API_PREFIX + apiPath,
-                                        datatype: 'json'
-                                    };
-                                    $.ajax(requestOptions)
-                                        .done((pull) => {
-                                            if (raw.state === 'closed' && pull.merged_at) {
-                                                raw.state = cache[type][value].state = 'merged';
-                                            }
-                                            elem.tooltipster('content', getCardHTML(type, raw));
-                                        });
+                                    if (raw.pull_request) {
+                                        todo++;
+                                        let prPath = apiPath.replace(/\/issues\/(\d+)$/, '/pulls/$1');
+                                        let options = {
+                                            url: API_PREFIX + prPath,
+                                            dataType: 'json'
+                                        };
+                                        $.ajax(Object.assign(requestOptions, options))
+                                            .done((pull) => {
+                                                if (raw.state === 'closed' && pull.merged_at) {
+                                                    raw.state = cache[type][value].state = 'merged';
+                                                }
+                                                if (!--todo) {
+                                                    elem.tooltipster('content', getCardHTML(type, raw));
+                                                }
+                                            })
+                                            .fail(handleError);
+                                    }
                                     return;
                                 }
                             }
 
                             elem.tooltipster('content', getCardHTML(type, raw));
                         })
-                        .fail((xhr) => {
-                            let status = xhr.status;
-                            let title = '';
-                            let message = '';
-                            let needToken = false;
+                        .fail(handleError);
 
-                            switch (status) {
-                                case 0:
-                                    title = 'Connection error';
-                                    message = 'Please try again later.';
-                                    break;
-                                case 401:
-                                    title = 'Invalid token';
-                                    message = encodeHTML`<a href="${CREATE_TOKEN_PATH}" class="token-link" target="_blank">Create a new access token</a>, paste it back here and try again.`;
-                                    needToken = true;
-                                    break;
-                                case 403:
-                                    if (xhr.getAllResponseHeaders().indexOf('X-RateLimit-Remaining: 0') !== -1) {
-                                        title = 'API limit exceeded';
-                                        if (!localStorage.getItem(TOKEN_KEY)) {
-                                            message = encodeHTML`API rate limit exceeded for current IP. <a href="${CREATE_TOKEN_PATH}" class="token-link" target="_blank">Create a new access token</a> and paste it back here to get a higher rate limit.`;
-                                        }
-                                    } else {
-                                        let response = xhr.responseJSON;
-                                        if (type === EXTRACT_TYPE.REPO && response.block && response.block.reason === 'dmca') {
-                                            title = 'Access blocked';
-                                            message = 'Repository unavailable due to DMCA takedown.';
-                                        } else {
-                                            title = 'Forbidden';
-                                            message = encodeHTML`You are not allowed to access GitHub API. <a href="${CREATE_TOKEN_PATH}" class="token-link" target="_blank">Create a new access token</a>, paste it back here and try again.`;
-                                        }
+                    function handleError(xhr) {
+                        let status = xhr.status;
+                        let title = '';
+                        let message = '';
+                        let needToken = false;
+
+                        switch (status) {
+                            case 0:
+                                title = 'Connection error';
+                                message = 'Please try again later.';
+                                break;
+                            case 401:
+                                title = 'Invalid token';
+                                message = encodeHTML`<a href="${CREATE_TOKEN_PATH}" class="token-link" target="_blank">Create a new access token</a>, paste it back here and try again.`;
+                                needToken = true;
+                                break;
+                            case 403:
+                                if (xhr.getAllResponseHeaders().indexOf('X-RateLimit-Remaining: 0') !== -1) {
+                                    title = 'API limit exceeded';
+                                    if (!localStorage.getItem(TOKEN_KEY)) {
+                                        message = encodeHTML`API rate limit exceeded for current IP. <a href="${CREATE_TOKEN_PATH}" class="token-link" target="_blank">Create a new access token</a> and paste it back here to get a higher rate limit.`;
                                     }
-                                    needToken = true;
-                                    break;
-                                case 404:
-                                    title = 'Not found';
-                                    if (type === EXTRACT_TYPE.REPO) {
-                                        message = encodeHTML`The repository doesn\'t exist or is private. <a href="${CREATE_TOKEN_PATH}" class="token-link" target="_blank">Create a new access token</a>, paste it back here and try again.`;
-                                        needToken = true;
-                                    } else if (type === EXTRACT_TYPE.USER) {
-                                        message = 'The user doesn\'t exist.';
-                                    }
-                                    break;
-                                default:
-                                    title = 'Error';
+                                } else {
                                     let response = xhr.responseJSON;
-                                    if (response) {
-                                        message = encodeHTML`${response.message}` || '';
+                                    if (type === EXTRACT_TYPE.REPO && response.block && response.block.reason === 'dmca') {
+                                        title = 'Access blocked';
+                                        message = 'Repository unavailable due to DMCA takedown.';
+                                    } else {
+                                        title = 'Forbidden';
+                                        message = encodeHTML`You are not allowed to access GitHub API. <a href="${CREATE_TOKEN_PATH}" class="token-link" target="_blank">Create a new access token</a>, paste it back here and try again.`;
                                     }
-                                    break;
-                            }
-
-                            let error = {
-                                title: title,
-                                message: message,
-                                needToken: needToken,
-                                icons: {
-                                    alert: getIcon('alert')
                                 }
-                            };
-                            elem.tooltipster('content', getErrorHTML(error));
-                        });
+                                needToken = true;
+                                break;
+                            case 404:
+                                title = 'Not found';
+                                if (type === EXTRACT_TYPE.REPO) {
+                                    message = encodeHTML`The repository doesn\'t exist or is private. <a href="${CREATE_TOKEN_PATH}" class="token-link" target="_blank">Create a new access token</a>, paste it back here and try again.`;
+                                    needToken = true;
+                                } else if (type === EXTRACT_TYPE.USER) {
+                                    message = 'The user doesn\'t exist.';
+                                }
+                                break;
+                            default:
+                                title = 'Error';
+                                let response = xhr.responseJSON;
+                                if (response) {
+                                    message = encodeHTML`${response.message}` || '';
+                                }
+                                break;
+                        }
+
+                        let error = {
+                            title: title,
+                            message: message,
+                            needToken: needToken,
+                            icons: {
+                                alert: getIcon('alert')
+                            }
+                        };
+                        elem.tooltipster('content', getErrorHTML(error));
+                    }
                 }
             },
             interactive: true

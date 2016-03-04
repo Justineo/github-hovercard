@@ -2,7 +2,7 @@
 // @name GitHub Hovercard
 // @namespace https://justineo.github.io/
 // @version {{version}}
-// @description Neat user/repo/issue hovercard for GitHub.
+// @description Neat user/repo/issue hovercards for GitHub.
 // @author Justineo(justice360@gmail.com)
 // @match https://github.com/*
 // @grant none

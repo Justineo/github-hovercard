@@ -1,8 +1,8 @@
 {
   "title": "GitHub Hovercard",
   "name": "github-hovercard",
-  "version": "0.3.8",
-  "description": "Neat user/repo/issue hovercard for GitHub.",
+  "version": "0.4.0",
+  "description": "Neat user/repo/issue hovercards for GitHub.",
   "main": "index.js",
   "author": "Justineo",
   "homepage": "https://justineo.github.io/github-hovercard/",
