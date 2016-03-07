@@ -4,13 +4,10 @@ Neat user/repo/issue hovercards for GitHub.
 
 ## Installation
 
-[Chrome extension](https://chrome.google.com/webstore/detail/github-hovercard/mmoahbbnojgkclgceahhakhnccimnplk)
-
-[Firefox add-on](https://addons.mozilla.org/en-US/firefox/addon/github-hovercard/)
-
-[Opera extension](https://addons.opera.com/extensions/details/github-hovercard/)
-
-[Userscript](https://justineo.github.io/github-hovercard/userscript/dist/github-hovercard.user.js)
+* [Chrome extension](https://chrome.google.com/webstore/detail/github-hovercard/mmoahbbnojgkclgceahhakhnccimnplk)
+* [Firefox add-on](https://addons.mozilla.org/en-US/firefox/addon/github-hovercard/)
+* [Opera extension](https://addons.opera.com/extensions/details/github-hovercard/)
+* [Userscript](https://justineo.github.io/github-hovercard/userscript/dist/github-hovercard.user.js)
 
 ## FAQ
 
