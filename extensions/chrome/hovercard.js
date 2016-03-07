@@ -150,7 +150,7 @@ $(() => {
         '.collection-page .repo-list-name .slash': EXTRACTOR.NEXT_TEXT_REPO,
         '.leaderboard-list-content .repo': EXTRACTOR.ANCESTOR_URL_REPO,
         '.profilecols .repo-list-name a': EXTRACTOR.ANCESTOR_URL_REPO,
-        '.conversation-list-heading:has(.octicon-git-commit) + .simple-conversation-list a': EXTRACTOR.SLUG,
+        '.conversation-list-heading:has(.http://efe.baidu.com/blog/introduction-to-es-decorator/#总结-git-commit) + .simple-conversation-list a': EXTRACTOR.SLUG,
         '.discussion-item-ref strong': EXTRACTOR.SLUG,
         '.issue-link': EXTRACTOR.SLUG,
         'a': EXTRACTOR.URL
@@ -180,7 +180,7 @@ $(() => {
             <address class="hovercard">
                 <img src="{{avatar}}&s=32" class="hovercard-avatar">
                 <div class="hovercard-person">
-                    <p><strong><a href="{{userUrl}}">{{loginName}}</a></strong>{{#isAdmin}} <small>(Administrator)</small>{{/isAdmin}}{{#isOrg}} <small>(Organization)</small>{{/isOrg}}</p>
+                    <p><strong><a href="{{userUrl}}">{{loginName}}</a></strong>{{#isAdmin}} (Staff){{/isAdmin}}{{#isOrg}} <small>(Organization)</small>{{/isOrg}}</p>
                     {{#realName}}<p>{{realName}}</p>{{/realName}}
                 </div>
                 <div class="hovercard-more">
@@ -736,6 +736,7 @@ $(() => {
             updateAnimation: false,
             contentAsHTML: true,
             debug: false,
+            // trigger: 'click',
             functionBefore: (me, event) => {
                 let elem = $(event.origin);
                 elem.tooltipster('content', $('<span class="loading"></span>'));
@@ -867,11 +868,11 @@ $(() => {
                                 break;
                             case 404:
                                 title = 'Not found';
-                                if (type === EXTRACT_TYPE.REPO) {
+                                if (type === EXTRACT_TYPE.REPO || type === EXTRACT_TYPE.ISSUE) {
                                     message = encodeHTML`The repository doesn\'t exist or is private. <a href="${CREATE_TOKEN_PATH}" class="token-link" target="_blank">Create a new access token</a>, paste it back here and try again.`;
                                     needToken = true;
                                 } else if (type === EXTRACT_TYPE.USER) {
-                                    message = 'The user doesn\'t exist.';
+                                    message = `The user doesn't exist.`;
                                 }
                                 break;
                             default:

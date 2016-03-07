@@ -6,6 +6,8 @@ Changelog
 * Switch Markdown rendering to GitHub API's Markdown service.
 * Remove dependencies for Remarkable.js, xss.js and highlight.js (which are no longer required since GitHub has taken care of all related stuff).
 * Now highlight code in issue card using theme "Tomorrow Night" from [GitHub-Dark](https://github.com/StylishThemes/GitHub-Dark).
+* Show better error message for issue card when visiting a private repo without access tokens.
+* Some minor style updates.
 
 ## 0.3.7
 

@@ -21,6 +21,11 @@ $fix-margin
     & > :last-child
         margin-bottom: 0
 
+ellipsis()
+    white-space: nowrap
+    overflow: hidden
+    text-overflow: ellipsis
+
 square(s)
     width: s
     height: s
@@ -41,16 +46,11 @@ square(s)
         margin: 0 0 4px
         vertical-align: middle
         line-height: 1.2
-        white-space: nowrap
-        overflow: hidden
-        text-overflow: ellipsis
+        ellipsis()
         clear: both
 
     a
         color: #bdf
-
-    strong
-        font-size: 120%
 
     small
         opacity: .8
@@ -90,6 +90,9 @@ square(s)
 .hovercard-person
     float: left
 
+    strong
+        font-size: 120%
+
 .hovercard-avatar
     float: left
     square(32px)
@@ -103,6 +106,12 @@ square(s)
  **********/
 .hovercard-repo
     @extends $with-large-icon
+
+    strong
+        font-size: 120%
+
+    p
+        max-width: 296px
 
     p:first-of-type
         font-size: 13px

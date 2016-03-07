@@ -44,9 +44,6 @@
 .hovercard a {
   color: #bdf;
 }
-.hovercard strong {
-  font-size: 120%;
-}
 .hovercard small {
   opacity: 0.8;
 }
@@ -84,6 +81,9 @@
 .hovercard-person {
   float: left;
 }
+.hovercard-person strong {
+  font-size: 120%;
+}
 .hovercard-avatar {
   float: left;
   width: 32px;
@@ -96,6 +96,12 @@
 /**********
  * Repo
  **********/
+.hovercard-repo strong {
+  font-size: 120%;
+}
+.hovercard-repo p {
+  max-width: 296px;
+}
 .hovercard-repo p:first-of-type {
   font-size: 13px;
 }

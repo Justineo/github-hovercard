@@ -8,7 +8,6 @@ let contentJS = [
 ];
 
 let contentCSS = [
-    'octicons/octicons.css',
     'tooltipster.css',
     'hovercard.css',
     'tomorrow-night.css'
@@ -44,6 +43,7 @@ function inject(id, files, type, callback) {
             injector(id, {
                 file: files[index]
             }, () => {
+                console.log(files[index] + ' injected.');
                 index++;
                 remaining--;
                 injectNext();
