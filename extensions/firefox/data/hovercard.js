@@ -152,7 +152,6 @@ $(() => {
         '.profilecols .repo-list-name a': EXTRACTOR.ANCESTOR_URL_REPO,
         '.conversation-list-heading:has(.http://efe.baidu.com/blog/introduction-to-es-decorator/#总结-git-commit) + .simple-conversation-list a': EXTRACTOR.SLUG,
         '.discussion-item-ref strong': EXTRACTOR.SLUG,
-        '.issue-link': EXTRACTOR.SLUG,
         'a': EXTRACTOR.URL
     };
 
@@ -776,63 +775,8 @@ $(() => {
                             }
                         };
                     }
-                    $.ajax(Object.assign(requestOptions, authOptions))
-                        .done((raw) => {
-                            cache[type][value] = raw;
 
-                            // further requests if necessary
-                            switch(type) {
-                                case EXTRACT_TYPE.ISSUE: {
-                                    let todo = 0;
-                                    if (raw.body) {
-                                        todo++;
-                                        let options = {
-                                            url: API_PREFIX + 'markdown',
-                                            method: 'POST',
-                                            contentType: 'application/json',
-                                            dataType: 'text',
-                                            data: JSON.stringify({
-                                                text: raw.body,
-                                                mode: 'gfm',
-                                                context: value.split('#')[0]
-                                            })
-                                        }
-                                        $.ajax(Object.assign(requestOptions, options))
-                                            .done((html) => {
-                                                raw.bodyHTML = html;
-                                                if (!--todo) {
-                                                    elem.tooltipster('content', getCardHTML(type, raw));
-                                                }
-                                            })
-                                            .fail(handleError);
-                                    }
-                                    if (raw.pull_request) {
-                                        todo++;
-                                        let prPath = apiPath.replace(/\/issues\/(\d+)$/, '/pulls/$1');
-                                        let options = {
-                                            url: API_PREFIX + prPath,
-                                            dataType: 'json'
-                                        };
-                                        $.ajax(Object.assign(requestOptions, options))
-                                            .done((pull) => {
-                                                if (raw.state === 'closed' && pull.merged_at) {
-                                                    raw.state = cache[type][value].state = 'merged';
-                                                }
-                                                if (!--todo) {
-                                                    elem.tooltipster('content', getCardHTML(type, raw));
-                                                }
-                                            })
-                                            .fail(handleError);
-                                    }
-                                    return;
-                                }
-                            }
-
-                            elem.tooltipster('content', getCardHTML(type, raw));
-                        })
-                        .fail(handleError);
-
-                    function handleError(xhr) {
+                    let handleError = function (xhr) {
                         let status = xhr.status;
                         let title = '';
                         let message = '';
@@ -894,6 +838,62 @@ $(() => {
                         };
                         elem.tooltipster('content', getErrorHTML(error));
                     }
+
+                    $.ajax(Object.assign(requestOptions, authOptions))
+                        .done((raw) => {
+                            cache[type][value] = raw;
+
+                            // further requests if necessary
+                            switch(type) {
+                                case EXTRACT_TYPE.ISSUE: {
+                                    let todo = 0;
+                                    if (raw.body) {
+                                        todo++;
+                                        let options = {
+                                            url: API_PREFIX + 'markdown',
+                                            method: 'POST',
+                                            contentType: 'application/json',
+                                            dataType: 'text',
+                                            data: JSON.stringify({
+                                                text: raw.body,
+                                                mode: 'gfm',
+                                                context: value.split('#')[0]
+                                            })
+                                        }
+                                        $.ajax(Object.assign(requestOptions, options))
+                                            .done((html) => {
+                                                raw.bodyHTML = html;
+                                                if (!--todo) {
+                                                    elem.tooltipster('content', getCardHTML(type, raw));
+                                                }
+                                            })
+                                            .fail(handleError);
+                                    }
+                                    if (raw.pull_request) {
+                                        todo++;
+                                        let prPath = apiPath.replace(/\/issues\/(\d+)$/, '/pulls/$1');
+                                        let options = {
+                                            url: API_PREFIX + prPath,
+                                            dataType: 'json'
+                                        };
+                                        $.ajax(Object.assign(requestOptions, options))
+                                            .done((pull) => {
+                                                if (raw.state === 'closed' && pull.merged_at) {
+                                                    raw.state = cache[type][value].state = 'merged';
+                                                }
+                                                if (!--todo) {
+                                                    elem.tooltipster('content', getCardHTML(type, raw));
+                                                }
+                                            })
+                                            .fail(handleError);
+                                    }
+                                    return;
+                                }
+                            }
+
+                            elem.tooltipster('content', getCardHTML(type, raw));
+                        })
+                        .fail(handleError);
                 }
             },
             interactive: true
