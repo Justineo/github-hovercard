@@ -4,6 +4,7 @@ Changelog
 ## 0.4.1
 
 * Fixed the problem that issue links were sometimes ignored.
+* Fixed selector syntax error (caused by mistakenly copy pasted something into it).
 
 ## 0.4.0
 

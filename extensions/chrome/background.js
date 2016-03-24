@@ -43,6 +43,7 @@ function inject(id, files, type, callback) {
             injector(id, {
                 file: files[index]
             }, () => {
+                console.log('"' + files[index] + '" is injected.');
                 index++;
                 remaining--;
                 injectNext();
