@@ -5,6 +5,7 @@ Changelog
 
 * Fixed the problem that issue links were sometimes ignored.
 * Fixed selector syntax error (caused by mistakenly copy pasted something into it).
+* Added more reserved word for username.
 
 ## 0.4.0
 
