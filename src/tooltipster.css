@@ -205,8 +205,8 @@ width, height, top, and left */
 	height: 32px;
 	margin: 0 32px;
 
-	/*! Spinner icon from https://github.com/StylishThemes/GitHub-Dark */
-    background: url(spinner.svg) no-repeat center center;
+	/*! Spinner icon from GitHub */
+    background: url(spinner.gif) no-repeat center center;
     background-size: 24px auto;
 }
 

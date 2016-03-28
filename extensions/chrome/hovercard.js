@@ -840,7 +840,7 @@ $(() => {
                         elem.tooltipster('content', getErrorHTML(error));
                     }
 
-                    $.ajax(Object.assign(requestOptions, authOptions))
+                    $.ajax(Object.assign({}, requestOptions, authOptions))
                         .done((raw) => {
                             cache[type][value] = raw;
 
@@ -861,7 +861,7 @@ $(() => {
                                                 context: value.split('#')[0]
                                             })
                                         }
-                                        $.ajax(Object.assign(requestOptions, options))
+                                        $.ajax(Object.assign({}, requestOptions, options))
                                             .done((html) => {
                                                 raw.bodyHTML = html;
                                                 if (!--todo) {
@@ -877,7 +877,7 @@ $(() => {
                                             url: API_PREFIX + prPath,
                                             dataType: 'json'
                                         };
-                                        $.ajax(Object.assign(requestOptions, options))
+                                        $.ajax(Object.assign({}, requestOptions, options))
                                             .done((pull) => {
                                                 if (raw.state === 'closed' && pull.merged_at) {
                                                     raw.state = cache[type][value].state = 'merged';

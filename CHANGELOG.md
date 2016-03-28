@@ -1,5 +1,10 @@
 Changelog
 ---
+## 0.4.2
+
+* Fixed token form style.
+* Fixed wrongly generated GitHub API call arguments (which leads to incorrect result for merged pull requests with message).
+* Replaced the spinner icon with GitHub's official version (which looks better).
 
 ## 0.4.1
 

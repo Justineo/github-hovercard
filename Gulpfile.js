@@ -12,6 +12,7 @@ var uglify = require('gulp-uglify');
 var stylus = require('gulp-stylus');
 var cssnano = require('gulp-cssnano');
 var babel = require('gulp-babel');
+var DataURI = require('datauri');
 var pack = JSON.parse(fs.readFileSync('./package.json', { encoding: 'utf8' }));
 var version = pack.version;
 
@@ -37,10 +38,7 @@ function getCommentHandler() {
 gulp.task('css:prepare', function () {
   return gulp.src('./src/tooltipster.css')
     .pipe(replace(
-      'spinner.svg',
-      '"data:image/svg+xml;utf8,'
-        + encodeURIComponent(fs.readFileSync('./assets/spinner.svg', { encoding: 'utf8' }))
-        + '"'
+      'spinner.gif', new DataURI('./assets/spinner.gif').content
     ))
     .pipe(gulp.dest('./tmp'));
 });

@@ -45,5 +45,6 @@ Authentication is supported from v0.0.7.
 
 ## Acknowledgements
 
-* Thank [Tooltipster](https://github.com/iamceege/tooltipster/) for the awesome tooltip component
+* Thank [Tooltipster](https://github.com/iamceege/tooltipster/) for the awesome tooltip component.
 * Thank [jQuery](https://github.com/jquery/jquery) for basic operations.
+* Thank [Mustache.js](https://github.com/janl/mustache.js) for templating.

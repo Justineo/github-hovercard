@@ -1,6 +1,6 @@
 {
   "name": "github-hovercard",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "description": "Neat user/repo/issue hovercards for GitHub.",
   "repository": {
     "type": "git",
@@ -24,7 +24,8 @@
     "gulp-uglify": "^1.5.1",
     "merge-stream": "^1.0.0",
     "rename": "^1.0.3",
-    "run-sequence": "^1.1.5"
+    "run-sequence": "^1.1.5",
+    "datauri": "^1.0.4"
   },
   "author": "Justineo",
   "license": "MIT",
