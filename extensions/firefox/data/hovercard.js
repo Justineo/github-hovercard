@@ -840,7 +840,7 @@ $(() => {
                         elem.tooltipster('content', getErrorHTML(error));
                     }
 
-                    $.ajax(Object.assign({}, requestOptions, authOptions))
+                    $.ajax(Object.assign(requestOptions, authOptions))
                         .done((raw) => {
                             cache[type][value] = raw;
 

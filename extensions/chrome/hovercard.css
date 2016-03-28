@@ -352,3 +352,6 @@
   border-radius: 5px;
   background-color: #fff;
 }
+.hovercard-overlay form p {
+  margin: 10px 0;
+}
