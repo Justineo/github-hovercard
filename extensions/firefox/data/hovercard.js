@@ -888,7 +888,11 @@ $(() => {
                                             })
                                             .fail(handleError);
                                     }
-                                    return;
+
+                                    // wait for async handler
+                                    if (todo) {
+                                        return;
+                                    }
                                 }
                             }
 

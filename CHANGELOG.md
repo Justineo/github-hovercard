@@ -1,5 +1,9 @@
 Changelog
 ---
+## 0.4.3
+
+* Fixed endless loading for issue without body.
+
 ## 0.4.2
 
 * Fixed token form style.
