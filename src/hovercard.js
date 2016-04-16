@@ -6,11 +6,11 @@ $(() => {
     const TOOLTIP_RELATED = '.tooltipster-base, .tooltipster-sizer';
     const DEFAULT_TARGET = document.body;
     let isExtracting = false;
-    let observer = new MutationObserver((mutations) => {
+    let observer = new MutationObserver(mutations => {
         if (isExtracting) {
             return;
         }
-        mutations.forEach((mutation) => {
+        mutations.forEach(mutation => {
             if (mutation.type === 'childList') {
                 let target = mutation.target;
                 if (!$(target).is(TOOLTIP_RELATED)
@@ -56,28 +56,6 @@ $(() => {
         ISSUE: 'issue',
         SKIP: 'skip'
     };
-
-    const TOKEN_KEY = 'hovercard-token';
-    let token = '';
-    let chrome = window.chrome;
-
-    // Revert to localStorage
-    // May switch back to chrome.storage when options are properly designed
-    // In Firefox options are not so flexible so keep it in localStorage
-    if (chrome && chrome.storage) {
-        let storage = chrome.storage.sync || chrome.storage.local;
-        storage.get({token: ''}, (item) => {
-            token = item.token;
-            if (token) {
-                localStorage.setItem(TOKEN_KEY, token);
-                storage.remove('token');
-            } else {
-                token = localStorage.getItem(TOKEN_KEY);
-            }
-        });
-    } else {
-        token = localStorage.getItem(TOKEN_KEY);
-    }
 
     const EXTRACTOR = {
         SLUG: 1, // {{user}}/{{repo}}#{{issue}}
@@ -557,7 +535,7 @@ $(() => {
         }
 
         let selectors = Object.keys(STRATEGIES);
-        selectors.forEach((selector) => {
+        selectors.forEach(selector => {
             let strategy = STRATEGIES[selector];
             let elems = $(selector, context);
             elems.each(function () {
@@ -736,6 +714,7 @@ $(() => {
             updateAnimation: false,
             contentAsHTML: true,
             debug: false,
+            delay: cardOptions.delay,
             // trigger: 'click',
             functionBefore: (me, event) => {
                 let elem = $(event.origin);
@@ -790,14 +769,14 @@ $(() => {
                                 break;
                             case 401:
                                 title = 'Invalid token';
-                                message = encodeHTML`<a href="${CREATE_TOKEN_PATH}" class="token-link" target="_blank">Create a new access token</a>, paste it back here and try again.`;
+                                message = encodeHTML`<a href="${CREATE_TOKEN_PATH}" class="token-link" target="_blank">Create a new access token</a>, <a href="#" class="token-link">paste it back here</a> and try again.`;
                                 needToken = true;
                                 break;
                             case 403:
                                 if (xhr.getAllResponseHeaders().indexOf('X-RateLimit-Remaining: 0') !== -1) {
                                     title = 'API limit exceeded';
                                     if (!localStorage.getItem(TOKEN_KEY)) {
-                                        message = encodeHTML`API rate limit exceeded for current IP. <a href="${CREATE_TOKEN_PATH}" class="token-link" target="_blank">Create a new access token</a> and paste it back here to get a higher rate limit.`;
+                                        message = encodeHTML`API rate limit exceeded for current IP. <a href="${CREATE_TOKEN_PATH}" class="token-link" target="_blank">Create a new access token</a> and <a href="#" class="token-link">paste it back here</a> to get a higher rate limit.`;
                                     }
                                 } else {
                                     let response = xhr.responseJSON;
@@ -806,7 +785,7 @@ $(() => {
                                         message = 'Repository unavailable due to DMCA takedown.';
                                     } else {
                                         title = 'Forbidden';
-                                        message = encodeHTML`You are not allowed to access GitHub API. <a href="${CREATE_TOKEN_PATH}" class="token-link" target="_blank">Create a new access token</a>, paste it back here and try again.`;
+                                        message = encodeHTML`You are not allowed to access GitHub API. <a href="${CREATE_TOKEN_PATH}" class="token-link" target="_blank">Create a new access token</a>, <a href="#" class="token-link">paste it back here</a> and try again.`;
                                     }
                                 }
                                 needToken = true;
@@ -814,7 +793,7 @@ $(() => {
                             case 404:
                                 title = 'Not found';
                                 if (type === EXTRACT_TYPE.REPO || type === EXTRACT_TYPE.ISSUE) {
-                                    message = encodeHTML`The repository doesn\'t exist or is private. <a href="${CREATE_TOKEN_PATH}" class="token-link" target="_blank">Create a new access token</a>, paste it back here and try again.`;
+                                    message = encodeHTML`The repository doesn\'t exist or is private. <a href="${CREATE_TOKEN_PATH}" class="token-link" target="_blank">Create a new access token</a>, <a href="#" class="token-link">paste it back here</a> and try again.`;
                                     needToken = true;
                                 } else if (type === EXTRACT_TYPE.USER) {
                                     message = `The user doesn't exist.`;
@@ -841,7 +820,7 @@ $(() => {
                     }
 
                     $.ajax(Object.assign(requestOptions, authOptions))
-                        .done((raw) => {
+                        .done(raw => {
                             cache[type][value] = raw;
 
                             // further requests if necessary
@@ -862,7 +841,7 @@ $(() => {
                                             })
                                         }
                                         $.ajax(Object.assign({}, requestOptions, options))
-                                            .done((html) => {
+                                            .done(html => {
                                                 raw.bodyHTML = html;
                                                 if (!--todo) {
                                                     elem.tooltipster('content', getCardHTML(type, raw));
@@ -878,7 +857,7 @@ $(() => {
                                             dataType: 'json'
                                         };
                                         $.ajax(Object.assign({}, requestOptions, options))
-                                            .done((pull) => {
+                                            .done(pull => {
                                                 if (raw.state === 'closed' && pull.merged_at) {
                                                     raw.state = cache[type][value].state = 'merged';
                                                 }
@@ -918,5 +897,50 @@ $(() => {
     }
 
     let emojiMap = '__EMOJI_DATA__';
-    extract();
+
+    const TOKEN_KEY = 'hovercard-token';
+    let token = '';
+    let chrome = window.chrome;
+
+    let cardOptions = {
+        delay: 200
+    };
+
+    // Revert to localStorage
+    // May switch back to chrome.storage when options are properly designed
+    // In Firefox options are not so flexible so keep tokens in localStorage
+    if (chrome && chrome.storage) {
+        let storage = chrome.storage.sync || chrome.storage.local;
+        storage.get({token: '', delay: 0}, item => {
+            token = item.token;
+            if (token) {
+                localStorage.setItem(TOKEN_KEY, token);
+                storage.remove('token');
+            } else {
+                token = localStorage.getItem(TOKEN_KEY);
+            }
+
+            // Other options
+            let delay = parseFloat(item.delay);
+            if (!isNaN(delay)) {
+                cardOptions.delay = delay;
+            }
+            extract();
+        });
+    } else {
+        token = localStorage.getItem(TOKEN_KEY);
+
+        // Firefox options
+        if (self.port) {
+            self.port.on('prefs', ({ delay }) => {
+                if (!isNaN(delay)) {
+                    cardOptions.delay = delay;
+                }
+                extract();
+            })
+        } else {
+            extract();
+        }
+
+    }
 });

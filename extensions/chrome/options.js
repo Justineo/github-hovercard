@@ -8,6 +8,7 @@ let saveBtn = $('#save');
 let cancelBtn = $('#cancel');
 let addBtn = $('#add');
 let msg = $('#message');
+let delayInput = $('#delay');
 let current;
 let storage = chrome.storage.sync || chrome.storage.local;
 
@@ -20,13 +21,16 @@ function concat(a, b) {
 }
 
 function restore() {
-    storage.get({ domains: [] }, items => {
-        current = items.domains;
+    storage.get({ domains: [], delay: 200 }, item => {
+        current = item.domains;
         list.append(Mustache.render(ITEM_TPL, { domains: current }));
+        delayInput.val(item.delay);
     });
 }
 
 function save() {
+    let delay = $('#delay').val();
+
     let domains = [];
     $('.domain').each(function () {
         let domain = $(this).val().trim();
@@ -46,15 +50,15 @@ function save() {
         chrome.permissions.request({
             origins: granting
         }, granted => {
-            if (!granted) {
+            let options = { delay };
+            if (granted) {
+                Object.assign(options, { domains });
+                current = domains;
+            } else {
                 log('Domain permission denied.');
-                return;
             }
 
-            storage.set({
-                domains: domains
-            }, () => {
-                current = domains;
+            storage.set(options, () => {
                 chrome.runtime.sendMessage({ event: 'optionschange' }, response => {
                     if (response.success) {
                         window.close();
@@ -88,10 +92,10 @@ function removeRow() {
 let logTimer;
 function log(message, duration) {
     clearTimeout(logTimer);
-    msg.html(message).show();
+    msg.css({opacity: 1}).html(message);
     if (duration) {
         logTimer = setTimeout(() => {
-            msg.animate({ opacity: 0 }, 500);
+            msg.animate({ opacity: 0 }, 500, () => msg.empty());
         }, duration);
     }
 }

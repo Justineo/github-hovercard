@@ -15,6 +15,18 @@ Neat user/repo/issue hovercards for GitHub.
 
     Now GitHub Hovercard is saving user's private access token into `localStorage`. `localStorage` has a limit of 5MB and the problem might be other extensions have consumed too much storage that GitHub Hovercard failed to save access tokens.
 
+## Options
+
+For browser extension versions, GitHub Hovercard provide following options:
+
+* Domain
+
+    Use this option to set custom domains for your GitHub Enterprise service. Note that you don't need to set `github.com` because it's always included. You may be asked to grant additional permissions for those domains.
+
+* Delay
+
+    If you don't want the hovercards to pop up instantly, you may set a delay before they try to retrieve data and appear.
+
 ## Screenshots
 
 ![Avatars in trending repos](screenshots/1.png)

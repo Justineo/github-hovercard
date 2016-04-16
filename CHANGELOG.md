@@ -1,7 +1,8 @@
 Changelog
 ---
-## 0.4.3
+## 0.5.0
 
+* Add delay option for extensions.
 * Fixed endless loading for issue without body.
 
 ## 0.4.2

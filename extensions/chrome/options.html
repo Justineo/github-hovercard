@@ -8,6 +8,10 @@ body {
     padding-bottom: 36px;
 }
 
+p {
+    line-height: normal;
+}
+
 :-webkit-any(#form, #actions) button {
     margin-left: 10px;
 }
@@ -67,8 +71,13 @@ body {
 
 #message {
     flex-grow: 1;
+    padding-left: 5px;
     color: #666;
     line-height: 24px;
+}
+
+.aux {
+    color: #999;
 }
 
 #save:not(:focus) {
@@ -78,6 +87,8 @@ body {
 </head>
 <body>
 <section id="form">
+    <h3>Delay</h3>
+    <p><input type="number" id="delay" placeholder="Time in milliseconds..."> ms <span class="aux">(<code>200</code> by default)</span></p>
     <h3>Applicable Domains</h3>
     <ul id="domains">
         <li><input type="text" value="github.com (required)" readonly class="fixed"></li>
