@@ -742,20 +742,12 @@ $(() => {
                             break;
                         }
                     }
-                    let requestOptions = {
+                    let baseOptions = {
                         url: API_PREFIX + apiPath,
                         dataType: 'json'
                     };
 
-                    let authOptions = {};
-                    if (token) {
-                        authOptions = {
-                            headers: {
-                                Authorization: `token ${token}`
-                            }
-                        };
-                    }
-
+                    let isRetry = false;
                     let handleError = function (xhr) {
                         let status = xhr.status;
                         let title = '';
@@ -764,8 +756,15 @@ $(() => {
 
                         switch (status) {
                             case 0:
-                                title = 'Connection error';
-                                message = 'Please try again later.';
+                                if (isRetry) {
+                                    title = 'Connection error';
+                                    message = 'Please try again later.';
+                                } else {
+                                    // next request should be retry
+                                    isRetry = true;
+                                    request();
+                                    return;
+                                }
                                 break;
                             case 401:
                                 title = 'Invalid token';
@@ -819,65 +818,79 @@ $(() => {
                         elem.tooltipster('content', getErrorHTML(error));
                     }
 
-                    $.ajax(Object.assign(requestOptions, authOptions))
-                        .done(raw => {
-                            cache[type][value] = raw;
+                    let request = function () {
+                        let authOptions = {};
+                        if (token && !isRetry) {
+                            authOptions = {
+                                headers: {
+                                    Authorization: `token ${token}`
+                                }
+                            };
+                        }
 
-                            // further requests if necessary
-                            switch(type) {
-                                case EXTRACT_TYPE.ISSUE: {
-                                    let todo = 0;
-                                    if (raw.body) {
-                                        todo++;
-                                        let options = {
-                                            url: API_PREFIX + 'markdown',
-                                            method: 'POST',
-                                            contentType: 'application/json',
-                                            dataType: 'text',
-                                            data: JSON.stringify({
-                                                text: raw.body,
-                                                mode: 'gfm',
-                                                context: value.split('#')[0]
-                                            })
+                        let requestOptions = Object.assign({}, baseOptions, authOptions);
+
+                        $.ajax(requestOptions)
+                            .done(raw => {
+                                cache[type][value] = raw;
+
+                                // further requests if necessary
+                                switch(type) {
+                                    case EXTRACT_TYPE.ISSUE: {
+                                        let todo = 0;
+                                        if (raw.body) {
+                                            todo++;
+                                            let options = {
+                                                url: API_PREFIX + 'markdown',
+                                                method: 'POST',
+                                                contentType: 'application/json',
+                                                dataType: 'text',
+                                                data: JSON.stringify({
+                                                    text: raw.body,
+                                                    mode: 'gfm',
+                                                    context: value.split('#')[0]
+                                                })
+                                            }
+                                            $.ajax(Object.assign({}, requestOptions, options))
+                                                .done(html => {
+                                                    raw.bodyHTML = html;
+                                                    if (!--todo) {
+                                                        elem.tooltipster('content', getCardHTML(type, raw));
+                                                    }
+                                                })
+                                                .fail(handleError);
                                         }
-                                        $.ajax(Object.assign({}, requestOptions, options))
-                                            .done(html => {
-                                                raw.bodyHTML = html;
-                                                if (!--todo) {
-                                                    elem.tooltipster('content', getCardHTML(type, raw));
-                                                }
-                                            })
-                                            .fail(handleError);
-                                    }
-                                    if (raw.pull_request) {
-                                        todo++;
-                                        let prPath = apiPath.replace(/\/issues\/(\d+)$/, '/pulls/$1');
-                                        let options = {
-                                            url: API_PREFIX + prPath,
-                                            dataType: 'json'
-                                        };
-                                        $.ajax(Object.assign({}, requestOptions, options))
-                                            .done(pull => {
-                                                if (raw.state === 'closed' && pull.merged_at) {
-                                                    raw.state = cache[type][value].state = 'merged';
-                                                }
-                                                if (!--todo) {
-                                                    elem.tooltipster('content', getCardHTML(type, raw));
-                                                }
-                                            })
-                                            .fail(handleError);
-                                    }
+                                        if (raw.pull_request) {
+                                            todo++;
+                                            let prPath = apiPath.replace(/\/issues\/(\d+)$/, '/pulls/$1');
+                                            let options = {
+                                                url: API_PREFIX + prPath,
+                                                dataType: 'json'
+                                            };
+                                            $.ajax(Object.assign({}, requestOptions, options))
+                                                .done(pull => {
+                                                    if (raw.state === 'closed' && pull.merged_at) {
+                                                        raw.state = cache[type][value].state = 'merged';
+                                                    }
+                                                    if (!--todo) {
+                                                        elem.tooltipster('content', getCardHTML(type, raw));
+                                                    }
+                                                })
+                                                .fail(handleError);
+                                        }
 
-                                    // wait for async handler
-                                    if (todo) {
-                                        return;
+                                        // wait for async handler
+                                        if (todo) {
+                                            return;
+                                        }
                                     }
                                 }
-                            }
 
-                            elem.tooltipster('content', getCardHTML(type, raw));
-                        })
-                        .fail(handleError);
+                                elem.tooltipster('content', getCardHTML(type, raw));
+                            })
+                            .fail(handleError);
+                    };
+                    request();
                 }
             },
             interactive: true

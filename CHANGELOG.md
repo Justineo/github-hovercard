@@ -1,8 +1,11 @@
 Changelog
 ---
+## 0.5.1
+* Fixed a problem with `Authorization` header + CORS + `30x` results, now retry once without `Authorization` header if error occurs.
+
 ## 0.5.0
 
-* Add delay option for extensions.
+* Added delay option for extensions.
 * Fixed endless loading for issue without body.
 
 ## 0.4.2
