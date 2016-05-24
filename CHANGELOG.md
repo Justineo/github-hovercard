@@ -1,6 +1,7 @@
 Changelog
 ---
-## 0.5.1
+## 0.6.0
+* Provide more information for pull request cards.
 * Fixed a problem with `Authorization` header + CORS + `30x` results, now retry once without `Authorization` header if error occurs.
 
 ## 0.5.0

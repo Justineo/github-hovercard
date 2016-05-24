@@ -147,6 +147,16 @@ square(s)
 /**********
  * Issue
  **********/
+.hovercard-issue
+    margin-bottom: 8px
+
+    strong
+        font-size: 120%
+
+    .issue-number
+        opacity: 0.8
+
+
 .hovercard-issue-meta
     p
         line-height: 16px
@@ -165,6 +175,40 @@ square(s)
         border-width: 1px
         vertical-align: middle
         line-height 1.2
+
+.hovercard-pull-meta
+    p
+        line-height: 18px
+
+    .commit-ref
+        border-radius: 2px
+        background-color: rgba(255, 255, 255, .15)
+        white-space: nowrap
+        color: inherit
+        font-size: inherit
+
+        .user
+            color: inherit
+            opacity: 0.5
+
+    .octicon
+        opacity: 0.8
+        margin-left: 10px
+
+        &:first-child
+            margin-left: 0
+
+    .diffstat
+        margin-left: 10px
+
+    .text-diff-added
+        color: #84d063 !important
+
+    .text-diff-deleted
+        color: #ff3c00 !important
+
+    .commit-ref + .octicon
+        margin: 0
 
 .hovercard-issue-body
     @extends $fix-margin

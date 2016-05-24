@@ -136,6 +136,15 @@
 /**********
  * Issue
  **********/
+.hovercard-issue {
+  margin-bottom: 8px;
+}
+.hovercard-issue strong {
+  font-size: 120%;
+}
+.hovercard-issue .issue-number {
+  opacity: 0.8;
+}
 .hovercard-issue-meta p {
   line-height: 16px;
 }
@@ -154,6 +163,39 @@
   border-width: 1px;
   vertical-align: middle;
   line-height: 1.2;
+}
+.hovercard-pull-meta p {
+  line-height: 18px;
+}
+.hovercard-pull-meta .commit-ref {
+  border-radius: 2px;
+  background-color: rgba(255,255,255,0.15);
+  white-space: nowrap;
+  color: inherit;
+  font-size: inherit;
+}
+.hovercard-pull-meta .commit-ref .user {
+  color: inherit;
+  opacity: 0.5;
+}
+.hovercard-pull-meta .octicon {
+  opacity: 0.8;
+  margin-left: 10px;
+}
+.hovercard-pull-meta .octicon:first-child {
+  margin-left: 0;
+}
+.hovercard-pull-meta .diffstat {
+  margin-left: 10px;
+}
+.hovercard-pull-meta .text-diff-added {
+  color: #84d063 !important;
+}
+.hovercard-pull-meta .text-diff-deleted {
+  color: #ff3c00 !important;
+}
+.hovercard-pull-meta .commit-ref + .octicon {
+  margin: 0;
 }
 .hovercard-issue-body {
   clear: left;

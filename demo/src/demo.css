@@ -232,6 +232,7 @@ body > main::after {
 .octicon {
   font: 16px/1 octicons;
   display: inline-block;
+  vertical-align: text-top;
   text-decoration: none;
   text-rendering: auto;
   -webkit-font-smoothing: antialiased;
@@ -672,4 +673,31 @@ main > footer img {
 
 .fallback {
   display: none;
+}
+
+.diffstat {
+  font-size: 12px;
+  font-weight: bold;
+  color: #666;
+  white-space: nowrap;
+  cursor: default;
+}
+
+.text-diff-added {
+  color: #55a532 !important;
+}
+
+.text-diff-deleted {
+  color: #bd2c00 !important;
+}
+
+.commit-ref {
+  position: relative;
+  display: inline-block;
+  padding: 0 5px;
+  font: 0.75em/2 Consolas, "Liberation Mono", Menlo, Courier, monospace;
+  color: #336479;
+  white-space: nowrap;
+  background-color: #e8f0f8;
+  border-radius: 3px;
 }
