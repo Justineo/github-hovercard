@@ -168,11 +168,19 @@
   line-height: 18px;
 }
 .hovercard-pull-meta .commit-ref {
+  max-width: 150px;
   border-radius: 2px;
   background-color: rgba(255,255,255,0.15);
-  white-space: nowrap;
   color: inherit;
   font-size: inherit;
+  vertical-align: bottom;
+  cursor: help;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.hovercard-pull-meta .commit-ref + .octicon {
+  height: 22px;
 }
 .hovercard-pull-meta .commit-ref .user {
   color: inherit;
