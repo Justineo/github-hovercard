@@ -221,7 +221,7 @@ $(() => {
                         <span class="text-diff-added">+{{additions}}</span>
                         <span class="text-diff-deleted">−{{deletions}}</span>
                     </span></p>
-                    <p><span class="commit-ref" title="{{headUser}}:{{headRef}}"><span class="user">{{headUser}}</span>:{{headRef}}</span> {{{icons.arrow}}} <span class="commit-ref" title="{{baseUser}}:{{baseRef}}"><span class="user">{{baseUser}}</span>:{{baseRef}}</span></p>
+                    <p class="hovercard-branch"><span class="commit-ref" title="{{headUser}}:{{headRef}}"><span class="user">{{headUser}}</span>:{{headRef}}</span><span>{{{icons.arrow}}}</span><span class="commit-ref" title="{{baseUser}}:{{baseRef}}"><span class="user">{{baseUser}}</span>:{{baseRef}}</span></p>
                 </div>{{/isPullRequest}}
                 {{#body}}<div class="hovercard-issue-body">{{{.}}}</div>{{/body}}
             </div>`,

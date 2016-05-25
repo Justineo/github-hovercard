@@ -180,18 +180,26 @@ square(s)
     p
         line-height: 18px
 
+    .hovercard-branch
+        display: flex
+
     .commit-ref
-        max-width: 150px
+        flex: 1 1 auto
+        float: left
         border-radius: 2px
         background-color: rgba(255, 255, 255, .15)
         color: inherit
         font-size: inherit
-        vertical-align: bottom
         cursor: help
         ellipsis()
 
-        & + .octicon
-            height: 22px
+        & + span
+            flex: 0 0 auto
+            float: left
+            padding: 0 5px
+
+            & > .octicon
+                height: 22px
 
         .user
             color: inherit

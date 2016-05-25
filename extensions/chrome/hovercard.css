@@ -167,19 +167,27 @@
 .hovercard-pull-meta p {
   line-height: 18px;
 }
+.hovercard-pull-meta .hovercard-branch {
+  display: flex;
+}
 .hovercard-pull-meta .commit-ref {
-  max-width: 150px;
+  flex: 1 1 auto;
+  float: left;
   border-radius: 2px;
   background-color: rgba(255,255,255,0.15);
   color: inherit;
   font-size: inherit;
-  vertical-align: bottom;
   cursor: help;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.hovercard-pull-meta .commit-ref + .octicon {
+.hovercard-pull-meta .commit-ref + span {
+  flex: 0 0 auto;
+  float: left;
+  padding: 0 5px;
+}
+.hovercard-pull-meta .commit-ref + span > .octicon {
   height: 22px;
 }
 .hovercard-pull-meta .commit-ref .user {
