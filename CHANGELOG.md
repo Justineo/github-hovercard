@@ -1,5 +1,8 @@
 Changelog
 ---
+## 0.6.2
+* Minor style update.
+
 ## 0.6.1
 * Added ellipsis for branch labels to prevent clipping.
 
