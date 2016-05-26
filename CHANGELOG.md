@@ -1,7 +1,7 @@
 Changelog
 ---
 ## 0.6.1
-* Gave pull request branches a max-width to prevent overflow.
+* Added ellipsis for branch labels to prevent clipping.
 
 ## 0.6.0
 * Provide more information for pull request cards.
