@@ -1,5 +1,8 @@
 Changelog
 ---
+## 0.6.3
+* Fix code highlight styles (regression due to last version).
+
 ## 0.6.2
 * Minor style update.
 * Fix major break down due to GitHub's recent update which includes styles for `.hovercard`.
