@@ -48,8 +48,8 @@ $(() => {
     const GH_USER_NAME_PATTERN = /^[a-z0-9]+$|^[a-z0-9](?:[a-z0-9](?!--)|-(?!-))*[a-z0-9]$/i;
     const GH_REPO_NAME_PATTERN = /^[a-z0-9\-_\.]+$/i;
 
-    const TYPE_KEY = 'hovercard-type';
-    const VALUE_KEY = 'hovercard-value';
+    const TYPE_KEY = 'ghh-type';
+    const VALUE_KEY = 'ghh-value';
     const EXTRACT_TYPE = {
         USER: 'user',
         REPO: 'repo',
@@ -135,7 +135,7 @@ $(() => {
     };
 
     const BLACK_LIST_SELECTOR = [
-        '.hovercard a',
+        '.ghh a',
         '.repo-nav a',
         '.tabnav-tab',
         '.discussion-item .timestamp',
@@ -155,14 +155,14 @@ $(() => {
 
     const CARD_TPL = {
         user: `
-            <address class="hovercard">
-                <img src="{{avatar}}&s=32" class="hovercard-avatar">
-                <div class="hovercard-person">
+            <address class="ghh">
+                <img src="{{avatar}}&s=32" class="ghh-avatar">
+                <div class="ghh-person">
                     <p><strong><a href="{{userUrl}}">{{loginName}}</a></strong>{{#isAdmin}} (Staff){{/isAdmin}}{{#isOrg}} <small>(Organization)</small>{{/isOrg}}</p>
                     {{#realName}}<p>{{realName}}</p>{{/realName}}
                 </div>
-                <div class="hovercard-more">
-                    {{^isOrg}}<div class="hovercard-stats">
+                <div class="ghh-more">
+                    {{^isOrg}}<div class="ghh-stats">
                         <a href="{{followersUrl}}">
                             <strong>{{followers}}</strong>
                             <span>Followers</span>
@@ -181,14 +181,14 @@ $(() => {
                 </div>
             </address>`,
         repo: `
-            <div class="hovercard">
-                <div class="hovercard-repo">
+            <div class="ghh">
+                <div class="ghh-repo">
                     {{{icons.repo}}}
                     <p><a href="{{ownerUrl}}">{{owner}}</a> / <strong><a href="{{repoUrl}}">{{repo}}</a></strong></p>
                     {{#parent}}<p><span>forked from <a href="{{url}}">{{repo}}</a></span></p>{{/parent}}
                 </div>
-                <div class="hovercard-more">
-                    <div class="hovercard-stats">
+                <div class="ghh-more">
+                    <div class="ghh-stats">
                         <a href="{{starsUrl}}">
                             <strong>{{stars}}</strong>
                             <span>Stars</span>
@@ -202,41 +202,41 @@ $(() => {
                             <span>Issues</span>
                         </a>{{/hasIssues}}
                     </div>
-                    {{#desc}}<p class="hovercard-repo-desc">{{{icons.info}}}{{{.}}}</p>{{/desc}}
+                    {{#desc}}<p class="ghh-repo-desc">{{{icons.info}}}{{{.}}}</p>{{/desc}}
                     {{#homepage}}<p>{{{icons.link}}}<a href="{{.}}">{{.}}</a></p>{{/homepage}}
                     {{#language}}<p>{{{icons.code}}}{{.}}</p>{{/language}}
                 </div>
             </div>`,
         issue: `
-            <div class="hovercard">
-                <div class="hovercard-issue">
+            <div class="ghh">
+                <div class="ghh-issue">
                     <p><span class="issue-number">#{{number}}</span> <a href="{{issueUrl}}"><strong>{{title}}</strong></a></p>
                 </div>
-                <div class="hovercard-issue-meta">
+                <div class="ghh-issue-meta">
                     <p><span class="state state-{{state}}">{{{icons.state}}}{{state}}</span><a href="{{userUrl}}">{{user}}</a> created on {{{createTime}}}</p>
                 </div>
-                {{#isPullRequest}}<div class="hovercard-pull-meta">
+                {{#isPullRequest}}<div class="ghh-pull-meta">
                     <p>{{{icons.commit}}} {{commits}} commit{{^isSingleCommit}}s{{/isSingleCommit}}{{{icons.diff}}} {{changedFiles}} file{{^isSingleFile}}s{{/isSingleFile}} changed
                     <span class="diffstat">
                         <span class="text-diff-added">+{{additions}}</span>
                         <span class="text-diff-deleted">−{{deletions}}</span>
                     </span></p>
-                    <p class="hovercard-branch"><span class="commit-ref" title="{{headUser}}:{{headRef}}"><span class="user">{{headUser}}</span>:{{headRef}}</span><span>{{{icons.arrow}}}</span><span class="commit-ref" title="{{baseUser}}:{{baseRef}}"><span class="user">{{baseUser}}</span>:{{baseRef}}</span></p>
+                    <p class="ghh-branch"><span class="commit-ref" title="{{headUser}}:{{headRef}}"><span class="user">{{headUser}}</span>:{{headRef}}</span><span>{{{icons.arrow}}}</span><span class="commit-ref" title="{{baseUser}}:{{baseRef}}"><span class="user">{{baseUser}}</span>:{{baseRef}}</span></p>
                 </div>{{/isPullRequest}}
-                {{#body}}<div class="hovercard-issue-body">{{{.}}}</div>{{/body}}
+                {{#body}}<div class="ghh-issue-body">{{{.}}}</div>{{/body}}
             </div>`,
         error: `
-            <div class="hovercard hovercard-error">
+            <div class="ghh ghh-error">
                 <p><strong>{{{icons.alert}}}{{title}}</strong></p>
                 {{#message}}<p>{{{message}}}</p>{{/message}}
             </div>`,
         form: `
-            <div class="hovercard-overlay">
+            <div class="ghh-overlay">
                 <form>
                     <p>
-                        <input class="hovercard-token" type="text" placeholder="Paste access token here..." size="40" />
-                        <button class="btn btn-primary hovercard-save">Save</button>
-                        <button class="btn hovercard-cancel">Cancel</button>
+                        <input class="ghh-token" type="text" placeholder="Paste access token here..." size="40" />
+                        <button class="btn btn-primary ghh-save">Save</button>
+                        <button class="btn ghh-cancel">Cancel</button>
                     </p>
                 </form>
             </div>`
@@ -275,7 +275,7 @@ $(() => {
     }
 
     function getTypeClass(type) {
-        return `hovercard-${type}-x`;
+        return `ghh-${type}-x`;
     }
 
     function getFullRepoFromAncestorLink(elem) {
@@ -324,11 +324,11 @@ $(() => {
                 $(this)
                     .html(content.replace(TASK_PATTERN, (match, checked, remaining) => {
                         return `
-                            <input class="hovercard-task-checker"
+                            <input class="ghh-task-checker"
                                 type="checkbox"${checked === 'x' ? ' checked' : ''}
                                 disabled> ${remaining}`;
                     }))
-                    .addClass('hovercard-task');
+                    .addClass('ghh-task');
             }
         });
 
@@ -519,8 +519,8 @@ $(() => {
 
     // prepare token form
     let tokenForm = $(CARD_TPL.form);
-    let tokenField = tokenForm.find('.hovercard-token');
-    tokenForm.find('.hovercard-save').on('click', () => {
+    let tokenField = tokenForm.find('.ghh-token');
+    tokenForm.find('.ghh-save').on('click', () => {
         let newToken = tokenField.val().trim();
         if (newToken) {
             localStorage.setItem(TOKEN_KEY, newToken);
@@ -529,7 +529,7 @@ $(() => {
         tokenForm.detach();
         return false;
     });
-    tokenForm.find('.hovercard-cancel').on('click', () => {
+    tokenForm.find('.ghh-cancel').on('click', () => {
         tokenForm.detach();
         return false;
     });

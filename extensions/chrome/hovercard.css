@@ -1,38 +1,38 @@
 /**********
  * Utils
  **********/
-.hovercard-repo {
+.ghh-repo {
   position: relative;
   float: left;
   margin-top: 2px;
   margin-bottom: 6px;
   padding-left: 24px;
 }
-.hovercard-repo .octicon {
+.ghh-repo .octicon {
   position: absolute;
   top: 0;
   left: 0;
   line-height: 1;
 }
-.hovercard-issue-body > :first-child {
+.ghh-issue-body > :first-child {
   margin-top: 0;
 }
-.hovercard-issue-body > :last-child {
+.ghh-issue-body > :last-child {
   margin-bottom: 0;
 }
 /**********
  * Global
  **********/
-.hovercard {
+.ghh {
   max-width: 320px;
   min-width: 160px;
   font-style: normal;
   line-height: 2;
 }
-.hovercard.extended {
+.ghh.extended {
   max-width: 640px;
 }
-.hovercard p {
+.ghh p {
   margin: 0 0 4px;
   vertical-align: middle;
   line-height: 1.2;
@@ -41,34 +41,34 @@
   text-overflow: ellipsis;
   clear: both;
 }
-.hovercard a {
+.ghh a {
   color: #bdf;
 }
-.hovercard small {
+.ghh small {
   opacity: 0.8;
 }
-.hovercard .octicon {
+.ghh .octicon {
   fill: currentColor;
 }
 /**********
  * More
  **********/
-.hovercard-more {
+.ghh-more {
   clear: left;
 }
-.hovercard-more p {
+.ghh-more p {
   position: relative;
   padding-left: 18px;
   line-height: 18px;
 }
-.hovercard-more .hovercard-repo-desc {
+.ghh-more .ghh-repo-desc {
   white-space: normal;
   height: auto;
 }
-.hovercard-more .emoji {
+.ghh-more .emoji {
   vertical-align: middle;
 }
-.hovercard-more .octicon {
+.ghh-more .octicon {
   position: absolute;
   top: 2px;
   left: 0;
@@ -78,13 +78,13 @@
 /**********
  * User
  **********/
-.hovercard-person {
+.ghh-person {
   float: left;
 }
-.hovercard-person strong {
+.ghh-person strong {
   font-size: 120%;
 }
-.hovercard-avatar {
+.ghh-avatar {
   float: left;
   width: 32px;
   height: 32px;
@@ -96,16 +96,16 @@
 /**********
  * Repo
  **********/
-.hovercard-repo strong {
+.ghh-repo strong {
   font-size: 120%;
 }
-.hovercard-repo p {
+.ghh-repo p {
   max-width: 296px;
 }
-.hovercard-repo p:first-of-type {
+.ghh-repo p:first-of-type {
   font-size: 13px;
 }
-.hovercard-stats {
+.ghh-stats {
   display: flex;
   min-width: 180px;
   margin-bottom: 10px;
@@ -114,49 +114,49 @@
   background-color: rgba(255,255,255,0.15);
   line-height: 1;
 }
-.hovercard-stats strong,
-.hovercard-stats span {
+.ghh-stats strong,
+.ghh-stats span {
   display: block;
   padding: 2px 4px;
   line-height: 1;
   text-align: center;
 }
-.hovercard-stats span {
+.ghh-stats span {
   font-style: 70%;
   color: #fff;
   opacity: 0.8;
 }
-.hovercard-stats a {
+.ghh-stats a {
   display: block;
   flex: 1 1 auto;
 }
-.hovercard-stats a:hover {
+.ghh-stats a:hover {
   text-decoration: none;
 }
 /**********
  * Issue
  **********/
-.hovercard-issue {
+.ghh-issue {
   margin-bottom: 8px;
 }
-.hovercard-issue strong {
+.ghh-issue strong {
   font-size: 120%;
 }
-.hovercard-issue .issue-number {
+.ghh-issue .issue-number {
   opacity: 0.8;
 }
-.hovercard-issue-meta p {
+.ghh-issue-meta p {
   line-height: 16px;
 }
-.hovercard-issue-meta .state {
+.ghh-issue-meta .state {
   margin-right: 5px;
   padding: 0 4px;
   text-transform: capitalize;
 }
-.hovercard-issue-meta .state .octicon {
+.ghh-issue-meta .state .octicon {
   margin-right: 4px;
 }
-.hovercard-issue-meta .hovercard-avatar {
+.ghh-issue-meta .ghh-avatar {
   margin: 0 5px 0 0;
   width: 16px;
   height: 16px;
@@ -164,13 +164,13 @@
   vertical-align: middle;
   line-height: 1.2;
 }
-.hovercard-pull-meta p {
+.ghh-pull-meta p {
   line-height: 18px;
 }
-.hovercard-pull-meta .hovercard-branch {
+.ghh-pull-meta .ghh-branch {
   display: flex;
 }
-.hovercard-pull-meta .commit-ref {
+.ghh-pull-meta .commit-ref {
   flex: 0 1 auto;
   float: left;
   border-radius: 2px;
@@ -182,38 +182,38 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.hovercard-pull-meta .commit-ref + span {
+.ghh-pull-meta .commit-ref + span {
   flex: 0 0 auto;
   float: left;
   padding: 0 5px;
 }
-.hovercard-pull-meta .commit-ref + span > .octicon {
+.ghh-pull-meta .commit-ref + span > .octicon {
   height: 22px;
 }
-.hovercard-pull-meta .commit-ref .user {
+.ghh-pull-meta .commit-ref .user {
   color: inherit;
   opacity: 0.5;
 }
-.hovercard-pull-meta .octicon {
+.ghh-pull-meta .octicon {
   opacity: 0.8;
   margin-left: 10px;
 }
-.hovercard-pull-meta .octicon:first-child {
+.ghh-pull-meta .octicon:first-child {
   margin-left: 0;
 }
-.hovercard-pull-meta .diffstat {
+.ghh-pull-meta .diffstat {
   margin-left: 10px;
 }
-.hovercard-pull-meta .text-diff-added {
+.ghh-pull-meta .text-diff-added {
   color: #84d063 !important;
 }
-.hovercard-pull-meta .text-diff-deleted {
+.ghh-pull-meta .text-diff-deleted {
   color: #ff3c00 !important;
 }
-.hovercard-pull-meta .commit-ref + .octicon {
+.ghh-pull-meta .commit-ref + .octicon {
   margin: 0;
 }
-.hovercard-issue-body {
+.ghh-issue-body {
   clear: left;
   overflow: auto;
   max-height: 280px;
@@ -226,135 +226,135 @@
   line-height: 1.6;
   word-wrap: break-word;
 }
-.hovercard-issue-body h1,
-.hovercard-issue-body h2,
-.hovercard-issue-body h3,
-.hovercard-issue-body h4,
-.hovercard-issue-body h5,
-.hovercard-issue-body h6 {
+.ghh-issue-body h1,
+.ghh-issue-body h2,
+.ghh-issue-body h3,
+.ghh-issue-body h4,
+.ghh-issue-body h5,
+.ghh-issue-body h6 {
   margin-top: 1em;
   margin-bottom: 12px;
   font-weight: 700;
   line-height: 1.4;
 }
-.hovercard-issue-body h1 tt,
-.hovercard-issue-body h2 tt,
-.hovercard-issue-body h3 tt,
-.hovercard-issue-body h4 tt,
-.hovercard-issue-body h5 tt,
-.hovercard-issue-body h6 tt,
-.hovercard-issue-body h1 code,
-.hovercard-issue-body h2 code,
-.hovercard-issue-body h3 code,
-.hovercard-issue-body h4 code,
-.hovercard-issue-body h5 code,
-.hovercard-issue-body h6 code {
+.ghh-issue-body h1 tt,
+.ghh-issue-body h2 tt,
+.ghh-issue-body h3 tt,
+.ghh-issue-body h4 tt,
+.ghh-issue-body h5 tt,
+.ghh-issue-body h6 tt,
+.ghh-issue-body h1 code,
+.ghh-issue-body h2 code,
+.ghh-issue-body h3 code,
+.ghh-issue-body h4 code,
+.ghh-issue-body h5 code,
+.ghh-issue-body h6 code {
   font-size: inherit;
 }
-.hovercard-issue-body h1 {
+.ghh-issue-body h1 {
   font-size: 1.5em;
 }
-.hovercard-issue-body h2 {
+.ghh-issue-body h2 {
   font-size: 1.4em;
 }
-.hovercard-issue-body h3 {
+.ghh-issue-body h3 {
   font-size: 1.3em;
 }
-.hovercard-issue-body h4 {
+.ghh-issue-body h4 {
   font-size: 1.2em;
 }
-.hovercard-issue-body h5 {
+.ghh-issue-body h5 {
   font-size: 1.1em;
 }
-.hovercard-issue-body h6 {
+.ghh-issue-body h6 {
   font-size: 1em;
 }
-.hovercard-issue-body p,
-.hovercard-issue-body blockquote,
-.hovercard-issue-body ul,
-.hovercard-issue-body ol,
-.hovercard-issue-body dl,
-.hovercard-issue-body table,
-.hovercard-issue-body pre {
+.ghh-issue-body p,
+.ghh-issue-body blockquote,
+.ghh-issue-body ul,
+.ghh-issue-body ol,
+.ghh-issue-body dl,
+.ghh-issue-body table,
+.ghh-issue-body pre {
   margin-top: 0;
   margin-bottom: 1em;
 }
-.hovercard-issue-body hr {
+.ghh-issue-body hr {
   height: 2px;
   padding: 0;
   margin: 16px 0;
   background-color: #ccc;
   border: 0 none;
 }
-.hovercard-issue-body a:not([href]) {
+.ghh-issue-body a:not([href]) {
   color: inherit;
 }
-.hovercard-issue-body p {
+.ghh-issue-body p {
   white-space: normal;
   line-height: 1.6;
 }
-.hovercard-issue-body ul,
-.hovercard-issue-body ol {
+.ghh-issue-body ul,
+.ghh-issue-body ol {
   padding-left: 2em;
 }
-.hovercard-issue-body ul ol,
-.hovercard-issue-body ol ol,
-.hovercard-issue-body ul ul,
-.hovercard-issue-body ol ul {
+.ghh-issue-body ul ol,
+.ghh-issue-body ol ol,
+.ghh-issue-body ul ul,
+.ghh-issue-body ol ul {
   margin-top: 0;
   margin-bottom: 0;
 }
-.hovercard-issue-body dl {
+.ghh-issue-body dl {
   padding: 0;
 }
-.hovercard-issue-body dt {
+.ghh-issue-body dt {
   padding: 0;
   margin-top: 1em;
   font-size: 1em;
   font-style: italic;
   font-weight: 700;
 }
-.hovercard-issue-body dd {
+.ghh-issue-body dd {
   padding: 0 1em;
   margin-bottom: 1em;
 }
-.hovercard-issue-body blockquote {
+.ghh-issue-body blockquote {
   padding: 0 1em;
   border-left: 3px solid #ccc;
 }
-.hovercard-issue-body table {
+.ghh-issue-body table {
   width: 100%;
   overflow: auto;
   word-break: normal;
   word-break: keep-all;
 }
-.hovercard-issue-body th {
+.ghh-issue-body th {
   font-weight: 700;
 }
-.hovercard-issue-body th,
-.hovercard-issue-body tr:nth-child(even) td {
+.ghh-issue-body th,
+.ghh-issue-body tr:nth-child(even) td {
   background-color: rgba(108,108,108,0.5);
 }
-.hovercard-issue-body th,
-.hovercard-issue-body td {
+.ghh-issue-body th,
+.ghh-issue-body td {
   border: 1px solid #777;
   padding: 0.5em 1em;
 }
-.hovercard-issue-body img {
+.ghh-issue-body img {
   max-width: 100%;
 }
-.hovercard-issue-body code,
-.hovercard-issue-body tt {
+.ghh-issue-body code,
+.ghh-issue-body tt {
   padding: 0.2em 0;
   margin: 0;
   background-color: rgba(0,0,0,0.04);
   border-radius: 2px;
 }
-.hovercard-issue-body code br,
-.hovercard-issue-body tt br {
+.ghh-issue-body code br,
+.ghh-issue-body tt br {
   display: none;
 }
-.hovercard-issue-body pre {
+.ghh-issue-body pre {
   padding: 0.6em;
   overflow: auto;
   line-height: 1.45;
@@ -362,28 +362,28 @@
   border-radius: 2px;
   word-wrap: normal;
 }
-.hovercard-issue-body pre code,
-.hovercard-issue-body pre tt {
+.ghh-issue-body pre code,
+.ghh-issue-body pre tt {
   background-color: transparent;
 }
-.hovercard-task {
+.ghh-task {
   list-style-type: none;
 }
-.hovercard-task-checker {
+.ghh-task-checker {
   margin-right: 0.3em;
   margin-left: -1.5em;
 }
 /**********
  * Error
  **********/
-.hovercard-error {
+.ghh-error {
   max-width: 320px;
 }
-.hovercard-error p {
+.ghh-error p {
   line-height: 1.6;
   white-space: normal;
 }
-.hovercard-error .octicon {
+.ghh-error .octicon {
   display: inline-block;
   position: static;
   margin-right: 5px;
@@ -391,7 +391,7 @@
 /**********
  * Overlay
  **********/
-.hovercard-overlay {
+.ghh-overlay {
   position: fixed;
   z-index: 10000000;
   top: 0;
@@ -400,7 +400,7 @@
   left: 0;
   background-color: rgba(0,0,0,0.6);
 }
-.hovercard-overlay form {
+.ghh-overlay form {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -410,6 +410,6 @@
   border-radius: 5px;
   background-color: #fff;
 }
-.hovercard-overlay form p {
+.ghh-overlay form p {
   margin: 10px 0;
 }

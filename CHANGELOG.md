@@ -2,6 +2,7 @@ Changelog
 ---
 ## 0.6.2
 * Minor style update.
+* Fix major break down due to GitHub's recent update which includes styles for `.hovercard`.
 
 ## 0.6.1
 * Added ellipsis for branch labels to prevent clipping.
