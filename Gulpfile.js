@@ -51,28 +51,22 @@ gulp.task('css:compile', function () {
 
 gulp.task('css', ['css:prepare', 'css:compile']);
 
-gulp.task('cp', ['css', 'hovercard:prepare'], function () {
-  var targets = [
-    './src/*', '!./src/hovercard.js', './tmp/hovercard.js',
-    '!./src/*.styl', '!./src/tooltipster.css', './tmp/tooltipster.css'
-  ];
-  var srcChrome = gulp.src(targets)
-    .pipe(gulp.dest('./extensions/chrome'));
-  var srcFirefox = gulp.src(targets)
-    .pipe(gulp.dest('./extensions/firefox/data'));
-  var icon = gulp.src('./icon.png')
-    .pipe(gulp.dest('./extensions/firefox'))
-    .pipe(gulp.dest('./extensions/chrome'));
-  return merge(srcChrome, srcFirefox, icon);
-});
-
-gulp.task('hovercard:prepare', function () {
+gulp.task('resource:inline', function () {
   return gulp.src('./src/hovercard.js')
+    .pipe(replace('\'__OCTICONS__\'', JSON.stringify(require('./assets/octicons.json'))))
     .pipe(replace('\'__EMOJI_DATA__\'', JSON.stringify(require('./assets/emoji.json'))))
     .pipe(gulp.dest('./tmp'));
 });
 
-gulp.task('userscript:prepare', ['hovercard:prepare'], function () {
+gulp.task('firefox:resource', function () {
+  return gulp.src('./src/hovercard.js')
+    .pipe(replace('\'__OCTICONS__\'', 'self.options.octicons'))
+    .pipe(replace('\'__EMOJI_DATA__\'', 'self.options.emojiMap'))
+    .pipe(rename('hovercard.firefox.js'))
+    .pipe(gulp.dest('./tmp'));
+});
+
+gulp.task('userscript:prepare', ['resource:inline'], function () {
   var hovercard = gulp.src('./tmp/hovercard.js')
     .pipe(babel({ presets: ['es2015'] }))
     .pipe(rename('hovercard.userscript.js'))
@@ -105,6 +99,7 @@ gulp.task('userscript', ['userscript:inject-styles', 'userscript:prepare'], func
   return gulp.src([
       './tmp/metadata.js',
       './tmp/inject-styles.js',
+      './src/jquery.js',
       './src/mustache.js',
       './src/tooltipster.js',
       './tmp/hovercard.userscript.js'
@@ -116,15 +111,36 @@ gulp.task('userscript', ['userscript:inject-styles', 'userscript:prepare'], func
     .pipe(gulp.dest('./userscript/dist'));
 });
 
-gulp.task('extensions:prepare', function () {
-  return gulp.src([
-      './src/hovercard.js'
-    ])
-    .pipe(replace('\'__EMOJI_DATA__\'', JSON.stringify(require('./assets/emoji.json'))))
-    .pipe(gulp.dest('./tmp'));
+gulp.task('chrome:cp', ['resource:inline', 'css'], function () {
+  var targets = [
+    './src/*', '!./src/hovercard.js', './tmp/hovercard.js',
+    '!./src/*.styl', '!./src/tooltipster.css', './tmp/tooltipster.css'
+  ];
+  var src = gulp.src(targets)
+    .pipe(gulp.dest('./extensions/chrome'));
+  var icon = gulp.src('./icon.png')
+    .pipe(gulp.dest('./extensions/chrome'));
+  return merge(src, icon);
 });
 
-gulp.task('chrome:zip', ['cp'], function (cb) {
+gulp.task('firefox:cp', ['firefox:resource', 'css'], function () {
+  var targets = [
+    './src/*', '!./src/hovercard.js',
+    '!./src/*.styl', '!./src/tooltipster.css', './tmp/tooltipster.css'
+  ];
+  var main = gulp.src(['./tmp/hovercard.firefox.js'])
+    .pipe(rename('hovercard.js'))
+    .pipe(gulp.dest('./extensions/firefox/data'));
+  var src = gulp.src(targets.concat([
+      './assets/emoji.json', './assets/octicons.json'
+    ]))
+    .pipe(gulp.dest('./extensions/firefox/data'));
+  var icon = gulp.src('./icon.png')
+    .pipe(gulp.dest('./extensions/firefox'))
+  return merge(main, src, icon);
+});
+
+gulp.task('chrome:zip', ['chrome:cp'], function (cb) {
   var manifestPath = './extensions/chrome/manifest.json';
   var manifest = JSON.parse(fs.readFileSync(manifestPath, { encoding: 'utf8' }));
   manifest.version = version;
@@ -142,7 +158,7 @@ gulp.task('chrome:zip', ['cp'], function (cb) {
   );
 });
 
-gulp.task('firefox:xpi', ['cp'], function (cb) {
+gulp.task('firefox:xpi', ['firefox:cp'], function (cb) {
   var fxPackPath = './extensions/firefox/package.json';
   var fxPack = JSON.parse(fs.readFileSync(fxPackPath, { encoding: 'utf8' }));
   fxPack.version = version;
@@ -175,7 +191,7 @@ gulp.task('opera:nex', ['chrome:zip'], function (cb) {
   );
 });
 
-gulp.task('demo:prepare', ['hovercard:prepare'], function () {
+gulp.task('demo:prepare', ['resource:inline'], function () {
   var hovercard = gulp.src('./tmp/hovercard.js')
     .pipe(replace('location.host', '\'github.com\''))
     .pipe(babel({ presets: ['es2015'] }))

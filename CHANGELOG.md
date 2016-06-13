@@ -1,5 +1,10 @@
 Changelog
 ---
+## 0.6.4
+* Now organic tooltips on GitHub will be blocked if hovercards are going to show on same elements. (#30)
+* Included jQuery for user script version (GitHub doesn't provide jQuery in global scope now).
+* Moved assets into separate files for Firefox add-on.
+
 ## 0.6.3
 * Fix code highlight styles (regression due to last version).
 

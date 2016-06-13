@@ -17,6 +17,10 @@ pageMod.PageMod({
     data.url('tooltipster.js'),
     data.url('hovercard.js')
   ],
+  contentScriptOptions: {
+    octicons: JSON.parse(data.load('octicons.json')),
+    emojiMap: JSON.parse(data.load('emoji.json'))
+  },
   onAttach: function (worker) {
     worker.port.emit('prefs', { delay: prefs.delay });
   },

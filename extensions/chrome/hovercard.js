@@ -937,6 +937,15 @@ $(() => {
             tipped.css('box-shadow', '0 0 transparent');
         }
 
+        // disable original title tooltips
+        tipped.attr('title', '');
+
+        // block original tooltips
+        // see https://github.com/Justineo/github-hovercard/issues/30
+        const ORGANIC_TOOLTIP_CLASS = 'tooltipped';
+        tipped.filter(`.${ORGANIC_TOOLTIP_CLASS}`).removeClass(ORGANIC_TOOLTIP_CLASS);
+        tipped.parents(`.${ORGANIC_TOOLTIP_CLASS}`).removeClass(ORGANIC_TOOLTIP_CLASS);
+
         // Listen for future mutations but not ones happens
         // in current extraction process
         setTimeout(() => {
