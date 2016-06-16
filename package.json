@@ -14,6 +14,8 @@
   ],
   "devDependencies": {
     "babel-preset-es2015": "^6.3.13",
+    "cheerio": "^0.20.0",
+    "datauri": "^1.0.4",
     "del": "^2.2.0",
     "gulp": "^3.8.9",
     "gulp-babel": "^6.1.1",
@@ -22,10 +24,10 @@
     "gulp-replace": "^0.5.4",
     "gulp-stylus": "^2.1.0",
     "gulp-uglify": "^1.5.1",
+    "marked": "^0.3.5",
     "merge-stream": "^1.0.0",
     "rename": "^1.0.3",
-    "run-sequence": "^1.1.5",
-    "datauri": "^1.0.4"
+    "run-sequence": "^1.1.5"
   },
   "author": "Justineo",
   "license": "MIT",

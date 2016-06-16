@@ -92,6 +92,10 @@ textarea {
   box-shadow: inset 0 1px 2px rgba(0,0,0,0.075);
 }
 
+ul {
+  list-style-position: inside;
+}
+
 body > header {
   padding-top: 6px;
   padding-bottom: 6px;
@@ -703,4 +707,37 @@ main > footer img {
   white-space: nowrap;
   background-color: #e8f0f8;
   border-radius: 3px;
+}
+
+#overlay {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  z-index: 2;
+  transition: 0.3s;
+  cursor: pointer;
+}
+
+#overlay.ok {
+  transform: scale(10);
+  opacity: 0;
+  pointer-events: none;
+}
+
+#overlay .disclaimer {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 0 10px 0 48px;
+  border: 3px solid #d8d8d8;
+  border-radius: 3px;
+  background-color: #f5f5f5;
+}
+
+#overlay .disclaimer .alt {
+  text-align: center;
 }

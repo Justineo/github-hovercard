@@ -13,7 +13,9 @@ var stylus = require('gulp-stylus');
 var cssnano = require('gulp-cssnano');
 var babel = require('gulp-babel');
 var DataURI = require('datauri');
-var pack = JSON.parse(fs.readFileSync('./package.json', { encoding: 'utf8' }));
+var marked = require('marked');
+var cheerio = require('cheerio');
+var pack = require('./package.json');
 var version = pack.version;
 
 function getCommentHandler() {
@@ -205,7 +207,17 @@ gulp.task('demo:prepare', ['resource:inline'], function () {
   return merge(hovercard, demo);
 });
 
-gulp.task('demo', ['css', 'demo:prepare'], function () {
+gulp.task('demo:index', function () {
+  var changelog = fs.readFileSync('./CHANGELOG.md', { encoding: 'utf8' });
+  var $ = cheerio.load(marked(changelog));
+
+  return gulp.src('./demo/src/index.html')
+    .pipe(replace('${version}', version))
+    .pipe(replace('${changes}', '<ul>' + $('h2').eq(1).next().html() + '</ul>'))
+    .pipe(gulp.dest('.'));
+});
+
+gulp.task('demo', ['css', 'demo:prepare', 'demo:index'], function () {
   var jsSrc = gulp.src([
       './src/jquery.js',
       './src/mustache.js',

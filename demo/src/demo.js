@@ -1,6 +1,19 @@
 $(() => {
   'use strict';
 
+  if (location.hash === '#disclaimer') {
+    let $disclaimer = $('.disclaimer');
+    $(`<div id="overlay"></div>`)
+      .append($disclaimer.clone().append('<p class="alt">Click anywhere to close...</p>'))
+      .appendTo(document.body)
+      .on('click', function () {
+        $(this).addClass('ok');
+        if (history.replaceState) {
+          history.replaceState({}, document.title, '/');
+        }
+      });
+  }
+
   /**
    * Check browsers
    */
