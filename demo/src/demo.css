@@ -103,15 +103,18 @@ body > header {
 header > div {
   width: 980px;
   margin: 0 auto;
-  background: url(../../icon.png) no-repeat left center;
-  background-size: 36px 36px;
-  padding-left: 54px;
   line-height: 36px;
+}
+
+header a {
+  color: inherit;
 }
 
 header h1 {
   display: inline-block;
   margin: 0;
+  padding-left: 48px;
+  background: url(../../icon.png) no-repeat left center/36px 36px;
   font-size: 13px;
   font-weight: 700;
 }
