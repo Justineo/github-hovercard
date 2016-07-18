@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="google-site-verification" content="fB-iMU10GcaZPUhaVfd2hte-E36g44eYxcxGLbbljFc" />
+<title>GitHub Hovercard</title>
+<link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/octicons/3.3.0/octicons.css">
+<link rel="stylesheet" href="demo/dist/demo.css">
+<link rel="chrome-webstore-item" href="https://chrome.google.com/webstore/detail/mmoahbbnojgkclgceahhakhnccimnplk">
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-34177998-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
+</head>
+<body>
+<header role="banner">
+  <div>
+    <a href="//github.com/Justineo/github-hovercard"><h1>GitHub Hovercard</h1></a>
+    <div id="social"></div>
+  </div>
+</header>
+<main>
+  <article>
+    <section class="intro">
+      <section class="disclaimer">
+        <p><span class="mega-octicon octicon-issue-opened"></span> <em>GitHub Hovercard</em> is a third party tool which <strong>is not affiliated to GitHub</strong> (github.com). This page is designed exactly the same as GitHub only to show how the extension actually works on GitHub.</p>
+      </section>
+      <section class="desc">
+        <h1>What's GitHub Hovercard?</h1>
+        <p><em>GitHub Hovercard</em> provides neat user/repo/issue hovercards for GitHub. It brings information you may be interested with all into your current page.</p>
+      </section>
+      <section class="installation">
+        <h1>Installation</h1>
+        <script>
+          var browser = 'other';
+          if (window.chrome && chrome.webstore && typeof chrome.webstore.install === 'function') {
+            browser = 'chrome';
+          } else if (window.InstallTrigger && typeof InstallTrigger.install === 'function') {
+            browser = 'mozilla';
+          } else if (window.opr && opr.addons && typeof opr.addons.installExtension === 'function') {
+            browser = 'opera';
+          }
+
+          if (browser !== 'other') {
+            document.write('<style>#' + browser + ' { display: block; }</style>');
+          } else {
+            document.write('<style>.fallback { display: block !important; } .support { display: none; }</style>');
+          }
+        </script>
+        <div id="chrome" class="install-panel">
+          <p><button class="btn btn-primary install">Add to Chrome</button> <span class="hint">or download from <a href="https://chrome.google.com/webstore/detail/github-hovercard/mmoahbbnojgkclgceahhakhnccimnplk">Chrome Webstore</a>.</span></p>
+          <p class="alt text-muted">Other versions: <a href="https://addons.mozilla.org/en-US/firefox/addon/github-hovercard/">Firefox</a> / <a href="https://addons.opera.com/extensions/details/github-hovercard/">Opera</a> / <a href="https://justineo.github.io/github-hovercard/userscript/dist/github-hovercard.user.js">userscript</a></p>
+        </div>
+        <div id="mozilla" class="install-panel">
+          <p><button class="btn btn-primary install">Add to Firefox</button> <span class="hint">or download from <a href="https://addons.mozilla.org/en-US/firefox/addon/github-hovercard/">Mozilla Add-ons</a>.</span></p>
+          <p class="alt text-muted">Other versions: <a href="https://chrome.google.com/webstore/detail/github-hovercard/mmoahbbnojgkclgceahhakhnccimnplk">Chrome</a> / <a href="https://addons.opera.com/extensions/details/github-hovercard/">Opera</a> / <a href="https://justineo.github.io/github-hovercard/userscript/dist/github-hovercard.user.js">userscript</a></p>
+        </div>
+        <div id="opera" class="install-panel">
+          <p><button class="btn btn-primary install">Add to Opera</button> <span class="hint">or download from <a href="https://addons.opera.com/extensions/details/github-hovercard/">Opera Extensions</a>.</span></p>
+          <p class="alt text-muted">Other versions: <a href="https://chrome.google.com/webstore/detail/github-hovercard/mmoahbbnojgkclgceahhakhnccimnplk">Chrome</a> / <a href="https://addons.mozilla.org/en-US/firefox/addon/github-hovercard/">Firefox</a> / <a href="https://justineo.github.io/github-hovercard/userscript/dist/github-hovercard.user.js">userscript</a></p>
+        </div>
+        <div class="fallback">
+          <p>Extension version is not supported by your browser. You can try the <a href="https://justineo.github.io/github-hovercard/userscript/dist/github-hovercard.user.js">userscript</a> version. Or go to our <a href="//github.com/Justineo/github-hovercard/issues">GitHub issues</a> for help.</p>
+        </div>
+      </section>
+      <section class="changelog">
+        <h1>What's new for v${version}?</h1>
+        ${changes}
+        <p class="alt text-muted">Check the complete changelog <a href="//github.com/Justineo/github-hovercard/blob/gh-pages/CHANGELOG.md">here</a>.</p>
+      </section>
+      <section class="tryout">
+        <h1>Try yourself</h1>
+        <p class="support">Try it out around this page. Have fun!</p>
+        <p class="fallback">Sorry, neither extension nor userscript version is available for your browser (but you can preview the functionalities around this page).</p>
+      </section>
+    </section>
+    <section class="news">
+      <div class="alert push">
+        <div class="body">
+          <span class="mega-octicon octicon-git-commit" aria-label="Push"></span>
+
+          <div class="time">
+            <time datetime="2015-12-22T06:12:53Z" title="2015年12月22日 GMT+8下午2:12">A few hours ago</time>
+          </div>
+
+          <div class="title">
+            <a class="author" href="//github.com/pissang">pissang</a> pushed to <a href="//github.com/ecomfe/echarts-builder-web/tree/gh-pages">gh-pages</a> at <a class="notifications-repo-link" href="//github.com/ecomfe/echarts-builder-web">ecomfe/echarts-builder-web</a>
+          </div>
+
+          <div class="details">
+            <a href="//github.com/pissang"><img alt="@pissang" class="gravatar" height="30" src="https://avatars3.githubusercontent.com/u/841551?v=3&amp;s=60" width="30"></a>
+
+              <div class="commits pusher-is-only-committer">
+                <ul>
+                  <li>
+                    <span>
+                      <img class="avatar" alt="@pissang" height="16" src="https://avatars2.githubusercontent.com/u/841551?v=3&amp;s=32" width="16">
+                    </span>
+                    <code><a href="//github.com/ecomfe/echarts-builder-web/commit/a174f15a588102e1d52622264e26483af6e1b37d">a174f15</a></code>
+                    <div class="message">
+                      <blockquote>
+                        Fix <a class="issue-link" href="https://github.com/ecomfe/echarts/issues/2289">ecomfe/echarts#2289</a>
+                      </blockquote>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="alert issues_opened">
+        <div class="body">
+          <span class="mega-octicon octicon-git-pull-request" aria-label="Pull request"></span>
+
+          <div class="time">
+            <time datetime="2015-12-17T07:56:08Z" is="relative-time" title="2015年12月17日 GMT+8下午3:56">A few days ago</time>
+          </div>
+
+          <div class="title">
+            <a class="author" href="//github.com/errorrik">errorrik</a> opened pull request <a class="notifications-repo-link" href="/ecomfe/ecomfe.github.io/pull/38">ecomfe/ecomfe.github.io#38</a>
+          </div>
+
+          <div class="details">
+            <a href="//github.com/errorrik"><img alt="@errorrik" class="gravatar" height="30" src="https://avatars1.githubusercontent.com/u/2851010?v=3&amp;s=60" width="30"></a>
+            <div class="message">
+              <blockquote>add &lt;esl error message&gt; post</blockquote>
+                <div class="pull-info">
+                  <span class="octicon octicon-git-commit"></span>
+                  <em>1</em> commit with
+                  <em>237</em> additions and
+                  <em>0</em> deletions
+                </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="alert fork simple">
+        <div class="body">
+          <div class="simple">
+            <span class="octicon octicon-git-branch" aria-label="Fork"></span>
+
+            <div class="title">
+              <a class="author" href="//github.com/hax">hax</a> forked <a class="notifications-repo-link" href="//github.com/eslint/eslint">eslint/eslint</a> to <a class="notifications-repo-link" href="//github.com/hax/eslint" title="hax/eslint">hax/eslint</a>
+            </div>
+
+            <div class="time">
+              <time datetime="2015-12-21T04:48:18Z" title="2015年12月21日 GMT+8下午12:48">A few days ago</time>
+            </div>
+        </div>
+        </div>
+      </div>
+
+      <div class="alert issues_comment">
+        <div class="body">
+          <span class="mega-octicon octicon-comment-discussion" aria-label="Issue comment"></span>
+
+          <div class="time">
+            <time datetime="2015-10-05T13:56:40Z" title="2015年10月5日 GMT+8下午9:56">A few days ago</time>
+          </div>
+
+          <div class="title">
+            <a href="//github.com/Psidium">Psidium</a> commented on issue <a class="notifications-repo-link" href="//github.com/Justineo/github-hovercard/issues/6#issuecomment-154392034" title="Add support to Github Enterprise">Justineo/github-hovercard#6</a>
+          </div>
+
+          <div class="details">
+            <a href="//github.com/Psidium"><img alt="@Psidium" class="gravatar hovercard-user-x tooltipstered" height="30" src="https://avatars3.githubusercontent.com/u/2848323?v=3&amp;s=60" width="30"></a>
+            <div class="message markdown-body">
+              <blockquote>
+                Hey! sorry for the late response, but it works like a charm in github enterprise <img class="emoji" title=":+1:" alt=":+1:" src="https://assets-cdn.github.com/images/icons/emoji/unicode/1f44d.png" height="20" width="20" align="absmiddle"> thaankssss
+              </blockquote>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="alert issues_opened">
+        <div class="body">
+          <span class="mega-octicon octicon-issue-opened" aria-label="Issue"></span>
+
+          <div class="time">
+            <time datetime="2015-12-15T07:22:50Z" title="2015年12月15日 GMT+8下午3:22">Many days ago</time>
+          </div>
+
+          <div class="title">
+            <a class="author" href="//github.com/otakustay">otakustay</a> opened issue <a class="notifications-repo-link" href="//github.com/ecomfe/fecs/issues/129" title="检查变量是否可以定义在更小的作用域内">ecomfe/fecs#129</a>
+          </div>
+
+          <div class="details">
+            <a href="//github.com/otakustay"><img alt="@otakustay" class="gravatar" height="30" src="https://avatars3.githubusercontent.com/u/639549?v=3&amp;s=60" width="30"></a>
+            <div class="message">
+              <blockquote>
+                检查变量是否可以定义在更小的作用域内
+              </blockquote>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="alert watch_started simple">
+        <div class="body">
+          <div class="simple">
+            <span class="octicon octicon-star" aria-label="Watch"></span>
+
+            <div class="title">
+              <a class="author" href="//github.com/Justineo">Justineo</a> starred <a class="notifications-repo-link" href="//github.com/nodejs/node">nodejs/node</a>
+            </div>
+
+            <div class="time">
+              <time datetime="2015-08-11T14:23:00Z" title="2015年8月11日 GMT+8下午10:22">Many days ago</time>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="alert create simple">
+        <div class="body">
+          <div class="simple">
+            <span class="octicon octicon-repo" aria-label="Create"></span>
+            <div class="title">
+              <a class="author" href="//github.com/Justineo">Justineo</a> created repository <a class="notifications-repo-link" href="//github.com/Justineo/github-hovercard" title="Justineo/github-hovercard">Justineo/github-hovercard</a>
+            </div>
+            <div class="time">
+              <time datetime="2015-08-11T14:22:00Z" title="2015年8月11日 GMT+8下午10:22">Many days ago</time>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </section>
+  </article>
+
+  <aside class="sidebar">
+    <div class="boxed-group flush contributions" role="navigation">
+      <h3>Repositories you contribute to</h3>
+      <ul class="boxed-group-inner mini-repo-list">
+        <li class="public source">
+          <a href="//github.com/Justineo/github-hovercard">
+            <span class="octicon octicon-repo repo-icon"></span>
+            <span class="repo-and-owner">
+              <span class="owner">Justineo</span>/<span class="repo">github-hovercard</span>
+            </span>
+            <span class="stars"><span class="ghh-stars">191</span> <span class="octicon octicon-star "></span></span>
+          </a>
+        </li>
+        <li class="public source">
+          <a href="//github.com/angular/angular.js/">
+            <span class="octicon octicon-repo repo-icon"></span>
+            <span class="repo-and-owner">
+              <span class="owner">angular</span>/<span class="repo">angular.js</span>
+            </span>
+            <span class="stars">45,351 <span class="octicon octicon-star "></span></span>
+          </a>
+        </li>
+        <li class="public source">
+          <a href="//github.com/facebook/react/">
+            <span class="octicon octicon-repo repo-icon"></span>
+            <span class="repo-and-owner">
+              <span class="owner">facebook</span>/<span class="repo">react</span>
+            </span>
+            <span class="stars">33,427 <span class="octicon octicon-star "></span></span>
+          </a>
+        </li>
+        <li class="public source">
+          <a href="//github.com/nodejs/node/">
+            <span class="octicon octicon-repo repo-icon"></span>
+            <span class="repo-and-owner">
+              <span class="owner">nodejs</span>/<span class="repo">node</span>
+            </span>
+            <span class="stars">18,499 <span class="octicon octicon-star "></span></span>
+          </a>
+        </li>
+        <li class="public source">
+          <a href="//github.com/jquery/jquery/">
+            <span class="octicon octicon-repo repo-icon"></span>
+            <span class="repo-and-owner">
+              <span class="owner">jquery</span>/<span class="repo">jquery</span>
+            </span>
+            <span class="stars">37,241 <span class="octicon octicon-star "></span></span>
+          </a>
+        </li>
+      </ul>
+    </div>
+    <div class="boxed-group flush repos" role="navigation">
+      <div class="boxed-group-action">
+        <a href="//github.com/new" class="btn btn-sm btn-primary"><span class="octicon octicon-plus"></span> New repository</a>
+      </div>
+      <h3>Your repositories <span class="counter">5</span></h3>
+      <div class="boxed-group-inner">
+        <div class="filter-repos filter-bar" role="search">
+          <input type="text" id="your-repos-filter" class="filter-input" placeholder="Find a repository…" aria-label="Find a repository…" tabindex="1">
+          <ul class="repo-filterer">
+            <li><a href="#" class="repo-filter text-small text-muted filter-selected">All</a></li>
+            <li><a href="#" class="repo-filter text-small text-muted">Public</a></li>
+            <li><a href="#" class="repo-filter text-small text-muted">Private</a></li>
+            <li><a href="#" class="repo-filter text-small text-muted">Sources</a></li>
+            <li><a href="#" class="repo-filter text-small text-muted">Forks</a></li>
+          </ul>
+        </div>
+        <ul class="mini-repo-list">
+          <li class="public source">
+            <a href="//github.com/Justineo/github-hovercard">
+              <span class="octicon octicon-repo repo-icon"></span>
+              <span class="repo-and-owner" title="Justineo/github-hovercard">
+                <span class="repo">github-hovercard</span>
+              </span>
+            </a>
+          </li>
+          <li class="public source">
+            <a href="//github.com/Justineo/fi">
+              <span class="octicon octicon-repo repo-icon"></span>
+              <span class="repo-and-owner" title="Justineo/fi">
+                <span class="repo">fi</span>
+              </span>
+            </a>
+          </li>
+          <li class="public source">
+            <a href="//github.com/Justineo/kolor/">
+              <span class="octicon octicon-repo repo-icon"></span>
+              <span class="repo-and-owner" title="Justineo/kolor">
+                <span class="repo">kolor</span>
+              </span>
+            </a>
+          </li>
+          <li class="public source">
+            <a href="//github.com/Justineo/est/">
+              <span class="octicon octicon-repo-forked repo-icon"></span>
+              <span class="repo-and-owner" title="Justineo/est">
+                <span class="repo">est</span>
+              </span>
+            </a>
+          </li>
+          <li class="public source">
+            <a href="//github.com/Justineo/less.js/">
+              <span class="octicon octicon-repo-forked repo-icon"></span>
+              <span class="repo-and-owner" title="Justineo/less.js">
+                <span class="repo">less.js</span>
+              </span>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="boxed-group flush features">
+      <h3>Features</h3>
+      <ul class="boxed-group-inner">
+        <li><span class="octicon octicon-check"></span> Extracts users, repos and issues almost everywhere around GitHub</li>
+        <li><span class="octicon octicon-check"></span> Friendly emoji display in repo descriptions and issue contents</li>
+        <li><span class="octicon octicon-check"></span> Markdown conversion for issue contents</li>
+        <li><span class="octicon octicon-check"></span> Supports binding access token to increase API request limit</li>
+        <li><span class="octicon octicon-check"></span> Supports GitHub's task lists in Markdown</li>
+        <li><span class="octicon octicon-check"></span> Supports GitHub Enterprise</li>
+      </ul>
+    </div>
+  </aside>
+
+  <footer role="contentinfo">
+    <img class="logo" src="icon.png" width="28" height="28">
+    <span>Made by <a href="//github.com/Justineo">@Justineo</a>.</span>
+    <span style="float: right">Built upon <a href="//github.com/jquery/jquery">jQuery</a> &amp; <a href="//github.com/iamceege/tooltipster/">Tooltipster</a> and <a href="//github.com/janl/mustache.js">Mustache.js</a>.</span>
+  </footer>
+</main>
+<script>
+(function () {
+  /**
+   * Load social buttons
+   */
+  var API_URL = '//api.github.com/repos/Justineo/github-hovercard';
+  var REPO_URL = '//github.com/Justineo/github-hovercard';
+  var options = {
+    url: API_URL,
+    dataType: 'json'
+  };
+
+  var xhr = new XMLHttpRequest();
+  xhr.open('GET', API_URL, true);
+  xhr.send();
+  xhr.onreadystatechange = function() {
+    if (xhr.readyState === 4 && xhr.status === 200) {
+      var raw = JSON.parse(xhr.responseText);
+      setCount('star', raw.stargazers_count);
+      setCount('fork', raw.forks_count);
+    }
+  };
+
+  var SOCIAL_CONFIG = {
+    star: {
+      url: '//github.com/Justineo/github-hovercard/stargazers',
+      text: 'Star',
+      icon: 'star'
+    },
+    fork: {
+      url: '//github.com/Justineo/github-hovercard/network',
+      text: 'Fork',
+      icon: 'repo-forked'
+    }
+  };
+
+  function setCount(type, count) {
+    var config = SOCIAL_CONFIG[type];
+
+    var html = [
+      '<div class="social">',
+        '<a href="' + REPO_URL + '" class="btn btn-sm btn-with-count" aria-label="' + config.text + ' this repository" title="' + config.text + 'Justineo/github-hovercard">',
+          '<span class="octicon octicon-' + config.icon + '"></span> ' + config.text,
+        '</a>',
+        '<a class="social-count" href="' + config.url + '">' + count + '</a>',
+      '</div>'
+    ].join('');
+
+    document.getElementById('social').innerHTML += html;
+
+    Array.prototype.slice.call(document.querySelectorAll('.ghh-' + type + 's')).forEach(function (elem) {
+      elem.textContent = count;
+    });
+  }
+
+  var content = '';
+  if (browser === 'mozilla') {
+    content = '<script src="demo/dist/demo.js" type="application/javascript;version=1.7"><\/script>';
+  } else {
+    content = '<script src="demo/dist/demo.js"><\/script>'
+  }
+
+  document.write(content);
+})();
+</script>
+</body>
+</html>

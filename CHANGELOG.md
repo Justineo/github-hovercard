@@ -94,7 +94,7 @@ Changelog
 * Upgraded Tooltipster to v4 and enhanced its inline element support when break into multiple lines
 * Added issue extraction (with Markdown conversion and syntax highlight).
 * Added options page for Chrome and preferences for Firefox.
-* Added "Applicable Domains" options (which should support GitHun Enterprise).
+* Added "Applicable Domains" options (which should support GitHub Enterprise).
 * Supported auto link for repo descriptions.
 * Moved homepage before language.
 

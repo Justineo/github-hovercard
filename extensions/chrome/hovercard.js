@@ -3,7 +3,7 @@ $(() => {
 
     const GH_DOMAIN = location.host;
 
-    const TOOLTIP_RELATED = '.tooltipster-base, .tooltipster-sizer';
+    const EXCLUDES = '.tooltipster-base, .tooltipster-sizer, .timestamp';
     const DEFAULT_TARGET = document.body;
     let isExtracting = false;
     let observer = new MutationObserver(mutations => {
@@ -13,8 +13,8 @@ $(() => {
         mutations.forEach(mutation => {
             if (mutation.type === 'childList') {
                 let target = mutation.target;
-                if (!$(target).is(TOOLTIP_RELATED)
-                    && !$(target).parents(TOOLTIP_RELATED).length
+                if (!$(target).is(EXCLUDES)
+                    && !$(target).parents(EXCLUDES).length
                     && !$(target).is(DEFAULT_TARGET)) {
                     extract(target);
                 }
@@ -994,7 +994,7 @@ $(() => {
                     cardOptions.delay = delay;
                 }
                 extract();
-            })
+            });
         } else {
             extract();
         }
