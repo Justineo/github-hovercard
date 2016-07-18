@@ -1,5 +1,8 @@
 Changelog
 ---
+## 0.6.5
+* Fixed a performance issue caused by `MutationObserver` triggered by GitHub's timestamp update logic.
+
 ## 0.6.4
 * Now organic tooltips on GitHub will be blocked if hovercards are going to show on same elements. (#30)
 * Included jQuery for user script version (GitHub doesn't provide jQuery in global scope now).
