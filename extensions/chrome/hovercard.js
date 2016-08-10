@@ -77,12 +77,14 @@ $(() => {
     const STRATEGIES = {
         '.repo-list-name .prefix': EXTRACTOR.TEXT_USER,
         '.fork-flag a': EXTRACTOR.SLUG,
-        '.avatar': EXTRACTOR.ALT_USER,
-        '.gravatar': EXTRACTOR.ALT_USER,
+        'img.avatar': EXTRACTOR.ALT_USER,
+        'img.from-avatar': EXTRACTOR.ALT_USER,
+        'img.gravatar': EXTRACTOR.ALT_USER,
         '.leaderboard-gravatar': EXTRACTOR.ALT_USER,
-        '.author-gravatar': EXTRACTOR.ALT_USER,
-        '.author-avatar': EXTRACTOR.ALT_USER,
-        '.timeline-comment-avatar': EXTRACTOR.ALT_USER,
+        'img.author-gravatar': EXTRACTOR.ALT_USER,
+        'img.author-avatar': EXTRACTOR.ALT_USER,
+        'img.avatar-child': EXTRACTOR.ALT_USER,
+        'img.timeline-comment-avatar': EXTRACTOR.ALT_USER,
         '[data-ga-click~="target:actor"]': EXTRACTOR.TEXT_USER,
         '[data-ga-click~="target:repository"]': EXTRACTOR.SLUG,
         '[data-ga-click~="target:repo"]': EXTRACTOR.SLUG,
@@ -803,14 +805,8 @@ $(() => {
                                         message = encodeHTML`API rate limit exceeded for current IP. <a href="${CREATE_TOKEN_PATH}" class="token-link" target="_blank">Create a new access token</a> and <a href="#" class="token-link">paste it back here</a> to get a higher rate limit.`;
                                     }
                                 } else {
-                                    let response = xhr.responseJSON;
-                                    if (type === EXTRACT_TYPE.REPO && response.block && response.block.reason === 'dmca') {
-                                        title = 'Access blocked';
-                                        message = 'Repository unavailable due to DMCA takedown.';
-                                    } else {
-                                        title = 'Forbidden';
-                                        message = encodeHTML`You are not allowed to access GitHub API. <a href="${CREATE_TOKEN_PATH}" class="token-link" target="_blank">Create a new access token</a>, <a href="#" class="token-link">paste it back here</a> and try again.`;
-                                    }
+                                    title = 'Forbidden';
+                                    message = encodeHTML`You are not allowed to access GitHub API. <a href="${CREATE_TOKEN_PATH}" class="token-link" target="_blank">Create a new access token</a>, <a href="#" class="token-link">paste it back here</a> and try again.`;
                                 }
                                 needToken = true;
                                 break;
@@ -823,6 +819,14 @@ $(() => {
                                     message = `The user doesn't exist.`;
                                 }
                                 break;
+                            case 451: {
+                                let response = xhr.responseJSON;
+                                if (type === EXTRACT_TYPE.REPO && response.block && response.block.reason === 'dmca') {
+                                    title = 'Access blocked';
+                                    message = encodeHTML`Repository access blocked due to DMCA takedown. See the <a href="${response.block.html_url}" target="_blank">takedown notice</a>.`;
+                                }
+                                break;
+                            }
                             default:
                                 title = 'Error';
                                 let response = xhr.responseJSON;

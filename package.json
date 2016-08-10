@@ -1,6 +1,6 @@
 {
   "name": "github-hovercard",
-  "version": "0.6.5",
+  "version": "0.6.7",
   "description": "Neat user/repo/issue hovercards for GitHub.",
   "repository": {
     "type": "git",

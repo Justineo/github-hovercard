@@ -1,5 +1,13 @@
 Changelog
 ---
+## 0.6.7
+* Made error message clear again for DMCA takedowns since GitHub now gives status code `451` for DMCA takedowns.
+* Added child avatar support for commit pages.
+
+## 0.6.6
+* Fixed that `avatar` be a class name on elements other than `<img>`s, which don't have `alt` property.
+* Upgraded jQuery to v3.1.0.
+
 ## 0.6.5
 * Fixed a performance issue caused by `MutationObserver` triggered by GitHub's timestamp update logic.
 
