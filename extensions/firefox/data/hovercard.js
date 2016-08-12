@@ -54,6 +54,7 @@ $(() => {
         USER: 'user',
         REPO: 'repo',
         ISSUE: 'issue',
+        COMMIT: 'commit',
         SKIP: 'skip'
     };
 
@@ -72,7 +73,8 @@ $(() => {
     const URL_USER_PATTERN = `^https?:\\/\\/${GH_DOMAIN_PATTERN}\\/([^\\/\\?#]+)(?:[^\\/]*$|\\/(?:[\\?#]|$))`;
     const URL_REPO_PATTERN = `^https?:\\/\\/${GH_DOMAIN_PATTERN}\\/([^\\/\\?#]+)\\/([^\\/\\?#]+)(?:[^\\/]*$|\\/(?:[\\?#]|$))`;
     const URL_ISSUE_PATTERN = `^https?:\\/\\/${GH_DOMAIN_PATTERN}\\/([^\\/\\?#]+)\\/([^\\/\\?#]+)\\/(?:issues|pull)\\/(\\d+)(?:[^\\/]*$|(?:[\\?#]|$))`;
-    const SLUG_PATTERN = /([^\/\s]+)\/([^#@\s]+)(?:#(\d+)|@[\da-f]+)?/;
+    const URL_COMMIT_PATTERN = `^https?:\\/\\/${GH_DOMAIN_PATTERN}\\/([^\\/\\?#]+)\\/([^\\/\\?#]+)\\/(?:pull\\/\\d+\\/commits|commit)\\/([0-9a-f]+)(?:[^\\/]*$|(?:[\\?#]|$))`;
+    const SLUG_PATTERN = /([^\/\s]+)\/([^#@\s]+)(?:#(\d+)|@([0-9a-f]+))?/;
 
     const STRATEGIES = {
         '.repo-list-name .prefix': EXTRACTOR.TEXT_USER,
@@ -142,7 +144,9 @@ $(() => {
         '.tabnav-tab',
         '.discussion-item .timestamp',
         '.file-wrap a',
-        '.reponav-item' // new UI
+        '.reponav-item',
+        '.issue-pr-status a',
+        '.commits-comments-link'
     ].join(', ');
 
     // Octicons in SVG
@@ -212,20 +216,39 @@ $(() => {
         issue: `
             <div class="ghh">
                 <div class="ghh-issue">
-                    <p><span class="issue-number">#{{number}}</span> <a href="{{issueUrl}}"><strong>{{title}}</strong></a></p>
+                    <p><span class="issue-number">#{{number}}</span> <a href="{{issueUrl}}" title="{{title}}"><strong>{{title}}</strong></a></p>
                 </div>
                 <div class="ghh-issue-meta">
                     <p><span class="state state-{{state}}">{{{icons.state}}}{{state}}</span><a href="{{userUrl}}">{{user}}</a> created on {{{createTime}}}</p>
                 </div>
                 {{#isPullRequest}}<div class="ghh-pull-meta">
                     <p>{{{icons.commit}}} {{commits}} commit{{^isSingleCommit}}s{{/isSingleCommit}}{{{icons.diff}}} {{changedFiles}} file{{^isSingleFile}}s{{/isSingleFile}} changed
-                    <span class="diffstat">
-                        <span class="text-diff-added">+{{additions}}</span>
-                        <span class="text-diff-deleted">−{{deletions}}</span>
-                    </span></p>
+                        <span class="diffstat">
+                            <span class="text-diff-added">+{{additions}}</span>
+                            <span class="text-diff-deleted">−{{deletions}}</span>
+                        </span>
+                    </p>
                     <p class="ghh-branch"><span class="commit-ref" title="{{headUser}}:{{headRef}}"><span class="user">{{headUser}}</span>:{{headRef}}</span><span>{{{icons.arrow}}}</span><span class="commit-ref" title="{{baseUser}}:{{baseRef}}"><span class="user">{{baseUser}}</span>:{{baseRef}}</span></p>
                 </div>{{/isPullRequest}}
                 {{#body}}<div class="ghh-issue-body">{{{.}}}</div>{{/body}}
+            </div>`,
+        commit: `
+            <div class="ghh">
+                <div class="ghh-commit">
+                    <p><a href="{{commitUrl}}" title="{{title}}"><strong>{{title}}</strong></a></p>
+                </div>
+                {{#body}}<pre class="ghh-commit-body">{{.}}</pre>{{/body}}
+                <div class="ghh-more">
+                    <p>{{{icons.commit}}} <a href="{{authorUrl}}"><strong>{{author}}</strong></a> committed{{#isGitHub}} on <strong>GitHub</strong>{{/isGitHub}}{{^isGitHub}}{{#committer}} with <a href="{{committerUrl}}"><strong>{{committer}}</strong></a>{{/committer}}{{/isGitHub}} on {{{authorTime}}}</p>
+                    {{#branch}}<p>{{{icons.branch}}} <a href="/{{fullRepo}}/tree/{{branch}}"><strong>{{branch}}</strong></a>{{#pull}} (<a href="/{{fullRepo}}/pull/{{.}}">#{{.}}</a>){{/pull}}</p>
+                    {{#mainTag}}<p class="ghh-tags">{{{icons.tag}}} <a href="/{{fullRepo}}/releases/tag/{{.}}"><strong>{{.}}</strong></a>{{#otherTags}}, <a href="/{{fullRepo}}/releases/tag/{{.}}">{{.}}</a>{{/otherTags}}</p>{{/mainTag}}{{/branch}}
+                    <p class="ghh-commit-meta">{{{icons.diff}}} {{changedFiles}} file{{^isSingleFile}}s{{/isSingleFile}} changed
+                        <span class="diffstat">
+                            <span class="text-diff-added">+{{additions}}</span>
+                            <span class="text-diff-deleted">−{{deletions}}</span>
+                        </span>
+                    </p>
+                </div>
             </div>`,
         error: `
             <div class="ghh ghh-error">
@@ -247,6 +270,7 @@ $(() => {
     const CREATE_TOKEN_PATH = `//${GH_DOMAIN}/settings/tokens/new`;
     const IS_ENTERPRISE = GH_DOMAIN !== 'github.com';
     const API_PREFIX = IS_ENTERPRISE ? `//${GH_DOMAIN}/api/v3/` : `//api.${GH_DOMAIN}/`;
+    const SITE_PREFIX = `//${GH_DOMAIN}/`;
 
     function trim(str) {
         if (!str) {
@@ -508,6 +532,35 @@ $(() => {
                     isSingleFile: raw.changed_files === 1
                 })
             }
+        } else if (type === EXTRACT_TYPE.COMMIT) {
+            let lines = raw.commit.message.split('\n\n');
+            data = {
+                title: lines[0],
+                body: lines.slice(1).join('\n\n'),
+                commitUrl: raw.html_url,
+                author: raw.author.login,
+                authorAvatar: raw.author.avatar_url,
+                authorUrl: raw.author.html_url,
+                authorTime: formatTime(raw.commit.author.date),
+                committer: raw.committer.login === raw.author.login ? null : raw.committer.login,
+                committerUrl: raw.committer.html_url,
+                additions: raw.stats.additions,
+                deletions: raw.stats.deletions,
+                changedFiles: raw.files.length,
+                isSingleFile: raw.files.length === 1,
+                isGitHub: raw.committer.login === 'web-flow',
+                branch: raw.branch,
+                pull: raw.pull,
+                mainTag: raw.mainTag,
+                otherTags: raw.otherTags,
+                fullRepo: raw.fullRepo,
+                icons: {
+                    branch: getIcon('git-branch', 0.875),
+                    tag: getIcon('tag', 0.875),
+                    commit: getIcon('git-commit', 0.875),
+                    diff: getIcon('diff', 0.875)
+                }
+            }
         }
 
         let html = Mustache.render(CARD_TPL[type], data);
@@ -544,7 +597,8 @@ $(() => {
     let cache = {
         user: {},
         repo: {},
-        issue: {}
+        issue: {},
+        commit: {}
     };
 
     function extract(context) {
@@ -576,6 +630,8 @@ $(() => {
                 let fullRepo; // {{user}}/{{repo}}
                 let issue; // {{issue}}
                 let fullIssue; // {{user}}/{{repo}}#{{issue}}
+                let commit; // {{commit}}
+                let fullCommit; // {{user}}/{{repo}}@{{commit}}
                 switch (strategy) {
                     case EXTRACTOR.TEXT_USER: {
                         username = trim(elem.text().replace(/[@\/]/g, ''));
@@ -599,6 +655,7 @@ $(() => {
                         username = trim(match && match[1]);
                         repo = trim(match && match[2]);
                         issue = trim(match && match[3]);
+                        commit = trim(match && match[4]);
                         if (username && repo) {
                             fullRepo = username + '/' + repo;
 
@@ -618,6 +675,10 @@ $(() => {
                                 elem.html(slug.replace('#' + issue, encodeHTML`#<span>${issue}</span>`));
                                 slug = elem.html();
                             }
+                            if (commit) {
+                                elem.html(slug.replace('@' + commit, encodeHTML`@<span>${commit}</span>`));
+                                slug = elem.html();
+                            }
 
                             let repoContents = contents || repo; // safe HTML or plain text
                             if (username === me || username === current) {
@@ -630,6 +691,9 @@ $(() => {
                             }
                             if (issue) {
                                 markExtracted(elem.children().last(), EXTRACT_TYPE.ISSUE, fullRepo + '#' + issue);
+                            }
+                            if (commit) {
+                                markExtracted(elem.children().last(), EXTRACT_TYPE.COMMIT, fullRepo + '@' + commit);
                             }
 
                             // if not marked earlier, mark as nothing extracted
@@ -661,6 +725,12 @@ $(() => {
                                 repo = trim(match && match[2]);
                                 issue = trim(match && match[3]);
                             }
+                            if (!username) {
+                                match = href.match(URL_COMMIT_PATTERN);
+                                username = trim(match && match[1]);
+                                repo = trim(match && match[2]);
+                                commit = trim(match && match[3]);
+                            }
                             if (username) {
                                 if (GH_RESERVED_USER_NAMES.indexOf(username) !== -1
                                     || !GH_USER_NAME_PATTERN.test(username)) {
@@ -680,6 +750,9 @@ $(() => {
                             }
                             if (issue) {
                                 fullIssue = `${username}/${repo}#${issue}`;
+                            }
+                            if (commit) {
+                                fullCommit = `${username}/${repo}@${commit}`;
                             }
                             // skip hovercard on myself or current profile page owner
                             if ((username === me || username === current) && !repo) {
@@ -713,7 +786,9 @@ $(() => {
                 if (!elem) {
                     return;
                 }
-                if (fullIssue) {
+                if (fullCommit) {
+                    markExtracted(elem, EXTRACT_TYPE.COMMIT, fullCommit);
+                } else if (fullIssue) {
                     markExtracted(elem, EXTRACT_TYPE.ISSUE, fullIssue);
                 } else if (fullRepo) {
                     markExtracted(elem, EXTRACT_TYPE.REPO, fullRepo);
@@ -766,6 +841,13 @@ $(() => {
                             let fullRepo = values[0];
                             let issue = values[1];
                             apiPath = `repos/${fullRepo}/issues/${issue}`;
+                            break;
+                        }
+                        case EXTRACT_TYPE.COMMIT: {
+                            let values = value.split('@');
+                            let fullRepo = values[0];
+                            let commit = values[1];
+                            apiPath = `repos/${fullRepo}/commits/${commit}`;
                             break;
                         }
                     }
@@ -864,7 +946,7 @@ $(() => {
                                 cache[type][value] = raw;
 
                                 // further requests if necessary
-                                switch(type) {
+                                switch (type) {
                                     case EXTRACT_TYPE.ISSUE: {
                                         let todo = 0;
                                         if (raw.body) {
@@ -879,7 +961,7 @@ $(() => {
                                                     mode: 'gfm',
                                                     context: value.split('#')[0]
                                                 })
-                                            }
+                                            };
                                             $.ajax(Object.assign({}, requestOptions, options))
                                                 .done(html => {
                                                     raw.bodyHTML = html;
@@ -918,10 +1000,36 @@ $(() => {
                                                 .fail(handleError);
                                         }
 
-                                        // wait for async handler
-                                        if (todo) {
-                                            return;
-                                        }
+                                        return;
+                                    }
+                                    case EXTRACT_TYPE.COMMIT: {
+                                        let [fullRepo, commit] = value.split('@');
+                                        let commitPagePath = `${fullRepo}/commit/${commit}`;
+                                        raw.fullRepo = fullRepo;
+                                        let options = {
+                                            url: SITE_PREFIX + commitPagePath,
+                                            headers: {
+                                                'X-PJAX': 'true'
+                                            },
+                                            dataType: 'html'
+                                        };
+                                        $.ajax(Object.assign(options))
+                                            .done(html => {
+                                                let branches = $(html).find('.commit-branches');
+                                                raw.branch = branches.find('.branch a').text();
+                                                raw.pull = branches.find('.pull-request a').text().substring(1);
+                                                let tags = branches.find('.branches-tag-list a').map(function () {
+                                                    return this.textContent;
+                                                }).get();
+                                                if (tags.length) {
+                                                    raw.mainTag = tags[0];
+                                                    raw.otherTags = tags.slice(1);
+                                                }
+
+                                                elem.tooltipster('content', getCardHTML(type, raw));
+                                            });
+
+                                        return;
                                     }
                                 }
 

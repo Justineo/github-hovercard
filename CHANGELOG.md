@@ -1,8 +1,9 @@
 Changelog
 ---
-## 0.6.7
+## 0.7.0
+* Supported commit hovercards.
 * Made error message clear again for DMCA takedowns since GitHub now gives status code `451` for DMCA takedowns.
-* Added child avatar support for commit pages.
+* Updated extraction targets.
 
 ## 0.6.6
 * Fixed that `avatar` be a class name on elements other than `<img>`s, which don't have `alt` property.

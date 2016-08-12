@@ -1,6 +1,9 @@
 /**********
  * Utils
  **********/
+$sans-serif = -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"
+$monospace = Consolas, "Liberation Mono", Menlo, Courier, monospace
+
 $with-large-icon
     position: relative
     float: left
@@ -21,6 +24,54 @@ $fix-margin
     & > :last-child
         margin-bottom: 0
 
+$contribution
+    p
+        line-height: 18px
+
+    .ghh-branch
+        display: flex
+
+    .commit-ref
+        flex: 0 1 auto
+        float: left
+        border-radius: 2px
+        background-color: rgba(255, 255, 255, .15)
+        color: inherit
+        font-size: inherit
+        cursor: help
+        ellipsis()
+
+        & + span
+            flex: 0 0 auto
+            float: left
+            padding: 0 5px
+
+            & > .octicon
+                height: 22px
+
+        .user
+            color: inherit
+            opacity: .5
+
+    .octicon
+        opacity: .8
+        margin-left: 10px
+
+        &:first-child
+            margin-left: 0
+
+    .diffstat
+        margin-left: 10px
+
+    .text-diff-added
+        color: #84d063 !important
+
+    .text-diff-deleted
+        color: #ff3c00 !important
+
+    .commit-ref + .octicon
+        margin: 0
+
 ellipsis()
     white-space: nowrap
     overflow: hidden
@@ -38,6 +89,7 @@ square(s)
     min-width: 160px
     font-style: normal
     line-height: 2
+    font-family: $sans-serif
 
     &.extended
         max-width: 640px
@@ -68,6 +120,9 @@ square(s)
         position: relative
         padding-left: 18px
         line-height: 18px
+
+    strong
+        font-weight: 600
 
     .ghh-repo-desc
         white-space: normal
@@ -154,7 +209,7 @@ square(s)
         font-size: 120%
 
     .issue-number
-        opacity: 0.8
+        opacity: .8
 
 
 .ghh-issue-meta
@@ -177,52 +232,7 @@ square(s)
         line-height 1.2
 
 .ghh-pull-meta
-    p
-        line-height: 18px
-
-    .ghh-branch
-        display: flex
-
-    .commit-ref
-        flex: 0 1 auto
-        float: left
-        border-radius: 2px
-        background-color: rgba(255, 255, 255, .15)
-        color: inherit
-        font-size: inherit
-        cursor: help
-        ellipsis()
-
-        & + span
-            flex: 0 0 auto
-            float: left
-            padding: 0 5px
-
-            & > .octicon
-                height: 22px
-
-        .user
-            color: inherit
-            opacity: 0.5
-
-    .octicon
-        opacity: 0.8
-        margin-left: 10px
-
-        &:first-child
-            margin-left: 0
-
-    .diffstat
-        margin-left: 10px
-
-    .text-diff-added
-        color: #84d063 !important
-
-    .text-diff-deleted
-        color: #ff3c00 !important
-
-    .commit-ref + .octicon
-        margin: 0
+    @extends $contribution
 
 .ghh-issue-body
     @extends $fix-margin
@@ -234,7 +244,6 @@ square(s)
     padding: 8px 10px
     border-radius: 2px
     background-color: rgba(255, 255, 255, .15)
-    font-family: "Helvetica Neue", Helvetica, "Segoe UI", Arial, freesans, sans-serif
     font-size: 12px
     line-height: 1.6
     word-wrap: break-word
@@ -253,6 +262,7 @@ square(s)
         tt,
         code
             font-size: inherit
+            font-family: $monospace
 
     h1
         font-size: 1.5em
@@ -288,6 +298,7 @@ square(s)
         color: inherit
 
     p
+        overflow: visible
         white-space: normal
         line-height 1.6
 
@@ -365,8 +376,36 @@ square(s)
     list-style-type: none
 
 .ghh-task-checker
-    margin-right: 0.3em
+    margin-right: .3em
     margin-left: -1.5em
+
+/**********
+ * Commit
+ **********/
+.ghh-commit
+    margin-bottom: 8px
+
+    strong
+        font-size: 120%
+
+.ghh-commit-meta
+    @extends $contribution
+
+.ghh-commit-body
+    overflow: auto
+    max-height: 280px
+    margin: 8px 0 10px
+    padding: 8px 10px
+    border-radius: 2px
+    background-color: rgba(255, 255, 255, .15)
+    font-family: $monospace
+    font-size: 12px
+    line-height: 1.2
+    white-space: pre-wrap
+    word-wrap: break-word
+
+.ghh-tags
+    white-space: normal
 
 /**********
  * Error

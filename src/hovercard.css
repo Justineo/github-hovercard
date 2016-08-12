@@ -20,6 +20,64 @@
 .ghh-issue-body > :last-child {
   margin-bottom: 0;
 }
+.ghh-pull-meta p,
+.ghh-commit-meta p {
+  line-height: 18px;
+}
+.ghh-pull-meta .ghh-branch,
+.ghh-commit-meta .ghh-branch {
+  display: flex;
+}
+.ghh-pull-meta .commit-ref,
+.ghh-commit-meta .commit-ref {
+  flex: 0 1 auto;
+  float: left;
+  border-radius: 2px;
+  background-color: rgba(255,255,255,0.15);
+  color: inherit;
+  font-size: inherit;
+  cursor: help;
+}
+.ghh-pull-meta .commit-ref + span,
+.ghh-commit-meta .commit-ref + span {
+  flex: 0 0 auto;
+  float: left;
+  padding: 0 5px;
+}
+.ghh-pull-meta .commit-ref + span > .octicon,
+.ghh-commit-meta .commit-ref + span > .octicon {
+  height: 22px;
+}
+.ghh-pull-meta .commit-ref .user,
+.ghh-commit-meta .commit-ref .user {
+  color: inherit;
+  opacity: 0.5;
+}
+.ghh-pull-meta .octicon,
+.ghh-commit-meta .octicon {
+  opacity: 0.8;
+  margin-left: 10px;
+}
+.ghh-pull-meta .octicon:first-child,
+.ghh-commit-meta .octicon:first-child {
+  margin-left: 0;
+}
+.ghh-pull-meta .diffstat,
+.ghh-commit-meta .diffstat {
+  margin-left: 10px;
+}
+.ghh-pull-meta .text-diff-added,
+.ghh-commit-meta .text-diff-added {
+  color: #84d063 !important;
+}
+.ghh-pull-meta .text-diff-deleted,
+.ghh-commit-meta .text-diff-deleted {
+  color: #ff3c00 !important;
+}
+.ghh-pull-meta .commit-ref + .octicon,
+.ghh-commit-meta .commit-ref + .octicon {
+  margin: 0;
+}
 /**********
  * Global
  **********/
@@ -28,6 +86,7 @@
   min-width: 160px;
   font-style: normal;
   line-height: 2;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
 }
 .ghh.extended {
   max-width: 640px;
@@ -60,6 +119,9 @@
   position: relative;
   padding-left: 18px;
   line-height: 18px;
+}
+.ghh-more strong {
+  font-weight: 600;
 }
 .ghh-more .ghh-repo-desc {
   white-space: normal;
@@ -164,55 +226,6 @@
   vertical-align: middle;
   line-height: 1.2;
 }
-.ghh-pull-meta p {
-  line-height: 18px;
-}
-.ghh-pull-meta .ghh-branch {
-  display: flex;
-}
-.ghh-pull-meta .commit-ref {
-  flex: 0 1 auto;
-  float: left;
-  border-radius: 2px;
-  background-color: rgba(255,255,255,0.15);
-  color: inherit;
-  font-size: inherit;
-  cursor: help;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.ghh-pull-meta .commit-ref + span {
-  flex: 0 0 auto;
-  float: left;
-  padding: 0 5px;
-}
-.ghh-pull-meta .commit-ref + span > .octicon {
-  height: 22px;
-}
-.ghh-pull-meta .commit-ref .user {
-  color: inherit;
-  opacity: 0.5;
-}
-.ghh-pull-meta .octicon {
-  opacity: 0.8;
-  margin-left: 10px;
-}
-.ghh-pull-meta .octicon:first-child {
-  margin-left: 0;
-}
-.ghh-pull-meta .diffstat {
-  margin-left: 10px;
-}
-.ghh-pull-meta .text-diff-added {
-  color: #84d063 !important;
-}
-.ghh-pull-meta .text-diff-deleted {
-  color: #ff3c00 !important;
-}
-.ghh-pull-meta .commit-ref + .octicon {
-  margin: 0;
-}
 .ghh-issue-body {
   clear: left;
   overflow: auto;
@@ -221,7 +234,6 @@
   padding: 8px 10px;
   border-radius: 2px;
   background-color: rgba(255,255,255,0.15);
-  font-family: "Helvetica Neue", Helvetica, "Segoe UI", Arial, freesans, sans-serif;
   font-size: 12px;
   line-height: 1.6;
   word-wrap: break-word;
@@ -250,6 +262,7 @@
 .ghh-issue-body h5 code,
 .ghh-issue-body h6 code {
   font-size: inherit;
+  font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
 }
 .ghh-issue-body h1 {
   font-size: 1.5em;
@@ -290,6 +303,7 @@
   color: inherit;
 }
 .ghh-issue-body p {
+  overflow: visible;
   white-space: normal;
   line-height: 1.6;
 }
@@ -372,6 +386,31 @@
 .ghh-task-checker {
   margin-right: 0.3em;
   margin-left: -1.5em;
+}
+/**********
+ * Commit
+ **********/
+.ghh-commit {
+  margin-bottom: 8px;
+}
+.ghh-commit strong {
+  font-size: 120%;
+}
+.ghh-commit-body {
+  overflow: auto;
+  max-height: 280px;
+  margin: 8px 0 10px;
+  padding: 8px 10px;
+  border-radius: 2px;
+  background-color: rgba(255,255,255,0.15);
+  font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
+  font-size: 12px;
+  line-height: 1.2;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+.ghh-tags {
+  white-space: normal;
 }
 /**********
  * Error
