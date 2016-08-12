@@ -1004,7 +1004,7 @@ $(() => {
                                     }
                                     case EXTRACT_TYPE.COMMIT: {
                                         let [fullRepo, commit] = value.split('@');
-                                        let commitPagePath = `${fullRepo}/commit/${commit}`;
+                                        let commitPagePath = `${fullRepo}/branch_commits/${commit}`;
                                         raw.fullRepo = fullRepo;
                                         let options = {
                                             url: SITE_PREFIX + commitPagePath,
@@ -1015,7 +1015,7 @@ $(() => {
                                         };
                                         $.ajax(Object.assign(options))
                                             .done(html => {
-                                                let branches = $(html).find('.commit-branches');
+                                                let branches = $(html);
                                                 raw.branch = branches.find('.branch a').text();
                                                 raw.pull = branches.find('.pull-request a').text().substring(1);
                                                 let tags = branches.find('.branches-tag-list a').map(function () {
