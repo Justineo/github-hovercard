@@ -11,6 +11,10 @@ Neat user/repo/issue hovercards for GitHub.
 
 ## FAQ
 
+* Why Chrome warns me the extension might read my browser history?
+
+    It's because GitHub Hovercard uses `webNavigation` module to dynamically inject content scripts (to support GitHub Enterprise). See [#34](https://github.com/Justineo/github-hovercard/issues/34).
+
 * Why access token doesn't work?
 
     Now GitHub Hovercard is saving user's private access token into `localStorage`. `localStorage` has a limit of 5MB and the problem might be other extensions have consumed too much storage that GitHub Hovercard failed to save access tokens.
