@@ -36,7 +36,9 @@
   background-color: rgba(255,255,255,0.15);
   color: inherit;
   font-size: inherit;
-  cursor: help;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .ghh-pull-meta .commit-ref + span,
 .ghh-commit-meta .commit-ref + span {
@@ -47,6 +49,10 @@
 .ghh-pull-meta .commit-ref + span > .octicon,
 .ghh-commit-meta .commit-ref + span > .octicon {
   height: 22px;
+}
+.ghh-pull-meta .commit-ref + .octicon,
+.ghh-commit-meta .commit-ref + .octicon {
+  margin: 0;
 }
 .ghh-pull-meta .commit-ref .user,
 .ghh-commit-meta .commit-ref .user {
@@ -73,10 +79,6 @@
 .ghh-pull-meta .text-diff-deleted,
 .ghh-commit-meta .text-diff-deleted {
   color: #ff3c00 !important;
-}
-.ghh-pull-meta .commit-ref + .octicon,
-.ghh-commit-meta .commit-ref + .octicon {
-  margin: 0;
 }
 /**********
  * Global
@@ -105,6 +107,9 @@
 }
 .ghh small {
   opacity: 0.8;
+}
+.ghh [title] {
+  cursor: help;
 }
 .ghh .octicon {
   fill: currentColor;

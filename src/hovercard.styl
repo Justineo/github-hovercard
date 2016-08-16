@@ -4,6 +4,15 @@
 $sans-serif = -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"
 $monospace = Consolas, "Liberation Mono", Menlo, Courier, monospace
 
+ellipsis()
+    white-space: nowrap
+    overflow: hidden
+    text-overflow: ellipsis
+
+square(s)
+    width: s
+    height: s
+
 $with-large-icon
     position: relative
     float: left
@@ -38,7 +47,6 @@ $contribution
         background-color: rgba(255, 255, 255, .15)
         color: inherit
         font-size: inherit
-        cursor: help
         ellipsis()
 
         & + span
@@ -48,6 +56,9 @@ $contribution
 
             & > .octicon
                 height: 22px
+
+        & + .octicon
+            margin: 0
 
         .user
             color: inherit
@@ -68,18 +79,6 @@ $contribution
 
     .text-diff-deleted
         color: #ff3c00 !important
-
-    .commit-ref + .octicon
-        margin: 0
-
-ellipsis()
-    white-space: nowrap
-    overflow: hidden
-    text-overflow: ellipsis
-
-square(s)
-    width: s
-    height: s
 
 /**********
  * Global
@@ -106,6 +105,9 @@ square(s)
 
     small
         opacity: .8
+
+    [title]
+        cursor: help
 
     .octicon
         fill: currentColor

@@ -112,7 +112,7 @@ $(() => {
         '.repo a:last-of-type': EXTRACTOR.ANCESTOR_URL_REPO,
         '.repo-collection .repo-name': EXTRACTOR.SLUG,
         '.branch-meta a': EXTRACTOR.TEXT_USER,
-        '.commit-meta .commit-author': EXTRACTOR.TEXT_USER,
+        '.commit-meta a.commit-author': EXTRACTOR.TEXT_USER,
         '.author-name a': EXTRACTOR.TEXT_USER,
         '.author-name span': EXTRACTOR.TEXT_USER,
         '.release-authorship a:first-of-type': EXTRACTOR.TEXT_USER,
@@ -146,7 +146,8 @@ $(() => {
         '.file-wrap a',
         '.reponav-item',
         '.issue-pr-status a',
-        '.commits-comments-link'
+        '.commits-comments-link',
+        '.issues-listing .d-table-cell:last-child a'
     ].join(', ');
 
     // Octicons in SVG
@@ -239,7 +240,7 @@ $(() => {
                 </div>
                 {{#body}}<pre class="ghh-commit-body">{{.}}</pre>{{/body}}
                 <div class="ghh-more">
-                    <p>{{{icons.commit}}} <a href="{{authorUrl}}"><strong>{{author}}</strong></a> committed{{#isGitHub}} on <strong>GitHub</strong>{{/isGitHub}}{{^isGitHub}}{{#committer}} with <a href="{{committerUrl}}"><strong>{{committer}}</strong></a>{{/committer}}{{/isGitHub}} on {{{authorTime}}}</p>
+                    <p>{{{icons.commit}}} {{#authorUrl}}<a href="{{.}}"><strong>{{author}}</strong></a>{{/authorUrl}}{{^authorUrl}}<strong title="{{authorEmail}}">{{author}}</strong>{{/authorUrl}} committed{{#isGitHub}} on <strong>GitHub</strong>{{/isGitHub}}{{^isGitHub}}{{#committer}} with {{#committerUrl}}<a href="{{.}}"><strong>{{committer}}</strong></a>{{/committerUrl}}{{^committerUrl}}<strong title="{{committerEmail}}">{{committer}}</strong>{{/committerUrl}}{{/committer}}{{/isGitHub}} on {{{authorTime}}}</p>
                     {{#branch}}<p>{{{icons.branch}}} <a href="/{{fullRepo}}/tree/{{branch}}"><strong>{{branch}}</strong></a>{{#pull}} (<a href="/{{fullRepo}}/pull/{{.}}">#{{.}}</a>){{/pull}}</p>
                     {{#mainTag}}<p class="ghh-tags">{{{icons.tag}}} <a href="/{{fullRepo}}/releases/tag/{{.}}"><strong>{{.}}</strong></a>{{#otherTags}}, <a href="/{{fullRepo}}/releases/tag/{{.}}">{{.}}</a>{{/otherTags}}</p>{{/mainTag}}{{/branch}}
                     <p class="ghh-commit-meta">{{{icons.diff}}} {{changedFiles}} file{{^isSingleFile}}s{{/isSingleFile}} changed
@@ -534,16 +535,26 @@ $(() => {
             }
         } else if (type === EXTRACT_TYPE.COMMIT) {
             let lines = raw.commit.message.split('\n\n');
+            let committer;
+            if (raw.committer.login && raw.author.login) {
+                committer = raw.committer.login === raw.author.login ? null : raw.committer.login;
+            } else if (!raw.committer.login && !raw.author.login) {
+                committer = (raw.committer.name === raw.author.name && raw.committer.email === raw.author.email)
+                    ? null : raw.committer.name;
+            } else {
+                committer = raw.committer.login || raw.committer.name;
+            }
             data = {
                 title: lines[0],
                 body: lines.slice(1).join('\n\n'),
                 commitUrl: raw.html_url,
-                author: raw.author.login,
-                authorAvatar: raw.author.avatar_url,
+                author: raw.author.login || raw.author.name,
                 authorUrl: raw.author.html_url,
+                authorEmail: raw.author.email,
                 authorTime: formatTime(raw.commit.author.date),
-                committer: raw.committer.login === raw.author.login ? null : raw.committer.login,
+                committer: committer,
                 committerUrl: raw.committer.html_url,
+                committerEmail: raw.committer.email,
                 additions: raw.stats.additions,
                 deletions: raw.stats.deletions,
                 changedFiles: raw.files.length,
@@ -1006,6 +1017,8 @@ $(() => {
                                         let [fullRepo, commit] = value.split('@');
                                         let commitPagePath = `${fullRepo}/branch_commits/${commit}`;
                                         raw.fullRepo = fullRepo;
+                                        raw.author = raw.author || raw.commit.author;
+                                        raw.committer = raw.committer || raw.commit.committer;
                                         let options = {
                                             url: SITE_PREFIX + commitPagePath,
                                             headers: {

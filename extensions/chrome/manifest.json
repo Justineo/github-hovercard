@@ -2,7 +2,7 @@
   "manifest_version": 2,
   "name": "GitHub Hovercard",
   "description": "Neat user/repo/issue hovercards for GitHub.",
-  "version": "0.7.0",
+  "version": "0.7.1",
   "icons": {
     "128": "icon.png"
   },
@@ -20,9 +20,6 @@
   ],
   "optional_permissions": [
     "<all_urls>"
-  ],
-  "web_accessible_resources": [
-    "octicons/*"
   ],
   "externally_connectable": {
     "matches": [

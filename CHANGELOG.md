@@ -1,5 +1,11 @@
 Changelog
 ---
+## 0.7.1
+* Fixed that some commits are not associated with GitHub accounts.
+* Updated extraction blacklist.
+* Fixed some style bugs.
+* Removed title attribute for emojis.
+
 ## 0.7.0
 * Supported commit hovercards.
 * Made error message clear again for DMCA takedowns since GitHub now gives status code `451` for DMCA takedowns.
