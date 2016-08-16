@@ -143,7 +143,7 @@ $(() => {
         '.repo-nav a',
         '.tabnav-tab',
         '.discussion-item .timestamp',
-        '.file-wrap a',
+        '.file-wrap .content a',
         '.reponav-item',
         '.issue-pr-status a',
         '.commits-comments-link',
@@ -239,8 +239,9 @@ $(() => {
                     <p><a href="{{commitUrl}}" title="{{title}}"><strong>{{title}}</strong></a></p>
                 </div>
                 {{#body}}<pre class="ghh-commit-body">{{.}}</pre>{{/body}}
+                <p class="ghh-commit-author">{{#authorUrl}}<a href="{{.}}"><strong>{{author}}</strong></a>{{/authorUrl}}{{^authorUrl}}<strong title="{{authorEmail}}">{{author}}</strong>{{/authorUrl}} committed{{#isGitHub}} on <strong>GitHub</strong>{{/isGitHub}}{{^isGitHub}}{{#committer}} with {{#committerUrl}}<a href="{{.}}"><strong>{{committer}}</strong></a>{{/committerUrl}}{{^committerUrl}}<strong title="{{committerEmail}}">{{committer}}</strong>{{/committerUrl}}{{/committer}}{{/isGitHub}} on {{{authorTime}}}</p>
                 <div class="ghh-more">
-                    <p>{{{icons.commit}}} {{#authorUrl}}<a href="{{.}}"><strong>{{author}}</strong></a>{{/authorUrl}}{{^authorUrl}}<strong title="{{authorEmail}}">{{author}}</strong>{{/authorUrl}} committed{{#isGitHub}} on <strong>GitHub</strong>{{/isGitHub}}{{^isGitHub}}{{#committer}} with {{#committerUrl}}<a href="{{.}}"><strong>{{committer}}</strong></a>{{/committerUrl}}{{^committerUrl}}<strong title="{{committerEmail}}">{{committer}}</strong>{{/committerUrl}}{{/committer}}{{/isGitHub}} on {{{authorTime}}}</p>
+                    <p class="ghh-commit-sha">{{{icons.commit}}} <code>{{sha}}</code></p>
                     {{#branch}}<p>{{{icons.branch}}} <a href="/{{fullRepo}}/tree/{{branch}}"><strong>{{branch}}</strong></a>{{#pull}} (<a href="/{{fullRepo}}/pull/{{.}}">#{{.}}</a>){{/pull}}</p>
                     {{#mainTag}}<p class="ghh-tags">{{{icons.tag}}} <a href="/{{fullRepo}}/releases/tag/{{.}}"><strong>{{.}}</strong></a>{{#otherTags}}, <a href="/{{fullRepo}}/releases/tag/{{.}}">{{.}}</a>{{/otherTags}}</p>{{/mainTag}}{{/branch}}
                     <p class="ghh-commit-meta">{{{icons.diff}}} {{changedFiles}} file{{^isSingleFile}}s{{/isSingleFile}} changed
@@ -545,6 +546,7 @@ $(() => {
                 committer = raw.committer.login || raw.committer.name;
             }
             data = {
+                sha: raw.sha,
                 title: lines[0],
                 body: lines.slice(1).join('\n\n'),
                 commitUrl: raw.html_url,
