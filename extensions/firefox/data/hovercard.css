@@ -404,6 +404,9 @@
 .ghh .ghh-commit-author {
   margin-bottom: 6px;
 }
+.ghh .ghh-tags {
+  white-space: normal;
+}
 .ghh-commit-body {
   overflow: auto;
   max-height: 280px;

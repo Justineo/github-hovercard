@@ -2,6 +2,7 @@ Changelog
 ---
 ## 0.7.1
 * Fixed that some commits are not associated with GitHub accounts.
+* Fixed commit tag extraction.
 * Updated extraction blacklist.
 * Fixed some style bugs.
 * Removed title attribute for emojis.

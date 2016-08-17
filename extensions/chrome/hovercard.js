@@ -1030,7 +1030,7 @@ $(() => {
                                         };
                                         $.ajax(Object.assign(options))
                                             .done(html => {
-                                                let branches = $(html);
+                                                let branches = $(`<div>${html}</div>`);
                                                 raw.branch = branches.find('.branch a').text();
                                                 raw.pull = branches.find('.pull-request a').text().substring(1);
                                                 let tags = branches.find('.branches-tag-list a').map(function () {
