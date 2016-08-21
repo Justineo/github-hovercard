@@ -3,7 +3,7 @@ $(() => {
 
     const GH_DOMAIN = location.host;
 
-    const EXCLUDES = '.tooltipster-base, .tooltipster-sizer, .timestamp';
+    const EXCLUDES = '.tooltipster-base, .tooltipster-sizer, .timestamp, .time';
     const DEFAULT_TARGET = document.body;
     let isExtracting = false;
     let observer = new MutationObserver(mutations => {

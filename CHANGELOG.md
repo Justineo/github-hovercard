@@ -1,5 +1,8 @@
 Changelog
 ---
+## 0.7.2
+* Fixed a performance issue on GitHub feed (the same problem was fixed in v0.6.5 for issue pages).
+
 ## 0.7.1
 * Fixed that some commits are not associated with GitHub accounts.
 * Fixed commit tag extraction.
