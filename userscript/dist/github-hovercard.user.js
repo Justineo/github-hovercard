@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name GitHub Hovercard
 // @namespace https://justineo.github.io/
-// @version 0.7.1
+// @version 0.7.2
 // @description Neat user/repo/issue hovercards for GitHub.
 // @author Justineo(justice360@gmail.com)
 // @match https://github.com/*
