@@ -270,19 +270,19 @@
   font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
 }
 .ghh-issue-body h1 {
-  font-size: 1.5em;
+  font-size: 1.25em;
 }
 .ghh-issue-body h2 {
-  font-size: 1.4em;
-}
-.ghh-issue-body h3 {
-  font-size: 1.3em;
-}
-.ghh-issue-body h4 {
   font-size: 1.2em;
 }
-.ghh-issue-body h5 {
+.ghh-issue-body h3 {
+  font-size: 1.15em;
+}
+.ghh-issue-body h4 {
   font-size: 1.1em;
+}
+.ghh-issue-body h5 {
+  font-size: 1.05em;
 }
 .ghh-issue-body h6 {
   font-size: 1em;
@@ -364,9 +364,9 @@
 }
 .ghh-issue-body code,
 .ghh-issue-body tt {
-  padding: 0.2em 0;
+  padding: 0.2em 0.4em;
   margin: 0;
-  background-color: rgba(0,0,0,0.04);
+  background-color: rgba(255,255,255,0.1);
   border-radius: 2px;
 }
 .ghh-issue-body code br,

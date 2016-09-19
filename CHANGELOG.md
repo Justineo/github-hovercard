@@ -1,5 +1,9 @@
 Changelog
 ---
+## 0.8.0
+* Rewrote selectors for extraction due to GitHub's major update.
+* Supported comment hovercards.
+
 ## 0.7.2
 * Fixed a performance issue on GitHub feed (the same problem was fixed in v0.6.5 for issue pages).
 

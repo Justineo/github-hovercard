@@ -3,7 +3,7 @@ $(() => {
 
     const GH_DOMAIN = location.host;
 
-    const EXCLUDES = '.tooltipster-base, .tooltipster-sizer, .timestamp, .time';
+    const EXCLUDES = '.tooltipster-base, .tooltipster-sizer, .timestamp, .time, .octotree_sidebar';
     const DEFAULT_TARGET = document.body;
     let isExtracting = false;
     let observer = new MutationObserver(mutations => {
@@ -54,6 +54,7 @@ $(() => {
         USER: 'user',
         REPO: 'repo',
         ISSUE: 'issue',
+        COMMENT: 'comment',
         COMMIT: 'commit',
         SKIP: 'skip'
     };
@@ -66,27 +67,30 @@ $(() => {
         HREF_USER: 5, // href="{{user}}"
         URL: 6, // href="/{{user}}" or href="https://{{GH_DOMAIN}}/{{user}}"
         NEXT_TEXT_REPO: 7, // <span>...</span> {{repo}}
-        ANCESTOR_URL_REPO: 8 // <a href="/{{user}}/{{repo}}">...{{elem}}...</a>
+        ANCESTOR_URL_REPO: 8, // <a href="/{{user}}/{{repo}}">...{{elem}}...</a>
+        NEXT_LINK_TEXT_USER: 9, // <span>...</span>...<a>{{}user}</a>
+        TEXT_MY_REPO: 10 // {{repo}}
     };
 
     const GH_DOMAIN_PATTERN = GH_DOMAIN.replace(/\./g, '\\.');
-    const URL_USER_PATTERN = `^https?:\\/\\/${GH_DOMAIN_PATTERN}\\/([^\\/\\?#]+)(?:[^\\/]*$|\\/(?:[\\?#]|$))`;
-    const URL_REPO_PATTERN = `^https?:\\/\\/${GH_DOMAIN_PATTERN}\\/([^\\/\\?#]+)\\/([^\\/\\?#]+)(?:[^\\/]*$|\\/(?:[\\?#]|$))`;
-    const URL_ISSUE_PATTERN = `^https?:\\/\\/${GH_DOMAIN_PATTERN}\\/([^\\/\\?#]+)\\/([^\\/\\?#]+)\\/(?:issues|pull)\\/(\\d+)(?:[^\\/]*$|(?:[\\?#]|$))`;
-    const URL_COMMIT_PATTERN = `^https?:\\/\\/${GH_DOMAIN_PATTERN}\\/([^\\/\\?#]+)\\/([^\\/\\?#]+)\\/(?:pull\\/\\d+\\/commits|commit)\\/([0-9a-f]+)(?:[^\\/]*$|(?:[\\?#]|$))`;
+    const URL_USER_PATTERN = `^https?:\\/\\/${GH_DOMAIN_PATTERN}\\/([^/?#]+)(?:\/$|[^/]*$)`;
+    const URL_REPO_PATTERN = `^https?:\\/\\/${GH_DOMAIN_PATTERN}\\/([^/?#]+)\\/([^/?#]+)(?:\/$|[^/]*$)`;
+    const URL_ISSUE_PATTERN = `^https?:\\/\\/${GH_DOMAIN_PATTERN}\\/([^/?#]+)\\/([^/?#]+)\\/(?:issues|pull)\\/(\\d+)(?:\/?[^/#]*$)`;
+    const URL_COMMENT_PATTERN = `^https?:\\/\\/${GH_DOMAIN_PATTERN}\\/([^/?#]+)\\/([^/?#]+)\\/(?:issues|pull)\\/(\\d+)#issuecomment-(\\d+)$`;
+    const URL_COMMIT_PATTERN = `^https?:\\/\\/${GH_DOMAIN_PATTERN}\\/([^/?#]+)\\/([^/?#]+)\\/(?:pull\\/\\d+\\/commits|commit)\\/([0-9a-f]+)(?:\/?[^/]*$)`;
     const SLUG_PATTERN = /([^\/\s]+)\/([^#@\s]+)(?:#(\d+)|@([0-9a-f]+))?/;
 
     const STRATEGIES = {
-        '.repo-list-name .prefix': EXTRACTOR.TEXT_USER,
-        '.fork-flag a': EXTRACTOR.SLUG,
-        'img.avatar': EXTRACTOR.ALT_USER,
-        'img.from-avatar': EXTRACTOR.ALT_USER,
-        'img.gravatar': EXTRACTOR.ALT_USER,
-        '.leaderboard-gravatar': EXTRACTOR.ALT_USER,
-        'img.author-gravatar': EXTRACTOR.ALT_USER,
-        'img.author-avatar': EXTRACTOR.ALT_USER,
-        'img.avatar-child': EXTRACTOR.ALT_USER,
-        'img.timeline-comment-avatar': EXTRACTOR.ALT_USER,
+        /* Common */
+        // Avatars
+        'img.avatar:not([alt=""])': EXTRACTOR.ALT_USER,
+        'img.gravatar:not([alt=""])': EXTRACTOR.ALT_USER,
+
+        // @ mentions
+        '.user-mention': EXTRACTOR.TEXT_USER,
+
+        /* Dashboard */
+        // News feeds
         '[data-ga-click~="target:actor"]': EXTRACTOR.TEXT_USER,
         '[data-ga-click~="target:repository"]': EXTRACTOR.SLUG,
         '[data-ga-click~="target:repo"]': EXTRACTOR.SLUG,
@@ -96,45 +100,111 @@ $(() => {
         '[data-ga-click~="target:pull"]': EXTRACTOR.SLUG,
         '[data-ga-click~="target:pull-comment"]': EXTRACTOR.SLUG,
         '[data-ga-click~="target:commit-comment"]': EXTRACTOR.SLUG,
-        // '.user-mention': EXTRACTOR.TEXT_USER,
-        '.opened-by a': EXTRACTOR.TEXT_USER,
-        '.table-list-issues .issue-nwo-link': EXTRACTOR.SLUG,
-        '.filter-list .repo-and-owner': EXTRACTOR.SLUG,
-        '.repo-list a span:first-child': EXTRACTOR.TEXT_USER,
-        '.repo-list .repo-name': EXTRACTOR.ANCESTOR_URL_REPO,
-        '.repo-list-info a': EXTRACTOR.SLUG,
+        '[data-ga-click~="target:sha"]': EXTRACTOR.URL,
+
+        // Sidebar
         '.repo-and-owner .owner': EXTRACTOR.TEXT_USER,
         '.repo-and-owner .repo': EXTRACTOR.ANCESTOR_URL_REPO,
-        '.capped-card .aname': EXTRACTOR.TEXT_USER,
-        '.team-member-username a': EXTRACTOR.TEXT_USER,
-        '.member-username': EXTRACTOR.TEXT_USER,
-        '.repo a:first-of-type': EXTRACTOR.TEXT_USER,
-        '.repo a:last-of-type': EXTRACTOR.ANCESTOR_URL_REPO,
+
+        /* User profile */
+        // Pinned repos
+        '.pinned-repo-item-content .owner': EXTRACTOR.TEXT_USER,
+        '.pinned-repo-item-content .repo': EXTRACTOR.ANCESTOR_URL_REPO,
+
+        // Customize pinned repos
+        '.pinned-repos-selection-list .pinned-repo-name span': EXTRACTOR.TEXT_MY_REPO,
+
+        // Contribution activities
+        '.profile-rollup-content td:first-child a': EXTRACTOR.SLUG,
+        '.profile-rollup-content .content-title > span:first-child': EXTRACTOR.SLUG,
+        '.profile-rollup-content .content-title > span:last-child': EXTRACTOR.URL,
+
+        '.profile-timeline-card h3 a': EXTRACTOR.URL,
+
+        // Repos
+        '[itemprop$="owns"] .octicon-repo-forked ~ a': EXTRACTOR.SLUG,
+
+        // Stars
+        '.page-profile h3 a': EXTRACTOR.SLUG,
+
+        /* Explore */
+        // Trending summary
         '.repo-collection .repo-name': EXTRACTOR.SLUG,
-        '.branch-meta a': EXTRACTOR.TEXT_USER,
-        '.commit-meta a.commit-author': EXTRACTOR.TEXT_USER,
-        '.author-name a': EXTRACTOR.TEXT_USER,
-        '.author-name span': EXTRACTOR.TEXT_USER,
-        '.release-authorship a:first-of-type': EXTRACTOR.TEXT_USER,
-        '.table-list-cell-avatar img': EXTRACTOR.ALT_USER,
-        '.author': EXTRACTOR.TEXT_USER,
-        '.codesearch-results .repo-list-name a': EXTRACTOR.SLUG,
-        '.code-list-item > a ~ .title a:first-child': EXTRACTOR.SLUG,
-        '.issue-list-meta li:first-child a': EXTRACTOR.SLUG,
-        '.issue-list-meta li:nth-child(2) a': EXTRACTOR.TEXT_USER,
-        '.user-list-info a:first-child': EXTRACTOR.TEXT_USER,
-        '.commits li span': EXTRACTOR.TITLE_USER,
-        '.follow-list-name a': EXTRACTOR.HREF_USER,
-        '.sidebar-assignee .assignee': EXTRACTOR.TEXT_USER,
-        '.contribution .cmeta': EXTRACTOR.SLUG,
+
+        // Showcases & trending
+        '.repo-list-name .prefix': EXTRACTOR.TEXT_USER,
+        '.repo-list-name .slash': EXTRACTOR.NEXT_TEXT_REPO,
+
+
+        /* Organization profile */
+        // Invite member suggestion info
+        '.member-suggestion-info .member-login': EXTRACTOR.TEXT_USER,
+
+        // People
+        '.member-info-content .member-link': EXTRACTOR.TEXT_USER,
+
+        // People manage
+        '.member-list-avatar + strong': EXTRACTOR.TEXT_USER,
+        '.org-person-repo-header .table-list-heading strong': EXTRACTOR.TEXT_USER,
+        '.org-repo-name .repo-prefix': EXTRACTOR.TEXT_USER,
+        '.org-repo-name .repo-slash': EXTRACTOR.NEXT_TEXT_REPO,
+
+        // Teams
+        // - Audit log
+        '.member-username .member-link': EXTRACTOR.TEXT_USER,
+
+        // - Team
+        '.team-member-username a': EXTRACTOR.TEXT_USER,
+
+        // - Repositories details
+        '.org-higher-access-member': EXTRACTOR.TEXT_NODE_USER,
+
+
+        /* Repo */
+        // Issues
+        '.opened-by a': EXTRACTOR.TEXT_USER,
+        'img.from-avatar:not([alt=""])': EXTRACTOR.ALT_USER,
+
+        // - Detail
+        '.timeline-comment-avatar': EXTRACTOR.ALT_USER,
+        '.discussion-item-header strong': EXTRACTOR.SLUG,
+
+        // Projects
+        '.issue-card small a': EXTRACTOR.TEXT_USER,
+
+        // Pulse
+        '.pulse-authors-graph .bar image': EXTRACTOR.ALT_USER,
+
+        // Graphs
+        // - Contributors
+        '.capped-card img.avatar': EXTRACTOR.NEXT_LINK_TEXT_USER,
+        '.capped-card .aname': EXTRACTOR.TEXT_USER,
+
+        // Commits
+        'img.avatar-child': EXTRACTOR.ALT_USER,
+        '.signed-commit-signer-name .signer': EXTRACTOR.TEXT_NODE_USER,
+
+        /* New/import repo */
         '.select-menu-item-gravatar img': EXTRACTOR.ALT_USER,
+
+        /* Notifications */
+        '.filter-item .repo-and-owner': EXTRACTOR.SLUG,
         '.notifications-repo-link': EXTRACTOR.SLUG,
-        '.explore-page .repo-list-name .slash': EXTRACTOR.NEXT_TEXT_REPO,
-        '.collection-page .repo-list-name .slash': EXTRACTOR.NEXT_TEXT_REPO,
-        '.leaderboard-list-content .repo': EXTRACTOR.ANCESTOR_URL_REPO,
-        '.profilecols .repo-list-name a': EXTRACTOR.ANCESTOR_URL_REPO,
-        '.conversation-list-heading:has(.octicon-git-commit) + .simple-conversation-list a': EXTRACTOR.SLUG,
-        '.discussion-item-ref strong': EXTRACTOR.SLUG,
+        '.list-group-item-link': EXTRACTOR.TEXT_NODE_URL,
+
+        // Watching
+        '.notifications-list .repo-icon + ': EXTRACTOR.SLUG,
+
+        /* Pulls/Issues */
+        '.issues-listing .js-issue-row .muted-link:first-child': EXTRACTOR.SLUG,
+
+        /* Search */
+        '.codesearch-results .repo-list-name a': EXTRACTOR.SLUG,
+        '.code-list-item .title a:first-child': EXTRACTOR.SLUG,
+        '.issue-list-meta .octicon-repo + a': EXTRACTOR.SLUG,
+        '.wiki-list-item .title a:first-child': EXTRACTOR.SLUG,
+
+        /* All links */
         'a': EXTRACTOR.URL
     };
 
@@ -145,9 +215,9 @@ $(() => {
         '.discussion-item .timestamp',
         '.file-wrap .content a',
         '.reponav-item',
-        '.issue-pr-status a',
-        '.commits-comments-link',
-        '.issues-listing .d-table-cell:last-child a'
+        '.intgrs-lstng-logo', // integrations icon
+        '.issues-listing .float-right:last-child > a', // issue/pr list comment icon
+        '.commit-links-cell > a:first-child' // commit list comment icon
     ].join(', ');
 
     // Octicons in SVG
@@ -233,6 +303,15 @@ $(() => {
                 </div>{{/isPullRequest}}
                 {{#body}}<div class="ghh-issue-body">{{{.}}}</div>{{/body}}
             </div>`,
+        comment: `
+            <div class="ghh">
+                <img src="{{avatar}}&s=32" class="ghh-avatar">
+                <div class="ghh-person">
+                    <p><strong><a href="{{userUrl}}">{{loginName}}</a></strong></p>
+                    <p>Commented on {{{createTime}}}{{#updatedTime}} • {{{.}}}{{/updatedTime}}</p>
+                </div>
+                <div class="ghh-issue-body">{{{body}}}</div>
+            </div>`,
         commit: `
             <div class="ghh">
                 <div class="ghh-commit">
@@ -274,11 +353,11 @@ $(() => {
     const API_PREFIX = IS_ENTERPRISE ? `//${GH_DOMAIN}/api/v3/` : `//api.${GH_DOMAIN}/`;
     const SITE_PREFIX = `//${GH_DOMAIN}/`;
 
-    function trim(str) {
+    function trim(str, isCollapse) {
         if (!str) {
             return '';
         }
-        return str.replace(/^\s+|\s+$/g, '');
+        return str.replace(/^\s+|\s+$/g, isCollapse ? ' ' : '');
     }
 
     function markExtracted(elem, type, value) {
@@ -316,6 +395,24 @@ $(() => {
         return fullRepo;
     }
 
+    function getNextTextNode(node, context) {
+        let filter = NodeFilter.SHOW_TEXT|NodeFilter.SHOW_ELEMENT;
+        let walker = document.createTreeWalker(context || document.body, filter);
+        while (walker.nextNode()) {
+            if (walker.currentNode === node) {
+                while (walker.nextNode()) {
+                    let current = walker.currentNode;
+                    if (current.nodeType === Node.TEXT_NODE
+                        && !(node.compareDocumentPosition(current) & Node.DOCUMENT_POSITION_CONTAINED_BY)
+                        && trim(current.nodeValue)){
+                        return current;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
     function formatNumber(num) {
         if (num >= 1000) {
             return (num / 1000).toFixed(1) + 'k';
@@ -326,10 +423,11 @@ $(() => {
     const MONTH_NAMES = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
                          'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
-    function formatTime(time) {
+    function formatTime(time, text) {
         let t = new Date(time);
         let formatted = MONTH_NAMES[t.getMonth()] + ' ' + t.getDate() + ', ' + t.getFullYear();
-        return encodeHTML`<time datetime="${time}">${formatted}</time>`;
+
+        return encodeHTML`<time datetime="${time}" title="${time}">${text || formatted}</time>`;
     }
 
     function replaceEmoji(text) {
@@ -534,6 +632,15 @@ $(() => {
                     isSingleFile: raw.changed_files === 1
                 })
             }
+        } else if (type === EXTRACT_TYPE.COMMENT) {
+            data = {
+                avatar: raw.user.avatar_url,
+                userUrl: raw.user.html_url,
+                loginName: raw.user.login,
+                createTime: formatTime(raw.created_at),
+                updatedTime: raw.created_at !== raw.updated_at ? formatTime(raw.updated_at, 'edited') : null,
+                body: raw.bodyHTML
+            };
         } else if (type === EXTRACT_TYPE.COMMIT) {
             let lines = raw.commit.message.split('\n\n');
             let committer;
@@ -611,6 +718,7 @@ $(() => {
         user: {},
         repo: {},
         issue: {},
+        comment: {},
         commit: {}
     };
 
@@ -638,11 +746,14 @@ $(() => {
                     // skip processed elements
                     return;
                 }
+                let target;
                 let username; // {{user}}
                 let repo; // {{repo}}
                 let fullRepo; // {{user}}/{{repo}}
                 let issue; // {{issue}}
                 let fullIssue; // {{user}}/{{repo}}#{{issue}}
+                let comment; // {{comment}}
+                let fullComment; // {{user}}/{{repo}}:{{issue}}
                 let commit; // {{commit}}
                 let fullCommit; // {{user}}/{{repo}}@{{commit}}
                 switch (strategy) {
@@ -661,6 +772,13 @@ $(() => {
                     case EXTRACTOR.HREF_USER: {
                         username = trim(elem.attr('href').replace(/[@\/]/g, ''));
                         break;
+                    }
+                    case EXTRACTOR.TEXT_MY_REPO: {
+                        let repo = trim(elem.text());
+                        if (me && repo.indexOf('/') === -1) {
+                            fullRepo = `${me}/${repo}`;
+                            break;
+                        }
                     }
                     case EXTRACTOR.SLUG: {
                         let slug = elem.text();
@@ -717,14 +835,24 @@ $(() => {
                         }
                         break;
                     }
+                    case EXTRACTOR.TEXT_NODE_URL: {
+                        let [...nodes] = elem[0].childNodes;
+                        let textNode = nodes.find(node => trim(node.nodeValue));
+                        target = $(` <span>${textNode.nodeValue}</span>`);
+                        textNode.parentNode.replaceChild(target[0], textNode);
+                        markExtracted(elem);
+                    }
                     case EXTRACTOR.URL: {
+                        target = elem;
+                        elem = elem.closest('a');
                         let attr = elem.attr('href');
-                        if (attr && attr.charAt(0) === '#') {
+                        if (attr && attr.charAt(0) === '#' || !attr) {
                             // ignore local anchors
                             return;
                         }
                         let href = elem.prop('href'); // absolute path via prop
                         if (href) {
+                            href = href.baseVal || href; // support SVG elements
                             let match = href.match(URL_USER_PATTERN);
                             username = trim(match && match[1]);
                             if (!username) {
@@ -737,6 +865,13 @@ $(() => {
                                 username = trim(match && match[1]);
                                 repo = trim(match && match[2]);
                                 issue = trim(match && match[3]);
+                            }
+                            if (!username) {
+                                match = href.match(URL_COMMENT_PATTERN);
+                                username = trim(match && match[1]);
+                                repo = trim(match && match[2]);
+                                issue = trim(match && match[3]);
+                                comment = trim(match && match[4])
                             }
                             if (!username) {
                                 match = href.match(URL_COMMIT_PATTERN);
@@ -764,6 +899,9 @@ $(() => {
                             if (issue) {
                                 fullIssue = `${username}/${repo}#${issue}`;
                             }
+                            if (comment) {
+                                fullComment = `${username}/${repo}:${comment}`;
+                            }
                             if (commit) {
                                 fullCommit = `${username}/${repo}@${commit}`;
                             }
@@ -777,19 +915,38 @@ $(() => {
                     case EXTRACTOR.NEXT_TEXT_REPO: {
                         fullRepo = getFullRepoFromAncestorLink(elem);
                         repo = fullRepo.split('/')[1];
-                        let textNode = elem[0].nextSibling;
+                        let textNode = getNextTextNode(elem[0], elem[0].parentNode.parentNode);
+                        target = $(` <span>${repo}</span>`);
                         if (fullRepo && textNode) {
-                            textNode.parentNode.removeChild(textNode);
-                            elem.after(` <span>${repo}</span>`);
+                            textNode.parentNode.replaceChild(target[0], textNode);
                             markExtracted(elem);
-                            markExtracted(elem.next(), EXTRACT_TYPE.REPO, fullRepo);
+                        } else {
+                            elem = null;
                         }
-                        elem = null;
                         break;
                     }
                     case EXTRACTOR.ANCESTOR_URL_REPO: {
                         fullRepo = getFullRepoFromAncestorLink(elem);
                         break;
+                    }
+                    case EXTRACTOR.NEXT_LINK_TEXT_USER: {
+                        let link = elem.nextAll('a').eq(0);
+                        if (link) {
+                            username = trim(link.text().replace(/[@\/]/g, ''));
+                        }
+                        break;
+                    }
+                    case EXTRACTOR.TEXT_NODE_USER: {
+                        let [...nodes] = elem[0].childNodes;
+                        let textNode = nodes.find(node => trim(node.nodeValue));
+
+                        if (textNode) {
+                            username = trim(textNode.nodeValue);
+                            let userElem = $(`<span>${textNode.nodeValue}</span>`);
+                            textNode.parentNode.replaceChild(userElem[0], textNode);
+                            markExtracted(elem);
+                            elem = userElem;
+                        }
                     }
                     default:
                         break;
@@ -799,14 +956,22 @@ $(() => {
                 if (!elem) {
                     return;
                 }
+
+                target = target || elem;
                 if (fullCommit) {
-                    markExtracted(elem, EXTRACT_TYPE.COMMIT, fullCommit);
+                    markExtracted(target, EXTRACT_TYPE.COMMIT, fullCommit);
+                } else if (fullComment) {
+                    markExtracted(target, EXTRACT_TYPE.COMMENT, fullComment);
                 } else if (fullIssue) {
-                    markExtracted(elem, EXTRACT_TYPE.ISSUE, fullIssue);
+                    markExtracted(target, EXTRACT_TYPE.ISSUE, fullIssue);
                 } else if (fullRepo) {
-                    markExtracted(elem, EXTRACT_TYPE.REPO, fullRepo);
-                } else if (username && username !== me && username !== current) {
-                    markExtracted(elem, EXTRACT_TYPE.USER, username);
+                    markExtracted(target, EXTRACT_TYPE.REPO, fullRepo);
+                } else if (username) {
+                    if (username !== me && username !== current) {
+                        markExtracted(target, EXTRACT_TYPE.USER, username);
+                    } else {
+                        markExtracted(target);
+                    }
                 }
                 if (!username && !fullRepo && !fullIssue) {
                     markExtracted(elem);
@@ -850,10 +1015,13 @@ $(() => {
                             apiPath = `repos/${value}`;
                             break;
                         case EXTRACT_TYPE.ISSUE: {
-                            let values = value.split('#');
-                            let fullRepo = values[0];
-                            let issue = values[1];
+                            let [fullRepo, issue] = value.split('#');
                             apiPath = `repos/${fullRepo}/issues/${issue}`;
+                            break;
+                        }
+                        case EXTRACT_TYPE.COMMENT: {
+                            let [fullRepo, comment] = value.split(':');
+                            apiPath = `repos/${fullRepo}/issues/comments/${comment}`;
                             break;
                         }
                         case EXTRACT_TYPE.COMMIT: {
@@ -1012,6 +1180,27 @@ $(() => {
                                                 })
                                                 .fail(handleError);
                                         }
+
+                                        return;
+                                    }
+                                    case EXTRACT_TYPE.COMMENT: {
+                                        let options = {
+                                            url: API_PREFIX + 'markdown',
+                                            method: 'POST',
+                                            contentType: 'application/json',
+                                            dataType: 'text',
+                                            data: JSON.stringify({
+                                                text: raw.body,
+                                                mode: 'gfm',
+                                                context: value.split(':')[0]
+                                            })
+                                        };
+                                        $.ajax(Object.assign({}, requestOptions, options))
+                                            .done(html => {
+                                                raw.bodyHTML = html;
+                                                elem.tooltipster('content', getCardHTML(type, raw));
+                                            })
+                                            .fail(handleError);
 
                                         return;
                                     }
