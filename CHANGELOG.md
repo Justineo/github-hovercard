@@ -1,5 +1,8 @@
 Changelog
 ---
+## 0.8.1
+* Supported in-page comment URL extraction.
+
 ## 0.8.0
 * Rewrote selectors for extraction due to GitHub's major update.
 * Supported comment hovercards.

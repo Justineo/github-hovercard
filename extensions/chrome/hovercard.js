@@ -164,6 +164,7 @@ $(() => {
         // Issues
         '.opened-by a': EXTRACTOR.TEXT_USER,
         'img.from-avatar:not([alt=""])': EXTRACTOR.ALT_USER,
+        '.fork-flag a': EXTRACTOR.SLUG,
 
         // - Detail
         '.timeline-comment-avatar': EXTRACTOR.ALT_USER,
@@ -846,7 +847,7 @@ $(() => {
                         target = elem;
                         elem = elem.closest('a');
                         let attr = elem.attr('href');
-                        if (attr && attr.charAt(0) === '#' || !attr) {
+                        if (attr && attr.match(/#(!:issuecomment-)/) || !attr) {
                             // ignore local anchors
                             return;
                         }
