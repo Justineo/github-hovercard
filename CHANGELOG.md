@@ -1,5 +1,8 @@
 Changelog
 ---
+## 0.8.2
+* Fixed the problem that repo names are overlaping with slashes in trending.
+
 ## 0.8.1
 * Supported in-page comment URL extraction.
 

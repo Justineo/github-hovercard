@@ -917,9 +917,11 @@ $(() => {
                         fullRepo = getFullRepoFromAncestorLink(elem);
                         repo = fullRepo.split('/')[1];
                         let textNode = getNextTextNode(elem[0], elem[0].parentNode.parentNode);
-                        target = $(` <span>${repo}</span>`);
+                        target = $(`<span>${repo}</span>`);
                         if (fullRepo && textNode) {
-                            textNode.parentNode.replaceChild(target[0], textNode);
+                            let parent = textNode.parentNode;
+                            parent.replaceChild(target[0], textNode);
+                            parent.insertBefore(document.createTextNode(' '), target[0]);
                             markExtracted(elem);
                         } else {
                             elem = null;

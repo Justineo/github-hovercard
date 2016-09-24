@@ -13,7 +13,11 @@ Neat user/repo/issue/commit hovercards for GitHub.
 
 * Why Chrome warns me the extension might read my browser history?
 
-    It's because GitHub Hovercard uses `webNavigation` module to dynamically inject content scripts (to support GitHub Enterprise). See [#34](https://github.com/Justineo/github-hovercard/issues/34).
+    It's because GitHub Hovercard uses `webNavigation` module to dynamically inject content scripts (to support GitHub Enterprise). See [#34](https://github.com/Justineo/github-hovercard/issues/34). GitHub Hovercard won't track or record any of these private data.
+
+* Why can GitHub Hovercard's demo page find out I have installed the extension or not?
+
+    In Chrome/Opera it's allowed to get this information through the API while in Firefox the extension will add a special attribute (`data-github-hovercard`) to the page's `body` element so that the demo page can find out if the user has installed GitHub Hovercard. It's all about user experience and the extension itself won't track or record these data.
 
 * Why access token doesn't work?
 
