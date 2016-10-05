@@ -165,6 +165,7 @@ $(() => {
         '.opened-by a': EXTRACTOR.TEXT_USER,
         'img.from-avatar:not([alt=""])': EXTRACTOR.ALT_USER,
         '.fork-flag a': EXTRACTOR.SLUG,
+        '.merge-pr-more-commits a:last-child': EXTRACTOR.SLUG,
 
         // - Detail
         '.timeline-comment-avatar': EXTRACTOR.ALT_USER,

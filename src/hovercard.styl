@@ -3,160 +3,180 @@
  **********/
 $sans-serif = -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"
 $monospace = Consolas, "Liberation Mono", Menlo, Courier, monospace
+$content-background = rgba(255, 255, 255, .15)
 
 ellipsis()
-    white-space: nowrap
-    overflow: hidden
-    text-overflow: ellipsis
+    white-space nowrap
+    overflow hidden
+    text-overflow ellipsis
 
 square(s)
-    width: s
-    height: s
+    width s
+    height s
 
 $with-large-icon
-    position: relative
-    float: left
-    margin-top: 2px
-    margin-bottom: 6px
-    padding-left: 24px
+    position relative
+    float left
+    margin-top 2px
+    margin-bottom 6px
+    padding-left 24px
 
     .octicon
-        position: absolute
-        top: 0
-        left: 0
-        line-height: 1
+        position absolute
+        top 0
+        left 0
+        line-height 1
 
 $fix-margin
     & > :first-child
-        margin-top: 0
+        margin-top 0
 
     & > :last-child
-        margin-bottom: 0
+        margin-bottom 0
 
 $contribution
     p
-        line-height: 18px
+        line-height 18px
 
     .ghh-branch
-        display: flex
+        display flex
 
     .commit-ref
-        flex: 0 1 auto
-        float: left
-        border-radius: 2px
-        background-color: rgba(255, 255, 255, .15)
-        color: inherit
-        font-size: inherit
+        flex 0 1 auto
+        float left
+        border-radius 2px
+        background-color $content-background
+        color inherit
+        font-size inherit
         ellipsis()
 
         & + span
-            flex: 0 0 auto
-            float: left
-            padding: 0 5px
+            flex 0 0 auto
+            float left
+            padding 0 5px
 
             & > .octicon
-                height: 22px
+                height 22px
 
         & + .octicon
-            margin: 0
+            margin 0
 
         .user
-            color: inherit
-            opacity: .5
+            color inherit
+            opacity .5
 
     .octicon
-        opacity: .8
-        margin-left: 10px
+        opacity .8
+        margin-left 10px
 
         &:first-child
-            margin-left: 0
+            margin-left 0
 
     .diffstat
-        margin-left: 10px
+        margin-left 10px
 
     .text-diff-added
-        color: #84d063 !important
+        color #84d063 !important
 
     .text-diff-deleted
-        color: #ff3c00 !important
+        color #ff3c00 !important
 
 /**********
  * Global
  **********/
 .ghh
-    max-width: 320px
-    min-width: 160px
-    font-style: normal
-    line-height: 2
-    font-family: $sans-serif
+    max-width 320px
+    min-width 160px
+    font-style normal
+    line-height 2
+    font-family $sans-serif
 
     &.extended
-        max-width: 640px
+        max-width 640px
 
     p
-        margin: 0 0 4px
-        vertical-align: middle
-        line-height: 1.2
+        margin 0 0 4px
+        vertical-align middle
+        line-height 1.2
         ellipsis()
-        clear: both
+        clear both
 
     a
-        color: #bdf
+        color #bdf
 
     small
-        opacity: .8
+        opacity .8
 
     [title]
-        cursor: help
+        cursor help
 
     .octicon
-        fill: currentColor
+        fill currentColor
+
+    .windows &
+        ::-webkit-scrollbar
+            width 20px
+            height 20px
+            padding 3px
+            background-color transparent
+
+        ::-webkit-scrollbar-button
+            display none
+
+        ::-webkit-scrollbar-thumb
+            background-color $content-background
+            border: 6px solid transparent
+            background-clip: padding-box
+            border-radius: 12px
+
+        ::-webkit-scrollbar-corner
+            background-color transparent
 
 /**********
  * More
  **********/
 .ghh-more
-    clear: left
+    clear left
 
     p
-        position: relative
-        padding-left: 18px
-        line-height: 18px
+        position relative
+        padding-left 18px
+        line-height 18px
 
     strong
-        font-weight: 600
+        font-weight 600
 
     .ghh-repo-desc
-        white-space: normal
-        height: auto
+        white-space normal
+        height auto
 
     .emoji
-        vertical-align: middle
+        vertical-align middle
 
     .octicon
-        position: absolute
-        top: 2px
-        left: 0
-        margin: 0
-        opacity: .8
+        position absolute
+        top 2px
+        left 0
+        margin 0
+        opacity .8
 
 
 /**********
  * User
  **********/
 .ghh-person
-    float: left
+    float left
 
     strong
-        font-size: 120%
+        font-size 120%
 
 .ghh-avatar
-    float: left
+    float left
     square(32px)
-    margin: 0 8px 8px 0
-    border: 2px solid rgba(255, 255, 255, .1)
-    border-radius: 2px
-    background-color: #fff
+    margin 0 8px 8px 0
+    border 2px solid rgba(255, 255, 255, .1)
+    border-radius 2px
+    background-color #fff
 
 /**********
  * Repo
@@ -165,72 +185,72 @@ $contribution
     @extends $with-large-icon
 
     strong
-        font-size: 120%
+        font-size 120%
 
     p
-        max-width: 296px
+        max-width 296px
 
     p:first-of-type
-        font-size: 13px
+        font-size 13px
 
 .ghh-stats
-    display: flex
-    min-width: 180px
-    margin-bottom: 10px
-    padding: 3px
-    border-radius: 2px
-    background-color: rgba(255, 255, 255, .15)
-    line-height: 1
+    display flex
+    min-width 180px
+    margin-bottom 10px
+    padding 3px
+    border-radius 2px
+    background-color $content-background
+    line-height 1
 
     strong,
     span
-        display: block
-        padding: 2px 4px
-        line-height: 1
-        text-align: center
+        display block
+        padding 2px 4px
+        line-height 1
+        text-align center
 
     span
-        font-style: 70%
-        color: #fff
-        opacity: .8
+        font-style 70%
+        color #fff
+        opacity .8
 
     a
-        display: block
-        flex: 1 1 auto
+        display block
+        flex 1 1 auto
 
         &:hover
-            text-decoration: none
+            text-decoration none
 
 /**********
  * Issue
  **********/
 .ghh-issue
-    margin-bottom: 8px
+    margin-bottom 8px
 
     strong
-        font-size: 120%
+        font-size 120%
 
     .issue-number
-        opacity: .8
+        opacity .8
 
 
 .ghh-issue-meta
     p
-        line-height: 16px
+        line-height 16px
 
     .state
-        margin-right: 5px
-        padding: 0 4px
-        text-transform: capitalize
+        margin-right 5px
+        padding 0 4px
+        text-transform capitalize
 
         .octicon
-            margin-right: 4px
+            margin-right 4px
 
     .ghh-avatar
-        margin: 0 5px 0 0
+        margin 0 5px 0 0
         square(16px)
-        border-width: 1px
-        vertical-align: middle
+        border-width 1px
+        vertical-align middle
         line-height 1.2
 
 .ghh-pull-meta
@@ -239,16 +259,16 @@ $contribution
 .ghh-issue-body
     @extends $fix-margin
 
-    clear: left
-    overflow: auto
-    max-height: 280px
-    margin: 8px 0 3px
-    padding: 8px 10px
-    border-radius: 2px
-    background-color: rgba(255, 255, 255, .15)
-    font-size: 12px
-    line-height: 1.6
-    word-wrap: break-word
+    clear left
+    overflow auto
+    max-height 280px
+    margin 8px 0 3px
+    padding 8px 10px
+    border-radius 2px
+    background-color $content-background
+    font-size 12px
+    line-height 1.6
+    word-wrap break-word
 
     h1,
     h2,
@@ -256,28 +276,28 @@ $contribution
     h4,
     h5,
     h6
-        margin-top: 1em
-        margin-bottom: 12px
-        font-weight: 700
-        line-height: 1.4
+        margin-top 1em
+        margin-bottom 12px
+        font-weight 700
+        line-height 1.4
 
         tt,
         code
-            font-size: inherit
-            font-family: $monospace
+            font-size inherit
+            font-family $monospace
 
     h1
-        font-size: 1.25em
+        font-size 1.25em
     h2
-        font-size: 1.2em
+        font-size 1.2em
     h3
-        font-size: 1.15em
+        font-size 1.15em
     h4
-        font-size: 1.1em
+        font-size 1.1em
     h5
-        font-size: 1.05em
+        font-size 1.05em
     h6
-        font-size: 1em
+        font-size 1em
 
     p,
     blockquote,
@@ -286,173 +306,173 @@ $contribution
     dl,
     table,
     pre
-        margin-top: 0
-        margin-bottom: 1em
+        margin-top 0
+        margin-bottom 1em
 
     hr
-        height: 2px
-        padding: 0
-        margin: 16px 0
-        background-color: #ccc
-        border: 0 none
+        height 2px
+        padding 0
+        margin 16px 0
+        background-color #ccc
+        border 0 none
 
     a:not([href])
-        color: inherit
+        color inherit
 
     p
-        overflow: visible
-        white-space: normal
+        overflow visible
+        white-space normal
         line-height 1.6
 
     ul,
     ol
-        padding-left: 2em
+        padding-left 2em
 
         ol,
         ul
-            margin-top: 0
-            margin-bottom: 0
+            margin-top 0
+            margin-bottom 0
 
     dl
-        padding: 0
+        padding 0
 
     dt
-        padding: 0
-        margin-top: 1em
-        font-size: 1em
-        font-style: italic
-        font-weight: 700
+        padding 0
+        margin-top 1em
+        font-size 1em
+        font-style italic
+        font-weight 700
 
     dd
-        padding: 0 1em
-        margin-bottom: 1em
+        padding 0 1em
+        margin-bottom 1em
 
     blockquote
-        padding: 0 1em
-        border-left: 3px solid #ccc
+        padding 0 1em
+        border-left 3px solid #ccc
 
     table
-        width: 100%
-        overflow: auto
-        word-break: normal
-        word-break: keep-all
+        width 100%
+        overflow auto
+        word-break normal
+        word-break keep-all
 
     th
-        font-weight: 700
+        font-weight 700
 
     th,
     tr:nth-child(even) td
-        background-color: rgba(108, 108, 108, .5)
+        background-color rgba(108, 108, 108, .5)
 
     th,
     td
-        border: 1px solid #777
-        padding: .5em 1em
+        border 1px solid #777
+        padding .5em 1em
 
     img
-        max-width: 100%
+        max-width 100%
 
     code,
     tt
-        padding: .2em .4em
-        margin: 0
-        background-color: rgba(255, 255, 255, .1)
-        border-radius: 2px
+        padding .2em .4em
+        margin 0
+        background-color rgba(255, 255, 255, .1)
+        border-radius 2px
 
         br
-            display: none
+            display none
 
     pre
-        padding: .6em
-        overflow: auto
-        line-height: 1.45
-        background-color: rgba(108, 108, 108, .5)
-        border-radius: 2px
-        word-wrap: normal
+        padding .6em
+        overflow auto
+        line-height 1.45
+        background-color rgba(108, 108, 108, .5)
+        border-radius 2px
+        word-wrap normal
 
         code,
         tt
-            background-color: transparent
+            background-color transparent
 
 .ghh-task
-    list-style-type: none
+    list-style-type none
 
 .ghh-task-checker
-    margin-right: .3em
-    margin-left: -1.5em
+    margin-right .3em
+    margin-left -1.5em
 
 /**********
  * Commit
  **********/
 .ghh-commit
-    margin-bottom: 8px
+    margin-bottom 8px
 
     strong
-        font-size: 120%
+        font-size 120%
 
 
 .ghh
     .ghh-commit-author
-        margin-bottom: 6px
+        margin-bottom 6px
 
     .ghh-tags
-        white-space: normal
+        white-space normal
 
 .ghh-commit-meta
     @extends $contribution
 
 .ghh-commit-body
-    overflow: auto
-    max-height: 280px
-    margin: 8px 0 10px
-    padding: 8px 10px
-    border-radius: 2px
-    background-color: rgba(255, 255, 255, .15)
-    font-family: $monospace
-    font-size: 12px
-    line-height: 1.2
-    white-space: pre-wrap
-    word-wrap: break-word
+    overflow auto
+    max-height 280px
+    margin 8px 0 10px
+    padding 8px 10px
+    border-radius 2px
+    background-color $content-background
+    font-family $monospace
+    font-size 12px
+    line-height 1.2
+    white-space pre-wrap
+    word-wrap break-word
 
 .ghh-tags
-    white-space: normal
+    white-space normal
 
 /**********
  * Error
  **********/
 .ghh-error
-    max-width: 320px
+    max-width 320px
 
     p
-        line-height: 1.6
-        white-space: normal
+        line-height 1.6
+        white-space normal
 
     .octicon
-        display: inline-block
-        position: static
-        margin-right: 5px
+        display inline-block
+        position static
+        margin-right 5px
 
 /**********
  * Overlay
  **********/
 .ghh-overlay
-    position: fixed
-    z-index: 10000000
-    top: 0
-    right: 0
-    bottom: 0
-    left: 0
-    background-color: rgba(0, 0, 0, .6)
+    position fixed
+    z-index 10000000
+    top 0
+    right 0
+    bottom 0
+    left 0
+    background-color rgba(0, 0, 0, .6)
 
     form
-        position: absolute
-        top: 50%
-        left: 50%
-        transform: translate(-50%, -50%)
-        border: 3px solid rgba(0, 0, 0, .75)
-        padding: 0 20px
-        border-radius: 5px
-        background-color: #fff
+        position absolute
+        top 50%
+        left 50%
+        transform translate(-50%, -50%)
+        border 3px solid rgba(0, 0, 0, .75)
+        padding 0 20px
+        border-radius 5px
+        background-color #fff
 
         p
-            margin: 10px 0
+            margin 10px 0

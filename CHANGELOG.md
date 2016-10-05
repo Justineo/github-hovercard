@@ -1,5 +1,8 @@
 Changelog
 ---
+## 0.8.3
+* Better scrollbar styles for WebKit/Blink browsers in Windows.
+
 ## 0.8.2
 * Fixed the problem that repo names are overlaping with slashes in trending.
 

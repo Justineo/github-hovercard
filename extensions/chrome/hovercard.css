@@ -114,6 +114,24 @@
 .ghh .octicon {
   fill: currentColor;
 }
+.windows .ghh ::-webkit-scrollbar {
+  width: 20px;
+  height: 20px;
+  padding: 3px;
+  background-color: transparent;
+}
+.windows .ghh ::-webkit-scrollbar-button {
+  display: none;
+}
+.windows .ghh ::-webkit-scrollbar-thumb {
+  background-color: rgba(255,255,255,0.15);
+  border: 6px solid transparent;
+  background-clip: padding-box;
+  border-radius: 12px;
+}
+.windows .ghh ::-webkit-scrollbar-corner {
+  background-color: transparent;
+}
 /**********
  * More
  **********/
