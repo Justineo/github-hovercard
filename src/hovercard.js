@@ -3,7 +3,7 @@ $(() => {
 
     const GH_DOMAIN = location.host;
 
-    const EXCLUDES = '.tooltipster-base, .tooltipster-sizer, .timestamp, .time, .octotree_sidebar';
+    const EXCLUDES = '.tooltipster-base, .tooltipster-sizer, .timestamp, .time, .octotree_sidebar, time-ago';
     const DEFAULT_TARGET = document.body;
     let isExtracting = false;
     let observer = new MutationObserver(mutations => {
@@ -73,11 +73,11 @@ $(() => {
     };
 
     const GH_DOMAIN_PATTERN = GH_DOMAIN.replace(/\./g, '\\.');
-    const URL_USER_PATTERN = `^https?:\\/\\/${GH_DOMAIN_PATTERN}\\/([^/?#]+)(?:\/$|[^/]*$)`;
-    const URL_REPO_PATTERN = `^https?:\\/\\/${GH_DOMAIN_PATTERN}\\/([^/?#]+)\\/([^/?#]+)(?:\/$|[^/]*$)`;
-    const URL_ISSUE_PATTERN = `^https?:\\/\\/${GH_DOMAIN_PATTERN}\\/([^/?#]+)\\/([^/?#]+)\\/(?:issues|pull)\\/(\\d+)(?:\/?[^/#]*$)`;
+    const URL_USER_PATTERN = `^https?:\\/\\/${GH_DOMAIN_PATTERN}\\/([^/?#]+)(?:\\/$|[^/]*$)`;
+    const URL_REPO_PATTERN = `^https?:\\/\\/${GH_DOMAIN_PATTERN}\\/([^/?#]+)\\/([^/?#]+)(?:\\/$|[^/]*$)`;
+    const URL_ISSUE_PATTERN = `^https?:\\/\\/${GH_DOMAIN_PATTERN}\\/([^/?#]+)\\/([^/?#]+)\\/(?:issues|pull)\\/(\\d+)(?:\\/?(?:[?#](?!issuecomment).*)?$)`;
     const URL_COMMENT_PATTERN = `^https?:\\/\\/${GH_DOMAIN_PATTERN}\\/([^/?#]+)\\/([^/?#]+)\\/(?:issues|pull)\\/(\\d+)#issuecomment-(\\d+)$`;
-    const URL_COMMIT_PATTERN = `^https?:\\/\\/${GH_DOMAIN_PATTERN}\\/([^/?#]+)\\/([^/?#]+)\\/(?:pull\\/\\d+\\/commits|commit)\\/([0-9a-f]+)(?:\/?[^/]*$)`;
+    const URL_COMMIT_PATTERN = `^https?:\\/\\/${GH_DOMAIN_PATTERN}\\/([^/?#]+)\\/([^/?#]+)\\/(?:pull\\/\\d+\\/commits|commit)\\/([0-9a-f]+)(?:\\/?[^/]*$)`;
     const SLUG_PATTERN = /([^\/\s]+)\/([^#@\s]+)(?:#(\d+)|@([0-9a-f]+))?/;
 
     const STRATEGIES = {
@@ -847,14 +847,18 @@ $(() => {
                     case EXTRACTOR.URL: {
                         target = elem;
                         elem = elem.closest('a');
-                        let attr = elem.attr('href');
-                        if (attr && attr.match(/#(!:issuecomment-)/) || !attr) {
-                            // ignore local anchors
-                            return;
-                        }
+
                         let href = elem.prop('href'); // absolute path via prop
                         if (href) {
                             href = href.baseVal || href; // support SVG elements
+
+                            let url = new URL(href);
+                            // skip local anchors
+                            if (`${url.host}${url.pathname}` === `${location.host}${location.pathname}`
+                                && !url.hash.match(/#issuecomment-/)) {
+                                return;
+                            }
+
                             let match = href.match(URL_USER_PATTERN);
                             username = trim(match && match[1]);
                             if (!username) {
