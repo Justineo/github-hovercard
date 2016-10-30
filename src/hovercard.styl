@@ -5,82 +5,6 @@ $sans-serif = -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, 
 $monospace = Consolas, "Liberation Mono", Menlo, Courier, monospace
 $content-background = rgba(255, 255, 255, .15)
 
-ellipsis()
-    white-space nowrap
-    overflow hidden
-    text-overflow ellipsis
-
-square(s)
-    width s
-    height s
-
-$with-large-icon
-    position relative
-    float left
-    margin-top 2px
-    margin-bottom 6px
-    padding-left 24px
-
-    .octicon
-        position absolute
-        top 0
-        left 0
-        line-height 1
-
-$fix-margin
-    & > :first-child
-        margin-top 0
-
-    & > :last-child
-        margin-bottom 0
-
-$contribution
-    p
-        line-height 18px
-
-    .ghh-branch
-        display flex
-
-    .commit-ref
-        flex 0 1 auto
-        float left
-        border-radius 2px
-        background-color $content-background
-        color inherit
-        font-size inherit
-        ellipsis()
-
-        & + span
-            flex 0 0 auto
-            float left
-            padding 0 5px
-
-            & > .octicon
-                height 22px
-
-        & + .octicon
-            margin 0
-
-        .user
-            color inherit
-            opacity .5
-
-    .octicon
-        opacity .8
-        margin-left 10px
-
-        &:first-child
-            margin-left 0
-
-    .diffstat
-        margin-left 10px
-
-    .text-diff-added
-        color #84d063 !important
-
-    .text-diff-deleted
-        color #ff3c00 !important
-
 /**********
  * Global
  **********/
@@ -131,6 +55,225 @@ $contribution
 
         ::-webkit-scrollbar-corner
             background-color transparent
+
+/**********
+ * Mixins
+ **********/
+ellipsis()
+    white-space nowrap
+    overflow hidden
+    text-overflow ellipsis
+
+square(s)
+    width s
+    height s
+
+/**********
+ * Placeholders
+ **********/
+$with-large-icon
+    position relative
+    float left
+    margin-top 2px
+    margin-bottom 6px
+    padding-left 24px
+
+    .octicon
+        position absolute
+        top 0
+        left 0
+        line-height 1
+
+$fix-margin
+    & > :first-child
+        margin-top 0
+
+    & > :last-child
+        margin-bottom 0
+
+$markdown-body
+    @extends $fix-margin
+
+    clear left
+    overflow auto
+    max-height 280px
+    margin 8px 0 3px
+    padding 8px 10px
+    border-radius 2px
+    background-color $content-background
+    font-size 12px
+    line-height 1.6
+    word-wrap break-word
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6
+        margin-top 1em
+        margin-bottom 12px
+        font-weight 700
+        line-height 1.4
+
+        tt,
+        code
+            font-size inherit
+            font-family $monospace
+
+    h1
+        font-size 1.25em
+    h2
+        font-size 1.2em
+    h3
+        font-size 1.15em
+    h4
+        font-size 1.1em
+    h5
+        font-size 1.05em
+    h6
+        font-size 1em
+
+    p,
+    blockquote,
+    ul,
+    ol,
+    dl,
+    table,
+    pre
+        margin-top 0
+        margin-bottom 1em
+
+    hr
+        height 0
+        padding 0
+        margin 16px 0
+        border-bottom 2px dotted rgba(255, 255, 255, .2)
+
+    a:not([href])
+        color inherit
+
+    p
+        overflow visible
+        white-space normal
+        line-height 1.6
+
+    ul,
+    ol
+        padding-left 2em
+
+        ol,
+        ul
+            margin-top 0
+            margin-bottom 0
+
+    dl
+        padding 0
+
+    dt
+        padding 0
+        margin-top 1em
+        font-size 1em
+        font-style italic
+        font-weight 700
+
+    dd
+        padding 0 1em
+        margin-bottom 1em
+
+    blockquote
+        padding 0 1em
+        border-left 3px solid #ccc
+
+    table
+        width 100%
+        overflow auto
+        word-break normal
+        word-break keep-all
+
+    th
+        font-weight 700
+
+    th,
+    tr:nth-child(even) td
+        background-color rgba(108, 108, 108, .5)
+
+    th,
+    td
+        border 1px solid #777
+        padding .5em 1em
+
+    img
+        max-width 100%
+
+    code,
+    tt
+        padding .2em .4em
+        margin 0
+        background-color rgba(255, 255, 255, .1)
+        border-radius 2px
+
+        br
+            display none
+
+    pre
+        padding .6em
+        overflow auto
+        line-height 1.45
+        background-color rgba(108, 108, 108, .5)
+        border-radius 2px
+        word-wrap normal
+
+        code,
+        tt
+            background-color transparent
+
+$contribution
+    p
+        line-height 18px
+
+    .ghh-branch
+        display flex
+
+    .commit-ref
+        flex 0 1 auto
+        float left
+        border-radius 2px
+        background-color $content-background
+        color inherit
+        font-size inherit
+        ellipsis()
+
+        & + span
+            flex 0 0 auto
+            float left
+            padding 0 5px
+
+            & > .octicon
+                height 22px
+
+        & + .octicon
+            margin 0
+
+        .user
+            color inherit
+            opacity .5
+
+    .octicon
+        opacity .8
+        margin-left 10px
+
+        &:first-child
+            margin-left 0
+
+    .diffstat
+        margin-left 10px
+
+    .text-diff-added
+        color #84d063 !important
+
+    .text-diff-deleted
+        color #ff3c00 !important
 
 /**********
  * More
@@ -221,6 +364,9 @@ $contribution
         &:hover
             text-decoration none
 
+.ghh-readme
+    @extends $markdown-body
+
 /**********
  * Issue
  **********/
@@ -257,149 +403,7 @@ $contribution
     @extends $contribution
 
 .ghh-issue-body
-    @extends $fix-margin
-
-    clear left
-    overflow auto
-    max-height 280px
-    margin 8px 0 3px
-    padding 8px 10px
-    border-radius 2px
-    background-color $content-background
-    font-size 12px
-    line-height 1.6
-    word-wrap break-word
-
-    h1,
-    h2,
-    h3,
-    h4,
-    h5,
-    h6
-        margin-top 1em
-        margin-bottom 12px
-        font-weight 700
-        line-height 1.4
-
-        tt,
-        code
-            font-size inherit
-            font-family $monospace
-
-    h1
-        font-size 1.25em
-    h2
-        font-size 1.2em
-    h3
-        font-size 1.15em
-    h4
-        font-size 1.1em
-    h5
-        font-size 1.05em
-    h6
-        font-size 1em
-
-    p,
-    blockquote,
-    ul,
-    ol,
-    dl,
-    table,
-    pre
-        margin-top 0
-        margin-bottom 1em
-
-    hr
-        height 2px
-        padding 0
-        margin 16px 0
-        background-color #ccc
-        border 0 none
-
-    a:not([href])
-        color inherit
-
-    p
-        overflow visible
-        white-space normal
-        line-height 1.6
-
-    ul,
-    ol
-        padding-left 2em
-
-        ol,
-        ul
-            margin-top 0
-            margin-bottom 0
-
-    dl
-        padding 0
-
-    dt
-        padding 0
-        margin-top 1em
-        font-size 1em
-        font-style italic
-        font-weight 700
-
-    dd
-        padding 0 1em
-        margin-bottom 1em
-
-    blockquote
-        padding 0 1em
-        border-left 3px solid #ccc
-
-    table
-        width 100%
-        overflow auto
-        word-break normal
-        word-break keep-all
-
-    th
-        font-weight 700
-
-    th,
-    tr:nth-child(even) td
-        background-color rgba(108, 108, 108, .5)
-
-    th,
-    td
-        border 1px solid #777
-        padding .5em 1em
-
-    img
-        max-width 100%
-
-    code,
-    tt
-        padding .2em .4em
-        margin 0
-        background-color rgba(255, 255, 255, .1)
-        border-radius 2px
-
-        br
-            display none
-
-    pre
-        padding .6em
-        overflow auto
-        line-height 1.45
-        background-color rgba(108, 108, 108, .5)
-        border-radius 2px
-        word-wrap normal
-
-        code,
-        tt
-            background-color transparent
-
-.ghh-task
-    list-style-type none
-
-.ghh-task-checker
-    margin-right .3em
-    margin-left -1.5em
+    @extends $markdown-body
 
 /**********
  * Commit

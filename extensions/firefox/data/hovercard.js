@@ -69,7 +69,9 @@ $(() => {
         NEXT_TEXT_REPO: 7, // <span>...</span> {{repo}}
         ANCESTOR_URL_REPO: 8, // <a href="/{{user}}/{{repo}}">...{{elem}}...</a>
         NEXT_LINK_TEXT_USER: 9, // <span>...</span>...<a>{{}user}</a>
-        TEXT_MY_REPO: 10 // {{repo}}
+        TEXT_MY_REPO: 10, // {{repo}}
+        TEXT_NODE_USER: 11, // {{user}} <span>...</span>
+        NEXT_TEXT_USER: 12 // <img alt> {{user}}
     };
 
     const GH_DOMAIN_PATTERN = GH_DOMAIN.replace(/\./g, '\\.');
@@ -101,6 +103,7 @@ $(() => {
         '[data-ga-click~="target:pull-comment"]': EXTRACTOR.SLUG,
         '[data-ga-click~="target:commit-comment"]': EXTRACTOR.SLUG,
         '[data-ga-click~="target:sha"]': EXTRACTOR.URL,
+        'img[alt^="@"]': EXTRACTOR.ALT_USER,
 
         // Sidebar
         '.repo-and-owner .owner': EXTRACTOR.TEXT_USER,
@@ -110,6 +113,7 @@ $(() => {
         // Pinned repos
         '.pinned-repo-item-content .owner': EXTRACTOR.TEXT_USER,
         '.pinned-repo-item-content .repo': EXTRACTOR.ANCESTOR_URL_REPO,
+        '.pinned-repo-item-content .d-block + p:not(.pinned-repo-desc) a': EXTRACTOR.SLUG,
 
         // Customize pinned repos
         '.pinned-repos-selection-list .pinned-repo-name span': EXTRACTOR.TEXT_MY_REPO,
@@ -166,6 +170,9 @@ $(() => {
         'img.from-avatar:not([alt=""])': EXTRACTOR.ALT_USER,
         '.fork-flag a': EXTRACTOR.SLUG,
         '.merge-pr-more-commits a:last-child': EXTRACTOR.SLUG,
+        '.select-menu-list[data-filter="org"] .select-menu-item-text': EXTRACTOR.TEXT_USER,
+        '[data-filterable-for="assignee-filter-field"] .select-menu-item-heading': EXTRACTOR.TEXT_NODE_USER,
+        '.select-menu-item-gravatar': EXTRACTOR.NEXT_TEXT_USER,
 
         // - Detail
         '.timeline-comment-avatar': EXTRACTOR.ALT_USER,
@@ -285,6 +292,7 @@ $(() => {
                     {{#homepage}}<p>{{{icons.link}}}<a href="{{.}}">{{.}}</a></p>{{/homepage}}
                     {{#language}}<p>{{{icons.code}}}{{.}}</p>{{/language}}
                 </div>
+                {{#readme}}<div class="ghh-readme">{{{.}}}</div>{{/readme}}
             </div>`,
         issue: `
             <div class="ghh">
@@ -352,7 +360,7 @@ $(() => {
 
     const CREATE_TOKEN_PATH = `//${GH_DOMAIN}/settings/tokens/new`;
     const IS_ENTERPRISE = GH_DOMAIN !== 'github.com';
-    const API_PREFIX = IS_ENTERPRISE ? `//${GH_DOMAIN}/api/v3/` : `//api.${GH_DOMAIN}/`;
+    const API_PREFIX = IS_ENTERPRISE ? `//${GH_DOMAIN}/api/v3` : `//api.${GH_DOMAIN}`;
     const SITE_PREFIX = `//${GH_DOMAIN}/`;
 
     function trim(str, isCollapse) {
@@ -441,36 +449,6 @@ $(() => {
             return `<img class="emoji" title="${match}" alt="${match}"
                 src="${url}" width="18" height="18">`;
         });
-    }
-
-    function replaceCheckbox(html) {
-        const TASK_PATTERN = /^\[([ x])\] (.*)/;
-        let fragment = $('<div>').html(html);
-        fragment.find('li').each(function () {
-            let content = $(this).html();
-            if (TASK_PATTERN.test(content)) {
-                $(this)
-                    .html(content.replace(TASK_PATTERN, (match, checked, remaining) => {
-                        return `
-                            <input class="ghh-task-checker"
-                                type="checkbox"${checked === 'x' ? ' checked' : ''}
-                                disabled> ${remaining}`;
-                    }))
-                    .addClass('ghh-task');
-            }
-        });
-
-        return fragment.html();
-    }
-
-    function replacePlugins(text) {
-        const BOUNTYSOURCE_PATTERN = /<\/?bountysource-plugin>/g;
-        var result = text;
-
-        // deal with Bountysource
-        result = result.replace(BOUNTYSOURCE_PATTERN, '');
-
-        return result;
     }
 
     function replaceLink(text) {
@@ -584,6 +562,7 @@ $(() => {
                 homepage: raw.homepage
                     ? raw.homepage.match(/^https?:\/\//) ? raw.homepage : `http://${raw.homepage}`
                     : null,
+                readme: raw.readme,
                 starsUrl: `//${GH_DOMAIN}/${raw.full_name}/stargazers`,
                 forksUrl: `//${GH_DOMAIN}/${raw.full_name}/network`,
                 issuesUrl: `//${GH_DOMAIN}/${raw.full_name}/issues`,
@@ -761,6 +740,8 @@ $(() => {
                 switch (strategy) {
                     case EXTRACTOR.TEXT_USER: {
                         username = trim(elem.text().replace(/[@\/]/g, ''));
+                        target = $(`<span>${elem.text()}</span>`);
+                        elem.empty().append(target);
                         break;
                     }
                     case EXTRACTOR.TITLE_USER: {
@@ -953,8 +934,14 @@ $(() => {
                             let userElem = $(`<span>${textNode.nodeValue}</span>`);
                             textNode.parentNode.replaceChild(userElem[0], textNode);
                             markExtracted(elem);
-                            elem = userElem;
+                            target = userElem;
                         }
+                        break;
+                    }
+                    case EXTRACTOR.NEXT_TEXT_USER: {
+                        let textNode = getNextTextNode(elem[0], elem[0].parentNode.parentNode);
+                        username = textNode.nodeValue;
+                        break;
                     }
                     default:
                         break;
@@ -1041,7 +1028,7 @@ $(() => {
                         }
                     }
                     let baseOptions = {
-                        url: API_PREFIX + apiPath,
+                        url: `${API_PREFIX}/${apiPath}`,
                         dataType: 'json'
                     };
 
@@ -1130,28 +1117,53 @@ $(() => {
 
                         let requestOptions = Object.assign({}, baseOptions, authOptions);
 
+                        function renderMarkdown(content, context) {
+                            let options = {
+                                url: `${API_PREFIX}/markdown`,
+                                method: 'POST',
+                                contentType: 'application/json',
+                                dataType: 'text',
+                                data: JSON.stringify({
+                                    text: content,
+                                    mode: 'gfm',
+                                    context: context
+                                })
+                            };
+                            return $.ajax(Object.assign({}, requestOptions, options));
+                        }
+
                         $.ajax(requestOptions)
                             .done(raw => {
                                 cache[type][value] = raw;
 
                                 // further requests if necessary
                                 switch (type) {
+                                    case EXTRACT_TYPE.REPO: {
+                                        let options = {
+                                            url: `${API_PREFIX}/${apiPath}/readme`,
+                                            method: 'GET',
+                                            dataType: 'html',
+                                            headers: {
+                                                Authorization: `token ${token}`,
+                                                Accept: 'application/vnd.github.v3.html'
+                                            }
+                                        };
+                                        $.ajax(Object.assign({}, baseOptions, options))
+                                            .done(html => {
+                                                let content = $(html).find('.entry-content');
+                                                $('.anchor', content).remove();
+                                                raw.readme = content.html();
+                                                elem.tooltipster('content', getCardHTML(type, raw));
+                                            })
+                                            .fail(handleError);
+
+                                        return;
+                                    }
                                     case EXTRACT_TYPE.ISSUE: {
                                         let todo = 0;
                                         if (raw.body) {
                                             todo++;
-                                            let options = {
-                                                url: API_PREFIX + 'markdown',
-                                                method: 'POST',
-                                                contentType: 'application/json',
-                                                dataType: 'text',
-                                                data: JSON.stringify({
-                                                    text: raw.body,
-                                                    mode: 'gfm',
-                                                    context: value.split('#')[0]
-                                                })
-                                            };
-                                            $.ajax(Object.assign({}, requestOptions, options))
+                                            renderMarkdown(raw.body, value.split('#')[0])
                                                 .done(html => {
                                                     raw.bodyHTML = html;
                                                     if (!--todo) {
@@ -1164,7 +1176,7 @@ $(() => {
                                             todo++;
                                             let prPath = apiPath.replace(/\/issues\/(\d+)$/, '/pulls/$1');
                                             let options = {
-                                                url: API_PREFIX + prPath,
+                                                url: `${API_PREFIX}/${prPath}`,
                                                 dataType: 'json'
                                             };
                                             $.ajax(Object.assign({}, requestOptions, options))
@@ -1192,18 +1204,7 @@ $(() => {
                                         return;
                                     }
                                     case EXTRACT_TYPE.COMMENT: {
-                                        let options = {
-                                            url: API_PREFIX + 'markdown',
-                                            method: 'POST',
-                                            contentType: 'application/json',
-                                            dataType: 'text',
-                                            data: JSON.stringify({
-                                                text: raw.body,
-                                                mode: 'gfm',
-                                                context: value.split(':')[0]
-                                            })
-                                        };
-                                        $.ajax(Object.assign({}, requestOptions, options))
+                                        renderMarkdown(raw.body, value.split(':')[0])
                                             .done(html => {
                                                 raw.bodyHTML = html;
                                                 elem.tooltipster('content', getCardHTML(type, raw));
@@ -1219,7 +1220,7 @@ $(() => {
                                         raw.author = raw.author || raw.commit.author;
                                         raw.committer = raw.committer || raw.commit.committer;
                                         let options = {
-                                            url: SITE_PREFIX + commitPagePath,
+                                            url: `${SITE_PREFIX}${commitPagePath}`,
                                             headers: {
                                                 'X-PJAX': 'true'
                                             },

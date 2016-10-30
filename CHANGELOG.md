@@ -1,5 +1,8 @@
 Changelog
 ---
+## 0.8.4
+* Subtle fixes for extraction.
+
 ## 0.8.3
 * Fixed that local anchors are not ignored.
 * Better scrollbar styles for WebKit/Blink browsers in Windows.
