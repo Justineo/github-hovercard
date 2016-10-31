@@ -289,6 +289,21 @@
 .ghh-issue-body pre tt {
   background-color: transparent;
 }
+.ghh-readme img,
+.ghh-issue-body img {
+  max-width: 100%;
+  box-sizing: content-box;
+}
+.ghh-readme img[align="left"],
+.ghh-issue-body img[align="left"] {
+  max-width: 30% !important;
+  padding-right: 20px;
+}
+.ghh-readme img[align="right"],
+.ghh-issue-body img[align="right"] {
+  max-width: 30% !important;
+  padding-left: 20px;
+}
 .ghh-pull-meta p,
 .ghh-commit-meta p {
   line-height: 18px;

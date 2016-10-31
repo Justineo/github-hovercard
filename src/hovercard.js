@@ -523,6 +523,15 @@ $(() => {
         return result;
     }
 
+    function fixRef(elem, base, branch) {
+        ['href', 'src'].forEach(attr => {
+            let url = elem.attr(attr);
+            if (url && url.indexOf('//') === -1 && url[0] !== '/') {
+                elem.attr(attr, `${base}/raw/${branch}/${url}`);
+            }
+        })
+    }
+
     function getCardHTML(type, raw) {
         let data;
         if (type === EXTRACT_TYPE.USER) {
@@ -1139,6 +1148,9 @@ $(() => {
                                 // further requests if necessary
                                 switch (type) {
                                     case EXTRACT_TYPE.REPO: {
+                                        if (!cardOptions.readme) {
+                                            break;
+                                        }
                                         let options = {
                                             url: `${API_PREFIX}/${apiPath}/readme`,
                                             method: 'GET',
@@ -1152,10 +1164,15 @@ $(() => {
                                             .done(html => {
                                                 let content = $(html).find('.entry-content');
                                                 $('.anchor', content).remove();
+                                                let base = raw.html_url;
+                                                $('[href], [src]', content).each(function () {
+                                                    fixRef($(this), base, raw.default_branch);
+                                                });
                                                 raw.readme = content.html();
-                                                elem.tooltipster('content', getCardHTML(type, raw));
                                             })
-                                            .fail(handleError);
+                                            .always(() => {
+                                                elem.tooltipster('content', getCardHTML(type, raw));
+                                            });
 
                                         return;
                                     }
@@ -1293,7 +1310,7 @@ $(() => {
     // In Firefox options are not so flexible so keep tokens in localStorage
     if (chrome && chrome.storage) {
         let storage = chrome.storage.sync || chrome.storage.local;
-        storage.get({token: '', delay: 0}, item => {
+        storage.get({token: '', delay: 0, readme: true}, item => {
             token = item.token;
             if (token) {
                 localStorage.setItem(TOKEN_KEY, token);
@@ -1307,6 +1324,7 @@ $(() => {
             if (!isNaN(delay)) {
                 cardOptions.delay = delay;
             }
+            cardOptions.readme = item.readme;
             extract();
         });
     } else {
@@ -1314,10 +1332,11 @@ $(() => {
 
         // Firefox options
         if (self.port) {
-            self.port.on('prefs', ({ delay }) => {
+            self.port.on('prefs', ({ delay, readme }) => {
                 if (!isNaN(delay)) {
                     cardOptions.delay = delay;
                 }
+                cardOptions.readme = readme;
                 extract();
             });
         } else {

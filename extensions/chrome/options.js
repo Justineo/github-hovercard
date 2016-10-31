@@ -9,6 +9,7 @@ let cancelBtn = $('#cancel');
 let addBtn = $('#add');
 let msg = $('#message');
 let delayInput = $('#delay');
+let readmeInput = $('#readme');
 let current;
 let storage = chrome.storage.sync || chrome.storage.local;
 
@@ -21,15 +22,17 @@ function concat(a, b) {
 }
 
 function restore() {
-    storage.get({ domains: [], delay: 200 }, item => {
+    storage.get({ domains: [], delay: 200, readme: true }, item => {
         current = item.domains;
         list.append(Mustache.render(ITEM_TPL, { domains: current }));
         delayInput.val(item.delay);
+        readmeInput.prop('checked', item.readme);
     });
 }
 
 function save() {
-    let delay = $('#delay').val();
+    let delay = delayInput.val();
+    let readme = readmeInput.prop('checked');
 
     let domains = [];
     $('.domain').each(function () {
@@ -50,7 +53,7 @@ function save() {
         chrome.permissions.request({
             origins: granting
         }, granted => {
-            let options = { delay };
+            let options = { delay, readme };
             if (granted) {
                 Object.assign(options, { domains });
                 current = domains;

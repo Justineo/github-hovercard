@@ -1,6 +1,7 @@
 Changelog
 ---
-## 0.8.4
+## 0.9.0
+* Added readme content for repos (with option to turn off).
 * Subtle fixes for extraction.
 
 ## 0.8.3
