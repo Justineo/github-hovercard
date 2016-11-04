@@ -1,6 +1,6 @@
 # GitHub Hovercard
 
-Neat user/repo/issue/commit hovercards for GitHub.
+Neat hovercards for GitHub.
 
 ## Installation
 
