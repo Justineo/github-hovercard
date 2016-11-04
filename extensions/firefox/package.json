@@ -19,6 +19,13 @@
       "type": "integer",
       "description": "Delay seconds before hovercards pop up.",
       "value": 200
+    },
+    {
+      "name": "readme",
+      "title": "Readme",
+      "type": "bool",
+      "description": "Show readme content for repos.",
+      "value": true
     }
   ],
   "engines": {

@@ -35,6 +35,10 @@ For browser extension versions, GitHub Hovercard provide following options:
 
     If you don't want the hovercards to pop up instantly, you may set a delay before they try to retrieve data and appear.
 
+* Readme
+    
+    You may disable readme content for repo cards if you don't need it.
+
 ## Screenshots
 
 ![Avatars in trending repos](screenshots/1.png)

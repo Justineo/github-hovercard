@@ -2,7 +2,7 @@ Changelog
 ---
 ## 0.9.0
 * Added readme content for repos (with option to turn off).
-* Subtle fixes for extraction.
+* More fixes for extraction because GitHub updated thier UI implementation again (may continue to occur).
 
 ## 0.8.3
 * Fixed that local anchors are not ignored.

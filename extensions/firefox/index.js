@@ -19,27 +19,16 @@ pageMod.PageMod({
   ],
   contentScriptOptions: {
     octicons: JSON.parse(data.load('octicons.json')),
-    emojiMap: JSON.parse(data.load('emoji.json'))
+    emojiMap: JSON.parse(data.load('emoji.json')),
+    prefs: prefs
   },
-  onAttach: function (worker) {
-    worker.port.emit('prefs', { delay: prefs.delay });
-  },
+  // onAttach: function (worker) {
+  //   console.log('OOOOOOOOOOOOps');
+  //   worker.port.emit('prefs', { delay: prefs.delay, readme: prefs.readme });
+  // },
   contentStyleFile: [
     data.url('tooltipster.css'),
     data.url('hovercard.css'),
     data.url('tomorrow-night.css')
-  ]
-});
-
-let installerDomains = [
-  'http://justineo.github.io/github-hovercard/*',
-  'https://justineo.github.io/github-hovercard/*',
-  'http://localhost:8848/*',
-];
-
-pageMod.PageMod({
-  include: installerDomains,
-  contentScriptFile: [
-    data.url('installer.js')
   ]
 });
