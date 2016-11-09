@@ -114,21 +114,48 @@ gulp.task('userscript', ['userscript:inject-styles', 'userscript:prepare'], func
 });
 
 gulp.task('chrome:cp', ['resource:inline', 'css'], function () {
+  var manifestPath = './extensions/chrome/manifest.json';
+  var manifest = JSON.parse(fs.readFileSync(manifestPath, { encoding: 'utf8' }));
+  manifest.version = version;
+  fs.writeFileSync(manifestPath, JSON.stringify(manifest, null, '  '));
+
   var targets = [
-    './src/*', '!./src/hovercard.js', './tmp/hovercard.js',
-    '!./src/*.styl', '!./src/tooltipster.css', './tmp/tooltipster.css'
+    './src/*', '!./src/hovercard.js', './tmp/hovercard.js', '!./src/*.styl',
+    '!./src/tooltipster.css', './tmp/tooltipster.css', './icon.png'
   ];
-  var src = gulp.src(targets)
+  return gulp.src(targets)
     .pipe(gulp.dest('./extensions/chrome'));
-  var icon = gulp.src('./icon.png')
-    .pipe(gulp.dest('./extensions/chrome'));
-  return merge(src, icon);
+});
+
+gulp.task('edge:hack', ['resource:inline'], function () {
+  return gulp.src(['./tmp/hovercard.js'])
+    .pipe(replace('$(() => {', 'document.addEventListener(\'DOMContentLoaded\', () => {'))
+    .pipe(gulp.dest('./extensions/edge'));
+});
+
+gulp.task('edge:cp', ['edge:hack', 'css'], function () {
+  var manifestPath = './extensions/edge/manifest.json';
+  var manifest = JSON.parse(fs.readFileSync(manifestPath, { encoding: 'utf8' }));
+  manifest.version = version;
+  fs.writeFileSync(manifestPath, JSON.stringify(manifest, null, '  '));
+
+  var targets = [
+    './src/*', '!./src/hovercard.js', '!./src/jquery.js', '!./src/*.styl',
+    '!./src/tooltipster.css', './tmp/tooltipster.css', './icon.png'
+  ];
+  return gulp.src(targets)
+    .pipe(gulp.dest('./extensions/edge'));
 });
 
 gulp.task('firefox:cp', ['firefox:resource', 'css'], function () {
+  var fxPackPath = './extensions/firefox/package.json';
+  var fxPack = JSON.parse(fs.readFileSync(fxPackPath, { encoding: 'utf8' }));
+  fxPack.version = version;
+  fs.writeFileSync(fxPackPath, JSON.stringify(fxPack, null, '  '));
+
   var targets = [
-    './src/*', '!./src/hovercard.js',
-    '!./src/*.styl', '!./src/tooltipster.css', './tmp/tooltipster.css'
+    './src/*', '!./src/hovercard.js', '!./src/*.styl',
+    '!./src/tooltipster.css', './tmp/tooltipster.css'
   ];
   var main = gulp.src(['./tmp/hovercard.firefox.js'])
     .pipe(rename('hovercard.js'))
@@ -143,12 +170,8 @@ gulp.task('firefox:cp', ['firefox:resource', 'css'], function () {
 });
 
 gulp.task('chrome:zip', ['chrome:cp'], function (cb) {
-  var manifestPath = './extensions/chrome/manifest.json';
-  var manifest = JSON.parse(fs.readFileSync(manifestPath, { encoding: 'utf8' }));
-  manifest.version = version;
-  fs.writeFileSync(manifestPath, JSON.stringify(manifest, null, '  '));
   exec(
-    'find . -path \'*/.*\' -prune -o -type f -print | zip ../packed/github-hovercard.zip -@',
+    'find . -path \'*/.*\' -prune -o -type f -print | zip ../packed/github-hovercard.chrome.zip -@',
     { cwd: 'extensions/chrome' },
     function (error, stdout, stderr) {
       if (error) {
@@ -160,11 +183,21 @@ gulp.task('chrome:zip', ['chrome:cp'], function (cb) {
   );
 });
 
+gulp.task('edge:zip', ['edge:cp'], function (cb) {
+  exec(
+    'find . -path \'*/.*\' -prune -o -type f -print | zip ../packed/github-hovercard.edge.zip -@',
+    { cwd: 'extensions/edge' },
+    function (error, stdout, stderr) {
+      if (error) {
+        return cb(error);
+      } else {
+        cb();
+      }
+    }
+  );
+});
+
 gulp.task('firefox:xpi', ['firefox:cp'], function (cb) {
-  var fxPackPath = './extensions/firefox/package.json';
-  var fxPack = JSON.parse(fs.readFileSync(fxPackPath, { encoding: 'utf8' }));
-  fxPack.version = version;
-  fs.writeFileSync(fxPackPath, JSON.stringify(fxPack, null, '  '));
   exec('jpm xpi', {
     cwd: 'extensions/firefox'
   }, function (error, stdout, stderr) {
@@ -248,7 +281,7 @@ gulp.task('cleanup', function (cb) {
   return del(['./tmp']);
 });
 
-gulp.task('extensions', ['chrome:zip', 'firefox:xpi', 'opera:nex']);
+gulp.task('extensions', ['chrome:zip', 'edge:zip', 'firefox:xpi', 'opera:nex']);
 gulp.task('build', ['extensions', 'demo', 'userscript']);
 gulp.task('default', function (cb) {
   run('build', 'cleanup', cb);

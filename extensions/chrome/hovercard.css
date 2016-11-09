@@ -89,6 +89,7 @@
   font-size: 12px;
   line-height: 1.6;
   word-wrap: break-word;
+/* some special vendor optimizations */
 }
 .ghh-readme h1,
 .ghh-issue-body h1,
@@ -303,6 +304,11 @@
 .ghh-issue-body img[align="right"] {
   max-width: 30% !important;
   padding-left: 20px;
+}
+.ghh-readme a[href^="https://saucelabs.com/"] img,
+.ghh-issue-body a[href^="https://saucelabs.com/"] img {
+  background-color: #fff;
+  border-radius: 2px;
 }
 .ghh-pull-meta p,
 .ghh-commit-meta p {

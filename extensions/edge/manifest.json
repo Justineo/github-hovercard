@@ -1,0 +1,33 @@
+{
+  "author": "Justineo (justice360@gmail.com)",
+  "background": {
+    "page": "background.html",
+    "persistent": true
+  },
+  "description": "Neat hovercards for GitHub.",
+  "externally_connectable": {
+    "matches": [
+      "*://justineo.github.io/*"
+    ]
+  },
+  "icons": {
+    "128": "icon.png"
+  },
+  "manifest_version": 2,
+  "name": "GitHub Hovercard",
+  "optional_permissions": [
+    "<all_urls>"
+  ],
+  "options_page": "options.html",
+  "permissions": [
+    "webNavigation",
+    "tabs",
+    "storage",
+    "https://github.com/*"
+  ],
+  "version": "0.9.0",
+  "-ms-preload": {
+    "backgroundScript": "backgroundScriptsAPIBridge.js",
+    "contentScript": "contentScriptsAPIBridge.js"
+  }
+}
