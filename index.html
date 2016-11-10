@@ -40,12 +40,15 @@
         <h1>Installation</h1>
         <script>
           var browser = 'other';
+          var edge = navigator.userAgent.match(/Edge\/(\d+)\.(\d+)/);
           if (window.chrome && chrome.webstore && typeof chrome.webstore.install === 'function') {
             browser = 'chrome';
           } else if (window.InstallTrigger && typeof InstallTrigger.install === 'function') {
             browser = 'mozilla';
           } else if (window.opr && opr.addons && typeof opr.addons.installExtension === 'function') {
             browser = 'opera';
+          } else if (edge && parseInt(edge[1], 10) >= 14 && parseInt(edge[2], 10) >= 14393) {
+            browser = 'edge';
           }
 
           if (browser !== 'other') {
@@ -65,6 +68,9 @@
         <div id="opera" class="install-panel">
           <p><button class="btn btn-primary install">Add to Opera</button> <span class="hint">or download from <a href="https://addons.opera.com/extensions/details/github-hovercard/">Opera Extensions</a>.</span></p>
           <p class="alt text-muted">Other versions: <a href="https://chrome.google.com/webstore/detail/github-hovercard/mmoahbbnojgkclgceahhakhnccimnplk">Chrome</a> / <a href="https://addons.mozilla.org/en-US/firefox/addon/github-hovercard/">Firefox</a> / <a href="https://justineo.github.io/github-hovercard/userscript/dist/github-hovercard.user.js">userscript</a></p>
+        </div>
+        <div id="edge" class="install-panel">
+          <p>Download the zipped archive from GitHub Hovercard's <a href="https://github.com/Justineo/github-hovercard/raw/master/extensions/packed/github-hovercard.edge.zip">GitHub repo</a>. Microsoft Edge isn't accepting new extensions for now so it takes time to make the installation available directly from Windows Store. You can <a href="https://developer.microsoft.com/en-us/microsoft-edge/platform/documentation/extensions/guides/adding-and-removing-extensions/">manually install the extension</a> to try out.</p>
         </div>
         <div class="fallback">
           <p>Extension version is not supported by your browser. You can try the <a href="https://justineo.github.io/github-hovercard/userscript/dist/github-hovercard.user.js">userscript</a> version. Or go to our <a href="//github.com/Justineo/github-hovercard/issues">GitHub issues</a> for help.</p>

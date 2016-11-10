@@ -137,7 +137,6 @@ $(() => {
         '.repo-collection .repo-name': EXTRACTOR.SLUG,
 
         // Showcases & trending
-        // BREAKDOWN
         '.repo-list h3 > a': EXTRACTOR.REPO_LIST_SLUG,
 
         /* Organization profile */
@@ -208,7 +207,6 @@ $(() => {
         '.issues-listing .js-issue-row .muted-link:first-child': EXTRACTOR.SLUG,
 
         /* Search */
-        '.codesearch-results .repo-list-name a': EXTRACTOR.SLUG,
         '.code-list-item .title a:first-child': EXTRACTOR.SLUG,
         '.issue-list-meta .octicon-repo + a': EXTRACTOR.SLUG,
         '.wiki-list-item .title a:first-child': EXTRACTOR.SLUG,
@@ -959,12 +957,20 @@ $(() => {
                         repo = trim(match && match[2]);
                         if (username && repo) {
                             fullRepo = username + '/' + repo;
-                            let childNodes = elem[0].childNodes;
-                            let last = childNodes[childNodes.length - 1];
-                            last.parentNode.removeChild(last);
-                            elem.append($(`<span>${repo}</span>`));
-                            markExtracted(elem.children().first(), EXTRACT_TYPE.USER, username);
-                            markExtracted(elem.children().first().next(), EXTRACT_TYPE.REPO, fullRepo);
+
+                            let parts = elem.html()
+                                .replace('</', '${END_TAG}')
+                                .replace('/', '${SLASH}')
+                                .replace('${END_TAG}', '</')
+                                .split('${SLASH}');
+
+                            parts[0] = parts[0].replace(username, `<span data-ghh>${username}</span>`);
+                            parts[1] = parts[1].replace(repo, `<span data-ghh>${repo}</span>`);
+                            elem.html(parts.join('/'));
+                            let targets = elem.find('[data-ghh]');
+                            markExtracted(targets.eq(0), EXTRACT_TYPE.USER, username);
+                            markExtracted(targets.eq(1), EXTRACT_TYPE.REPO, fullRepo);
+                            targets.removeAttr('data-ghh');
 
                             // if not marked earlier, mark as nothing extracted
                             if (!getExtracted(elem)) {
