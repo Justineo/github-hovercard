@@ -30,8 +30,7 @@ $(() => {
   const VENDOR_URL = {
     chrome: `https://chrome.google.com/webstore/detail/${EXT_ID}`,
     mozilla: `https://addons.mozilla.org/en-US/firefox/addon/${EXT_ID}/`,
-    opera: `https://addons.opera.com/extensions/details/${EXT_NAME}/`,
-    edge: `https://github.com/Justineo/github-hovercard/raw/master/extensions/packed/github-hovercard.edge.zip`
+    opera: `https://addons.opera.com/extensions/details/${EXT_NAME}/`
   }[browser];
   const VENDOR_NAME = {
     chrome: 'Chrome Webstore',

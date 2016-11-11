@@ -49,6 +49,8 @@
             browser = 'opera';
           } else if (edge && parseInt(edge[1], 10) >= 14 && parseInt(edge[2], 10) >= 14393) {
             browser = 'edge';
+          } else if (navigator.userAgent.match(/\bSafari\b/)) {
+            browser = 'safari';
           }
 
           if (browser !== 'other') {
@@ -71,6 +73,9 @@
         </div>
         <div id="edge" class="install-panel">
           <p>Download the zipped archive from GitHub Hovercard's <a href="https://github.com/Justineo/github-hovercard/raw/master/extensions/packed/github-hovercard.edge.zip">GitHub repo</a>. Microsoft Edge isn't accepting new extensions for now so it takes time to make the installation available directly from Windows Store. You can <a href="https://developer.microsoft.com/en-us/microsoft-edge/platform/documentation/extensions/guides/adding-and-removing-extensions/">manually install the extension</a> to try out.</p>
+        </div>
+        <div id="safari" class="install-panel">
+          <p>Safari version is not available because Apple now requires the extension developers to purchase its Apple Developer Program ($99/year) to publish extensions. If you are a Safari user and you really like this extension, you can <a href="https://www.paypal.me/guyiling">make a donation here</a> and once the donation is sufficient to cover the annual fee I'll get it done. Before that you can try the <a href="https://justineo.github.io/github-hovercard/userscript/dist/github-hovercard.user.js">userscript</a> version. Or go to our <a href="//github.com/Justineo/github-hovercard/issues">GitHub issues</a> for help.</p>
         </div>
         <div class="fallback">
           <p>Extension version is not supported by your browser. You can try the <a href="https://justineo.github.io/github-hovercard/userscript/dist/github-hovercard.user.js">userscript</a> version. Or go to our <a href="//github.com/Justineo/github-hovercard/issues">GitHub issues</a> for help.</p>
