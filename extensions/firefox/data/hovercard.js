@@ -137,7 +137,8 @@ $(() => {
         '.repo-collection .repo-name': EXTRACTOR.SLUG,
 
         // Showcases & trending
-        '.repo-list h3 > a': EXTRACTOR.REPO_LIST_SLUG,
+        '.collection-page .repo-list h3 > a': EXTRACTOR.REPO_LIST_SLUG,
+        '.explore-page .repo-list h3 > a': EXTRACTOR.REPO_LIST_SLUG,
 
         /* Organization profile */
         // Invite member suggestion info
@@ -207,7 +208,7 @@ $(() => {
         '.issues-listing .js-issue-row .muted-link:first-child': EXTRACTOR.SLUG,
 
         /* Search */
-        '.code-list-item .title a:first-child': EXTRACTOR.SLUG,
+        '.code-list-item a:has(.avatar) + .title a:first-child': EXTRACTOR.SLUG, // rule out repo code search title
         '.issue-list-meta .octicon-repo + a': EXTRACTOR.SLUG,
         '.wiki-list-item .title a:first-child': EXTRACTOR.SLUG,
 

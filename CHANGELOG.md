@@ -1,5 +1,12 @@
 Changelog
 ---
+## 0.9.2
+* Fixed organization repo list extraction.
+
+## 0.9.1
+* Fixed extraction problems for repo list everywhere caused by GitHub's continuous updates.
+* Better image styling for in Markdown content.
+
 ## 0.9.0
 * Added readme content for repos (with option to turn off).
 * More fixes for extraction because GitHub updated thier UI implementation again (may continue to occur).
