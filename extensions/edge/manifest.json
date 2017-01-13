@@ -25,7 +25,7 @@
     "storage",
     "https://github.com/*"
   ],
-  "version": "0.9.2",
+  "version": "0.9.3",
   "-ms-preload": {
     "backgroundScript": "backgroundScriptsAPIBridge.js",
     "contentScript": "contentScriptsAPIBridge.js"

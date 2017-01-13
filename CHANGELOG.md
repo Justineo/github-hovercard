@@ -1,5 +1,9 @@
 Changelog
 ---
+## 0.9.3
+* Fixed the display of issues without body.
+* Fixed extraction for repo lists (whose logic is quite complicated).
+
 ## 0.9.2
 * Fixed organization repo list extraction.
 

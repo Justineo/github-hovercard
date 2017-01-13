@@ -33,12 +33,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // based on octotree's config
     const GH_RESERVED_USER_NAMES = [
-      'settings', 'orgs', 'organizations', 'site', 'blog', 'about',
-      'explore', 'styleguide', 'showcases', 'trending', 'stars',
-      'dashboard', 'notifications', 'search', 'developer', 'account',
-      'pulls', 'issues', 'features', 'contact', 'security', 'join',
-      'login', 'watching', 'new', 'integrations', 'pricing',
-      'personal', 'business', 'open-source'
+        'settings', 'orgs', 'organizations', 'site', 'blog', 'about',
+        'explore', 'styleguide', 'showcases', 'trending', 'stars',
+        'dashboard', 'notifications', 'search', 'developer', 'account',
+        'pulls', 'issues', 'features', 'contact', 'security', 'join',
+        'login', 'watching', 'new', 'integrations', 'pricing',
+        'personal', 'business', 'open-source'
     ];
 
     const GH_RESERVED_REPO_NAMES = [
@@ -208,6 +208,7 @@ document.addEventListener('DOMContentLoaded', () => {
         '.issues-listing .js-issue-row .muted-link:first-child': EXTRACTOR.SLUG,
 
         /* Search */
+        '.codesearch-results .repo-list h3 > a': EXTRACTOR.REPO_LIST_SLUG,
         '.code-list-item a:has(.avatar) + .title a:first-child': EXTRACTOR.SLUG, // rule out repo code search title
         '.issue-list-meta .octicon-repo + a': EXTRACTOR.SLUG,
         '.wiki-list-item .title a:first-child': EXTRACTOR.SLUG,
@@ -231,9 +232,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // Octicons in SVG
     const OCTICONS = {"alert":{"width":16,"height":16,"d":"M15.72 12.5l-6.85-11.98C8.69 0.21 8.36 0.02 8 0.02s-0.69 0.19-0.87 0.5l-6.85 11.98c-0.18 0.31-0.18 0.69 0 1C0.47 13.81 0.8 14 1.15 14h13.7c0.36 0 0.69-0.19 0.86-0.5S15.89 12.81 15.72 12.5zM9 12H7V10h2V12zM9 9H7V5h2V9z"},"arrow-right":{"width":10,"height":16,"d":"M10 8L4 3v3H0v4h4v3L10 8z"},"code":{"width":14,"height":16,"d":"M9.5 3l-1.5 1.5 3.5 3.5L8 11.5l1.5 1.5 4.5-5L9.5 3zM4.5 3L0 8l4.5 5 1.5-1.5L2.5 8l3.5-3.5L4.5 3z"},"diff":{"width":14,"height":16,"d":"M6 7h2v1H6v2h-1V8H3v-1h2V5h1v2zM3 13h5v-1H3v1z m4.5-11l3.5 3.5v9.5c0 0.55-0.45 1-1 1H1c-0.55 0-1-0.45-1-1V3c0-0.55 0.45-1 1-1h6.5z m2.5 4L7 3H1v12h9V6zM8.5 0S3 0 3 0v1h5l4 4v8h1V4.5L8.5 0z"},"git-commit":{"width":14,"height":16,"d":"M10.86 7c-0.45-1.72-2-3-3.86-3s-3.41 1.28-3.86 3H0v2h3.14c0.45 1.72 2 3 3.86 3s3.41-1.28 3.86-3h3.14V7H10.86zM7 10.2c-1.22 0-2.2-0.98-2.2-2.2s0.98-2.2 2.2-2.2 2.2 0.98 2.2 2.2-0.98 2.2-2.2 2.2z"},"git-pull-request":{"width":12,"height":16,"d":"M11 11.28c0-1.73 0-6.28 0-6.28-0.03-0.78-0.34-1.47-0.94-2.06s-1.28-0.91-2.06-0.94c0 0-1.02 0-1 0V0L4 3l3 3V4h1c0.27 0.02 0.48 0.11 0.69 0.31s0.3 0.42 0.31 0.69v6.28c-0.59 0.34-1 0.98-1 1.72 0 1.11 0.89 2 2 2s2-0.89 2-2c0-0.73-0.41-1.38-1-1.72z m-1 2.92c-0.66 0-1.2-0.55-1.2-1.2s0.55-1.2 1.2-1.2 1.2 0.55 1.2 1.2-0.55 1.2-1.2 1.2zM4 3c0-1.11-0.89-2-2-2S0 1.89 0 3c0 0.73 0.41 1.38 1 1.72 0 1.55 0 5.56 0 6.56-0.59 0.34-1 0.98-1 1.72 0 1.11 0.89 2 2 2s2-0.89 2-2c0-0.73-0.41-1.38-1-1.72V4.72c0.59-0.34 1-0.98 1-1.72z m-0.8 10c0 0.66-0.55 1.2-1.2 1.2s-1.2-0.55-1.2-1.2 0.55-1.2 1.2-1.2 1.2 0.55 1.2 1.2z m-1.2-8.8c-0.66 0-1.2-0.55-1.2-1.2s0.55-1.2 1.2-1.2 1.2 0.55 1.2 1.2-0.55 1.2-1.2 1.2z"},"info":{"width":14,"height":16,"d":"M6.3 5.69c-0.19-0.19-0.28-0.42-0.28-0.7s0.09-0.52 0.28-0.7 0.42-0.28 0.7-0.28 0.52 0.09 0.7 0.28 0.28 0.42 0.28 0.7-0.09 0.52-0.28 0.7-0.42 0.3-0.7 0.3-0.52-0.11-0.7-0.3z m1.7 2.3c-0.02-0.25-0.11-0.48-0.31-0.69-0.2-0.19-0.42-0.3-0.69-0.31h-1c-0.27 0.02-0.48 0.13-0.69 0.31-0.2 0.2-0.3 0.44-0.31 0.69h1v3c0.02 0.27 0.11 0.5 0.31 0.69 0.2 0.2 0.42 0.31 0.69 0.31h1c0.27 0 0.48-0.11 0.69-0.31 0.2-0.19 0.3-0.42 0.31-0.69h-1V7.98z m-1-5.69C3.86 2.3 1.3 4.84 1.3 7.98s2.56 5.7 5.7 5.7 5.7-2.55 5.7-5.7-2.56-5.69-5.7-5.69m0-1.31c3.86 0 7 3.14 7 7S10.86 14.98 7 14.98 0 11.86 0 7.98 3.14 0.98 7 0.98z"},"issue-closed":{"width":16,"height":16,"d":"M7 10h2v2H7V10z m2-6H7v5h2V4z m1.5 1.5l-1 1 2.5 2.5 4-4.5-1-1-3 3.5-1.5-1.5zM8 13.7c-3.14 0-5.7-2.56-5.7-5.7s2.56-5.7 5.7-5.7c1.83 0 3.45 0.88 4.5 2.2l0.92-0.92C12.14 2 10.19 1 8 1 4.14 1 1 4.14 1 8s3.14 7 7 7 7-3.14 7-7l-1.52 1.52c-0.66 2.41-2.86 4.19-5.48 4.19z"},"issue-opened":{"width":14,"height":16,"d":"M7 2.3c3.14 0 5.7 2.56 5.7 5.7S10.14 13.7 7 13.7 1.3 11.14 1.3 8s2.56-5.7 5.7-5.7m0-1.3C3.14 1 0 4.14 0 8s3.14 7 7 7 7-3.14 7-7S10.86 1 7 1z m1 3H6v5h2V4z m0 6H6v2h2V10z"},"link":{"width":16,"height":16,"d":"M4 9h1v1h-1c-1.5 0-3-1.69-3-3.5s1.55-3.5 3-3.5h4c1.45 0 3 1.69 3 3.5 0 1.41-0.91 2.72-2 3.25v-1.16c0.58-0.45 1-1.27 1-2.09 0-1.28-1.02-2.5-2-2.5H4c-0.98 0-2 1.22-2 2.5s1 2.5 2 2.5z m9-3h-1v1h1c1 0 2 1.22 2 2.5s-1.02 2.5-2 2.5H9c-0.98 0-2-1.22-2-2.5 0-0.83 0.42-1.64 1-2.09v-1.16c-1.09 0.53-2 1.84-2 3.25 0 1.81 1.55 3.5 3 3.5h4c1.45 0 3-1.69 3-3.5s-1.5-3.5-3-3.5z"},"location":{"width":12,"height":16,"d":"M6 0C2.69 0 0 2.5 0 5.5c0 4.52 6 10.5 6 10.5s6-5.98 6-10.5C12 2.5 9.31 0 6 0z m0 14.55C4.14 12.52 1 8.44 1 5.5 1 3.02 3.25 1 6 1c1.34 0 2.61 0.48 3.56 1.36 0.92 0.86 1.44 1.97 1.44 3.14 0 2.94-3.14 7.02-5 9.05z m2-9.05c0 1.11-0.89 2-2 2s-2-0.89-2-2 0.89-2 2-2 2 0.89 2 2z"},"organization":{"width":14,"height":16,"d":"M4.75 4.95c0.55 0.64 1.34 1.05 2.25 1.05s1.7-0.41 2.25-1.05c0.34 0.63 1 1.05 1.75 1.05 1.11 0 2-0.89 2-2s-0.89-2-2-2c-0.41 0-0.77 0.13-1.08 0.33C9.61 1 8.42 0 7 0S4.39 1 4.08 2.33c-0.31-0.2-0.67-0.33-1.08-0.33-1.11 0-2 0.89-2 2s0.89 2 2 2c0.75 0 1.41-0.42 1.75-1.05z m5.2-1.52c0.2-0.38 0.59-0.64 1.05-0.64 0.66 0 1.2 0.55 1.2 1.2s-0.55 1.2-1.2 1.2-1.17-0.53-1.19-1.17c0.06-0.19 0.11-0.39 0.14-0.59zM7 0.98c1.11 0 2.02 0.91 2.02 2.02s-0.91 2.02-2.02 2.02-2.02-0.91-2.02-2.02S5.89 0.98 7 0.98zM3 5.2c-0.66 0-1.2-0.55-1.2-1.2s0.55-1.2 1.2-1.2c0.45 0 0.84 0.27 1.05 0.64 0.03 0.2 0.08 0.41 0.14 0.59-0.02 0.64-0.53 1.17-1.19 1.17z m10 0.8H1c-0.55 0-1 0.45-1 1v3c0 0.55 0.45 1 1 1v2c0 0.55 0.45 1 1 1h1c0.55 0 1-0.45 1-1v-1h1v3c0 0.55 0.45 1 1 1h2c0.55 0 1-0.45 1-1V12h1v1c0 0.55 0.45 1 1 1h1c0.55 0 1-0.45 1-1V11c0.55 0 1-0.45 1-1V7c0-0.55-0.45-1-1-1zM3 13h-1V10H1V7h2v6z m7-2h-1V9h-1v6H6V9h-1v2h-1V7h6v4z m3-1h-1v3h-1V7h2v3z"},"person":{"width":8,"height":16,"d":"M7 6H1c-0.55 0-1 0.45-1 1v5h2v3c0 0.55 0.45 1 1 1h2c0.55 0 1-0.45 1-1V12h2V7c0-0.55-0.45-1-1-1z m0 5h-1V9h-1v6H3V9h-1v2H1V7h6v4z m0-8C7 1.34 5.66 0 4 0S1 1.34 1 3s1.34 3 3 3 3-1.34 3-3zM4 5c-1.11 0-2-0.89-2-2S2.89 1 4 1s2 0.89 2 2-0.89 2-2 2z"},"repo-forked":{"width":10,"height":16,"d":"M8 1c-1.11 0-2 0.89-2 2 0 0.73 0.41 1.38 1 1.72v1.28L5 8 3 6v-1.28c0.59-0.34 1-0.98 1-1.72 0-1.11-0.89-2-2-2S0 1.89 0 3c0 0.73 0.41 1.38 1 1.72v1.78l3 3v1.78c-0.59 0.34-1 0.98-1 1.72 0 1.11 0.89 2 2 2s2-0.89 2-2c0-0.73-0.41-1.38-1-1.72V9.5l3-3V4.72c0.59-0.34 1-0.98 1-1.72 0-1.11-0.89-2-2-2zM2 4.2c-0.66 0-1.2-0.55-1.2-1.2s0.55-1.2 1.2-1.2 1.2 0.55 1.2 1.2-0.55 1.2-1.2 1.2z m3 10c-0.66 0-1.2-0.55-1.2-1.2s0.55-1.2 1.2-1.2 1.2 0.55 1.2 1.2-0.55 1.2-1.2 1.2z m3-10c-0.66 0-1.2-0.55-1.2-1.2s0.55-1.2 1.2-1.2 1.2 0.55 1.2 1.2-0.55 1.2-1.2 1.2z"},"repo":{"width":12,"height":16,"d":"M4 9h-1v-1h1v1z m0-3h-1v1h1v-1z m0-2h-1v1h1v-1z m0-2h-1v1h1v-1z m8-1v12c0 0.55-0.45 1-1 1H6v2l-1.5-1.5-1.5 1.5V14H1c-0.55 0-1-0.45-1-1V1C0 0.45 0.45 0 1 0h10c0.55 0 1 0.45 1 1z m-1 10H1v2h2v-1h3v1h5V11z m0-10H2v9h9V1z"},"git-branch":{"width":10,"height":16,"d":"M10 5c0-1.11-.89-2-2-2a1.993 1.993 0 0 0-1 3.72v.3c-.02.52-.23.98-.63 1.38-.4.4-.86.61-1.38.63-.83.02-1.48.16-2 .45V4.72a1.993 1.993 0 0 0-1-3.72C.88 1 0 1.89 0 3a2 2 0 0 0 1 1.72v6.56c-.59.35-1 .99-1 1.72 0 1.11.89 2 2 2 1.11 0 2-.89 2-2 0-.53-.2-1-.53-1.36.09-.06.48-.41.59-.47.25-.11.56-.17.94-.17 1.05-.05 1.95-.45 2.75-1.25S8.95 7.77 9 6.73h-.02C9.59 6.37 10 5.73 10 5zM2 1.8c.66 0 1.2.55 1.2 1.2 0 .65-.55 1.2-1.2 1.2C1.35 4.2.8 3.65.8 3c0-.65.55-1.2 1.2-1.2zm0 12.41c-.66 0-1.2-.55-1.2-1.2 0-.65.55-1.2 1.2-1.2.65 0 1.2.55 1.2 1.2 0 .65-.55 1.2-1.2 1.2zm6-8c-.66 0-1.2-.55-1.2-1.2 0-.65.55-1.2 1.2-1.2.65 0 1.2.55 1.2 1.2 0 .65-.55 1.2-1.2 1.2z"},"tag":{"width":14,"height":16,"d":"M7.73 1.73C7.26 1.26 6.62 1 5.96 1H3.5C2.13 1 1 2.13 1 3.5v2.47c0 .66.27 1.3.73 1.77l6.06 6.06c.39.39 1.02.39 1.41 0l4.59-4.59a.996.996 0 0 0 0-1.41L7.73 1.73zM2.38 7.09c-.31-.3-.47-.7-.47-1.13V3.5c0-.88.72-1.59 1.59-1.59h2.47c.42 0 .83.16 1.13.47l6.14 6.13-4.73 4.73-6.13-6.15zM3.01 3h2v2H3V3h.01z"}};
 
-    function getIcon(type, scale) {
-        scale = scale || 1;
-        var icon = OCTICONS[type];
+    function getIcon(type, scale = 1) {
+        let icon = OCTICONS[type];
         return `<svg class="octicon" width="${icon.width * scale}" height="${icon.height * scale}"
             viewBox="0 0 ${icon.width} ${icon.height}"><path d="${icon.d}" /></svg>`;
     }
@@ -405,7 +405,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function getNextTextNode(node, context) {
-        let filter = NodeFilter.SHOW_TEXT|NodeFilter.SHOW_ELEMENT;
+        let filter = NodeFilter.SHOW_TEXT | NodeFilter.SHOW_ELEMENT;
         let walker = document.createTreeWalker(context || document.body, filter);
         while (walker.nextNode()) {
             if (walker.currentNode === node) {
@@ -413,13 +413,63 @@ document.addEventListener('DOMContentLoaded', () => {
                     let current = walker.currentNode;
                     if (current.nodeType === Node.TEXT_NODE
                         && !(node.compareDocumentPosition(current) & Node.DOCUMENT_POSITION_CONTAINED_BY)
-                        && trim(current.nodeValue)){
+                        && trim(current.nodeValue)) {
                         return current;
                     }
                 }
             }
         }
         return null;
+    }
+
+    // '<span>ecomfe/</span><em>ecomfe</em>.github.io'
+    function fixRepoSlug(html) {
+        let [, leading, content, ending] = html.match(/^(\s*)(.+?)(\s*)$/);
+
+        let parts = content
+            .replace(/<\//g, '${END}')
+            .replace(/\//g, '${SLASH}')
+            .replace(/</g, '${BEGIN}')
+            .split('${SLASH}');
+
+        return leading + parts.map(part => {
+            let [, leading, content, ending] = part.match(/^(\s*)(.+?)(\s*)$/);
+            let marker = /\$\{(\w+)\}/g;
+            let open = [];
+            let close = [];
+            let position;
+            let result;
+            while (result = marker.exec(content)) {
+                position = marker.lastIndex - result[0].length;
+                if (result[1] === 'BEGIN') {
+                    open.push(position);
+                } else {
+                    if (open.length) {
+                        open.pop();
+                    } else {
+                        close.push(position);
+                    }
+                }
+            }
+
+            // <span>user/ -> <span><span>user</span>
+            let begin = 0;
+            let end = content.length;
+            if (open[0] === 0 || close[0] === 0) {
+                begin = content.indexOf('>') + 1;
+            } else if (open.length || close.length) {
+                begin = 0;
+                end = open[0] || close[0];
+            }
+
+            content = content.slice(0, end) + '</span>' + content.slice(end, content.length);
+            content = content.slice(0, begin) + '<span data-ghh>' + content.slice(begin, content.length);
+            content = content
+                .replace(/\$\{BEGIN\}/g, '<')
+                .replace(/\$\{END\}/g, '</');
+
+            return `${leading}${content}${ending}`;
+        }).join('/') + ending;
     }
 
     function formatNumber(num) {
@@ -451,22 +501,21 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function replaceLink(text) {
-        return text.replace(/\b(https?:\/\/[^\s]+)/ig, `<a href="$1">$1</a>`);
+        return text.replace(/\b(https?:\/\/[^\s]+)/ig, '<a href="$1">$1</a>');
     }
 
     // Code via underscore's _.compose
-    function compose() {
-        var args = arguments;
-        var start = args.length - 1;
-        return function() {
-            var i = start;
-            var result = args[start].apply(this, arguments);
+    function compose(...fns) {
+        let start = fns.length - 1;
+        return function (...args) {
+            let i = start;
+            let result = fns[start].apply(this, args);
             while (i--) {
-                result = args[i].call(this, result);
+                result = fns[i].call(this, result);
             }
             return result;
         };
-    };
+    }
 
     // Code via https://developers.google.com/web/updates/2015/01/ES6-Template-Strings
     // HTML Escape helper utility
@@ -512,9 +561,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }());
 
     // Tagged template function
-    function encodeHTML(pieces) {
+    function encodeHTML(pieces, ...substitutions) {
         let result = pieces[0];
-        let substitutions = [].slice.call(arguments, 1);
         for (let i = 0; i < substitutions.length; ++i) {
             result += htmlUtil.escape(substitutions[i]) + pieces[i + 1];
         }
@@ -528,7 +576,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (url && url.indexOf('//') === -1) {
                 elem.attr(attr, `${base}/raw/${branch}/${url}`);
             }
-        })
+        });
     }
 
     function getCardHTML(type, raw) {
@@ -619,7 +667,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     changedFiles: raw.changed_files,
                     isSingleCommit: raw.commits === 1,
                     isSingleFile: raw.changed_files === 1
-                })
+                });
             }
         } else if (type === EXTRACT_TYPE.COMMENT) {
             data = {
@@ -669,7 +717,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     commit: getIcon('git-commit', 0.875),
                     diff: getIcon('diff', 0.875)
                 }
-            }
+            };
         }
 
         let html = Mustache.render(CARD_TPL[type], data);
@@ -827,7 +875,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         break;
                     }
                     case EXTRACTOR.TEXT_NODE_URL: {
-                        let [...nodes] = elem[0].childNodes;
+                        let nodes = elem[0].childNodes;
                         let textNode = nodes.find(node => trim(node.nodeValue));
                         target = $(` <span>${textNode.nodeValue}</span>`);
                         textNode.parentNode.replaceChild(target[0], textNode);
@@ -866,7 +914,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                 username = trim(match && match[1]);
                                 repo = trim(match && match[2]);
                                 issue = trim(match && match[3]);
-                                comment = trim(match && match[4])
+                                comment = trim(match && match[4]);
                             }
                             if (!username) {
                                 match = href.match(URL_COMMIT_PATTERN);
@@ -934,7 +982,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         break;
                     }
                     case EXTRACTOR.TEXT_NODE_USER: {
-                        let [...nodes] = elem[0].childNodes;
+                        let nodes = elem[0].childNodes;
                         let textNode = nodes.find(node => trim(node.nodeValue));
 
                         if (textNode) {
@@ -959,15 +1007,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         if (username && repo) {
                             fullRepo = username + '/' + repo;
 
-                            let parts = elem.html()
-                                .replace('</', '${END_TAG}')
-                                .replace('/', '${SLASH}')
-                                .replace('${END_TAG}', '</')
-                                .split('${SLASH}');
-
-                            parts[0] = parts[0].replace(username, `<span data-ghh>${username}</span>`);
-                            parts[1] = parts[1].replace(repo, `<span data-ghh>${repo}</span>`);
-                            elem.html(parts.join('/'));
+                            elem.html(fixRepoSlug(elem.html()));
                             let targets = elem.find('[data-ghh]');
                             markExtracted(targets.eq(0), EXTRACT_TYPE.USER, username);
                             markExtracted(targets.eq(1), EXTRACT_TYPE.REPO, fullRepo);
@@ -1029,7 +1069,7 @@ document.addEventListener('DOMContentLoaded', () => {
             debug: false,
             delay: cardOptions.delay,
             // trigger: 'click',
-            functionBefore: (me, event) => {
+            functionBefore(me, event) {
                 let elem = $(event.origin);
                 elem.tooltipster('content', $('<span class="loading"></span>'));
                 let type = elem.data(TYPE_KEY);
@@ -1109,10 +1149,10 @@ document.addEventListener('DOMContentLoaded', () => {
                             case 404:
                                 title = 'Not found';
                                 if (type === EXTRACT_TYPE.REPO || type === EXTRACT_TYPE.ISSUE) {
-                                    message = encodeHTML`The repository doesn\'t exist or is private. <a href="${CREATE_TOKEN_PATH}" class="token-link" target="_blank">Create a new access token</a>, <a href="#" class="token-link">paste it back here</a> and try again.`;
+                                    message = encodeHTML`The repository doesn't exist or is private. <a href="${CREATE_TOKEN_PATH}" class="token-link" target="_blank">Create a new access token</a>, <a href="#" class="token-link">paste it back here</a> and try again.`;
                                     needToken = true;
                                 } else if (type === EXTRACT_TYPE.USER) {
-                                    message = `The user doesn't exist.`;
+                                    message = 'The user doesn\'t exist.';
                                 }
                                 break;
                             case 451: {
@@ -1141,7 +1181,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             }
                         };
                         elem.tooltipster('content', getErrorHTML(error));
-                    }
+                    };
 
                     let request = function () {
                         let authOptions = {};
@@ -1252,7 +1292,9 @@ document.addEventListener('DOMContentLoaded', () => {
                                                 })
                                                 .fail(handleError);
                                         }
-
+                                        if (!todo) {
+                                            elem.tooltipster('content', getCardHTML(type, raw));
+                                        }
                                         return;
                                     }
                                     case EXTRACT_TYPE.COMMENT: {

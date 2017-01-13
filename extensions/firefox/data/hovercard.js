@@ -33,12 +33,12 @@ $(() => {
 
     // based on octotree's config
     const GH_RESERVED_USER_NAMES = [
-      'settings', 'orgs', 'organizations', 'site', 'blog', 'about',
-      'explore', 'styleguide', 'showcases', 'trending', 'stars',
-      'dashboard', 'notifications', 'search', 'developer', 'account',
-      'pulls', 'issues', 'features', 'contact', 'security', 'join',
-      'login', 'watching', 'new', 'integrations', 'pricing',
-      'personal', 'business', 'open-source'
+        'settings', 'orgs', 'organizations', 'site', 'blog', 'about',
+        'explore', 'styleguide', 'showcases', 'trending', 'stars',
+        'dashboard', 'notifications', 'search', 'developer', 'account',
+        'pulls', 'issues', 'features', 'contact', 'security', 'join',
+        'login', 'watching', 'new', 'integrations', 'pricing',
+        'personal', 'business', 'open-source'
     ];
 
     const GH_RESERVED_REPO_NAMES = [
@@ -208,6 +208,7 @@ $(() => {
         '.issues-listing .js-issue-row .muted-link:first-child': EXTRACTOR.SLUG,
 
         /* Search */
+        '.codesearch-results .repo-list h3 > a': EXTRACTOR.REPO_LIST_SLUG,
         '.code-list-item a:has(.avatar) + .title a:first-child': EXTRACTOR.SLUG, // rule out repo code search title
         '.issue-list-meta .octicon-repo + a': EXTRACTOR.SLUG,
         '.wiki-list-item .title a:first-child': EXTRACTOR.SLUG,
@@ -231,9 +232,8 @@ $(() => {
     // Octicons in SVG
     const OCTICONS = self.options.octicons;
 
-    function getIcon(type, scale) {
-        scale = scale || 1;
-        var icon = OCTICONS[type];
+    function getIcon(type, scale = 1) {
+        let icon = OCTICONS[type];
         return `<svg class="octicon" width="${icon.width * scale}" height="${icon.height * scale}"
             viewBox="0 0 ${icon.width} ${icon.height}"><path d="${icon.d}" /></svg>`;
     }
@@ -405,7 +405,7 @@ $(() => {
     }
 
     function getNextTextNode(node, context) {
-        let filter = NodeFilter.SHOW_TEXT|NodeFilter.SHOW_ELEMENT;
+        let filter = NodeFilter.SHOW_TEXT | NodeFilter.SHOW_ELEMENT;
         let walker = document.createTreeWalker(context || document.body, filter);
         while (walker.nextNode()) {
             if (walker.currentNode === node) {
@@ -413,13 +413,63 @@ $(() => {
                     let current = walker.currentNode;
                     if (current.nodeType === Node.TEXT_NODE
                         && !(node.compareDocumentPosition(current) & Node.DOCUMENT_POSITION_CONTAINED_BY)
-                        && trim(current.nodeValue)){
+                        && trim(current.nodeValue)) {
                         return current;
                     }
                 }
             }
         }
         return null;
+    }
+
+    // '<span>ecomfe/</span><em>ecomfe</em>.github.io'
+    function fixRepoSlug(html) {
+        let [, leading, content, ending] = html.match(/^(\s*)(.+?)(\s*)$/);
+
+        let parts = content
+            .replace(/<\//g, '${END}')
+            .replace(/\//g, '${SLASH}')
+            .replace(/</g, '${BEGIN}')
+            .split('${SLASH}');
+
+        return leading + parts.map(part => {
+            let [, leading, content, ending] = part.match(/^(\s*)(.+?)(\s*)$/);
+            let marker = /\$\{(\w+)\}/g;
+            let open = [];
+            let close = [];
+            let position;
+            let result;
+            while (result = marker.exec(content)) {
+                position = marker.lastIndex - result[0].length;
+                if (result[1] === 'BEGIN') {
+                    open.push(position);
+                } else {
+                    if (open.length) {
+                        open.pop();
+                    } else {
+                        close.push(position);
+                    }
+                }
+            }
+
+            // <span>user/ -> <span><span>user</span>
+            let begin = 0;
+            let end = content.length;
+            if (open[0] === 0 || close[0] === 0) {
+                begin = content.indexOf('>') + 1;
+            } else if (open.length || close.length) {
+                begin = 0;
+                end = open[0] || close[0];
+            }
+
+            content = content.slice(0, end) + '</span>' + content.slice(end, content.length);
+            content = content.slice(0, begin) + '<span data-ghh>' + content.slice(begin, content.length);
+            content = content
+                .replace(/\$\{BEGIN\}/g, '<')
+                .replace(/\$\{END\}/g, '</');
+
+            return `${leading}${content}${ending}`;
+        }).join('/') + ending;
     }
 
     function formatNumber(num) {
@@ -451,22 +501,21 @@ $(() => {
     }
 
     function replaceLink(text) {
-        return text.replace(/\b(https?:\/\/[^\s]+)/ig, `<a href="$1">$1</a>`);
+        return text.replace(/\b(https?:\/\/[^\s]+)/ig, '<a href="$1">$1</a>');
     }
 
     // Code via underscore's _.compose
-    function compose() {
-        var args = arguments;
-        var start = args.length - 1;
-        return function() {
-            var i = start;
-            var result = args[start].apply(this, arguments);
+    function compose(...fns) {
+        let start = fns.length - 1;
+        return function (...args) {
+            let i = start;
+            let result = fns[start].apply(this, args);
             while (i--) {
-                result = args[i].call(this, result);
+                result = fns[i].call(this, result);
             }
             return result;
         };
-    };
+    }
 
     // Code via https://developers.google.com/web/updates/2015/01/ES6-Template-Strings
     // HTML Escape helper utility
@@ -512,9 +561,8 @@ $(() => {
     }());
 
     // Tagged template function
-    function encodeHTML(pieces) {
+    function encodeHTML(pieces, ...substitutions) {
         let result = pieces[0];
-        let substitutions = [].slice.call(arguments, 1);
         for (let i = 0; i < substitutions.length; ++i) {
             result += htmlUtil.escape(substitutions[i]) + pieces[i + 1];
         }
@@ -528,7 +576,7 @@ $(() => {
             if (url && url.indexOf('//') === -1) {
                 elem.attr(attr, `${base}/raw/${branch}/${url}`);
             }
-        })
+        });
     }
 
     function getCardHTML(type, raw) {
@@ -619,7 +667,7 @@ $(() => {
                     changedFiles: raw.changed_files,
                     isSingleCommit: raw.commits === 1,
                     isSingleFile: raw.changed_files === 1
-                })
+                });
             }
         } else if (type === EXTRACT_TYPE.COMMENT) {
             data = {
@@ -669,7 +717,7 @@ $(() => {
                     commit: getIcon('git-commit', 0.875),
                     diff: getIcon('diff', 0.875)
                 }
-            }
+            };
         }
 
         let html = Mustache.render(CARD_TPL[type], data);
@@ -827,7 +875,7 @@ $(() => {
                         break;
                     }
                     case EXTRACTOR.TEXT_NODE_URL: {
-                        let [...nodes] = elem[0].childNodes;
+                        let nodes = elem[0].childNodes;
                         let textNode = nodes.find(node => trim(node.nodeValue));
                         target = $(` <span>${textNode.nodeValue}</span>`);
                         textNode.parentNode.replaceChild(target[0], textNode);
@@ -866,7 +914,7 @@ $(() => {
                                 username = trim(match && match[1]);
                                 repo = trim(match && match[2]);
                                 issue = trim(match && match[3]);
-                                comment = trim(match && match[4])
+                                comment = trim(match && match[4]);
                             }
                             if (!username) {
                                 match = href.match(URL_COMMIT_PATTERN);
@@ -934,7 +982,7 @@ $(() => {
                         break;
                     }
                     case EXTRACTOR.TEXT_NODE_USER: {
-                        let [...nodes] = elem[0].childNodes;
+                        let nodes = elem[0].childNodes;
                         let textNode = nodes.find(node => trim(node.nodeValue));
 
                         if (textNode) {
@@ -959,15 +1007,7 @@ $(() => {
                         if (username && repo) {
                             fullRepo = username + '/' + repo;
 
-                            let parts = elem.html()
-                                .replace('</', '${END_TAG}')
-                                .replace('/', '${SLASH}')
-                                .replace('${END_TAG}', '</')
-                                .split('${SLASH}');
-
-                            parts[0] = parts[0].replace(username, `<span data-ghh>${username}</span>`);
-                            parts[1] = parts[1].replace(repo, `<span data-ghh>${repo}</span>`);
-                            elem.html(parts.join('/'));
+                            elem.html(fixRepoSlug(elem.html()));
                             let targets = elem.find('[data-ghh]');
                             markExtracted(targets.eq(0), EXTRACT_TYPE.USER, username);
                             markExtracted(targets.eq(1), EXTRACT_TYPE.REPO, fullRepo);
@@ -1029,7 +1069,7 @@ $(() => {
             debug: false,
             delay: cardOptions.delay,
             // trigger: 'click',
-            functionBefore: (me, event) => {
+            functionBefore(me, event) {
                 let elem = $(event.origin);
                 elem.tooltipster('content', $('<span class="loading"></span>'));
                 let type = elem.data(TYPE_KEY);
@@ -1109,10 +1149,10 @@ $(() => {
                             case 404:
                                 title = 'Not found';
                                 if (type === EXTRACT_TYPE.REPO || type === EXTRACT_TYPE.ISSUE) {
-                                    message = encodeHTML`The repository doesn\'t exist or is private. <a href="${CREATE_TOKEN_PATH}" class="token-link" target="_blank">Create a new access token</a>, <a href="#" class="token-link">paste it back here</a> and try again.`;
+                                    message = encodeHTML`The repository doesn't exist or is private. <a href="${CREATE_TOKEN_PATH}" class="token-link" target="_blank">Create a new access token</a>, <a href="#" class="token-link">paste it back here</a> and try again.`;
                                     needToken = true;
                                 } else if (type === EXTRACT_TYPE.USER) {
-                                    message = `The user doesn't exist.`;
+                                    message = 'The user doesn\'t exist.';
                                 }
                                 break;
                             case 451: {
@@ -1141,7 +1181,7 @@ $(() => {
                             }
                         };
                         elem.tooltipster('content', getErrorHTML(error));
-                    }
+                    };
 
                     let request = function () {
                         let authOptions = {};
@@ -1252,7 +1292,9 @@ $(() => {
                                                 })
                                                 .fail(handleError);
                                         }
-
+                                        if (!todo) {
+                                            elem.tooltipster('content', getCardHTML(type, raw));
+                                        }
                                         return;
                                     }
                                     case EXTRACT_TYPE.COMMENT: {
