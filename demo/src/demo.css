@@ -16,6 +16,15 @@ a {
   text-decoration: none;
 }
 
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: 600;
+}
+
 a:active,
 a:hover,
 button {
@@ -93,7 +102,7 @@ textarea {
 }
 
 ul {
-  list-style-position: inside;
+  padding-left: 18px;
 }
 
 body > header {
@@ -120,7 +129,7 @@ header h1 {
   padding-left: 48px;
   background: url(../../icon.png) no-repeat left center/36px 36px;
   font-size: 13px;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 body > main {
@@ -143,7 +152,7 @@ body > main::after {
   display: inline-block;
   padding: 6px 12px;
   font-size: 13px;
-  font-weight: bold;
+  font-weight: 600;
   line-height: 20px;
   color: #333;
   white-space: nowrap;
@@ -325,7 +334,7 @@ article > section > section > h1 {
 }
 
 .news .alert .title {
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .news .alert .body {
@@ -365,7 +374,7 @@ article > section > section > h1 {
 
 .news .alert .pull-info em {
   font-style: normal;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .news .commits li {
@@ -436,7 +445,7 @@ article > section > section > h1 {
   display: inline-block;
   padding: 2px 5px;
   font-size: 11px;
-  font-weight: bold;
+  font-weight: 600;
   line-height: 1;
   color: #666;
   background-color: #eee;
@@ -505,7 +514,7 @@ article > section > section > h1 {
 }
 
 .mini-repo-list .repo {
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .filter-bar {
@@ -585,7 +594,7 @@ article > section > section > h1 {
 .state {
   display: inline-block;
   padding: 4px 8px;
-  font-weight: bold;
+  font-weight: 600;
   line-height: 20px;
   color: #fff;
   text-align: center;
@@ -667,7 +676,7 @@ main > footer img {
   float: left;
   padding: 2px 7px;
   font-size: 11px;
-  font-weight: bold;
+  font-weight: 600;
   line-height: 20px;
   color: #333;
   vertical-align: middle;
@@ -684,7 +693,7 @@ main > footer img {
 
 .diffstat {
   font-size: 12px;
-  font-weight: bold;
+  font-weight: 600;
   color: #666;
   white-space: nowrap;
   cursor: default;

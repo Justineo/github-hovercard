@@ -105,7 +105,7 @@
 .ghh-issue-body h6 {
   margin-top: 1em;
   margin-bottom: 12px;
-  font-weight: 700;
+  font-weight: 600;
   line-height: 1.4;
 }
 .ghh-readme h1 tt,
@@ -220,7 +220,7 @@
   margin-top: 1em;
   font-size: 1em;
   font-style: italic;
-  font-weight: 700;
+  font-weight: 600;
 }
 .ghh-readme dd,
 .ghh-issue-body dd {
@@ -241,7 +241,7 @@
 }
 .ghh-readme th,
 .ghh-issue-body th {
-  font-weight: 700;
+  font-weight: 600;
 }
 .ghh-readme th,
 .ghh-issue-body th,
@@ -339,6 +339,7 @@
 .ghh-pull-meta .commit-ref + span > .octicon,
 .ghh-commit-meta .commit-ref + span > .octicon {
   height: 22px;
+  vertical-align: middle;
 }
 .ghh-pull-meta .commit-ref + .octicon,
 .ghh-commit-meta .commit-ref + .octicon {
@@ -421,6 +422,7 @@
  **********/
 .ghh-repo strong {
   font-size: 120%;
+  font-weight: 600;
 }
 .ghh-repo p {
   max-width: 296px;
