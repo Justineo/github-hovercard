@@ -4,10 +4,26 @@ Neat hovercards for GitHub.
 
 ## Installation
 
+### Published versions
+
 * [Chrome extension](https://chrome.google.com/webstore/detail/github-hovercard/mmoahbbnojgkclgceahhakhnccimnplk)
 * [Firefox add-on](https://addons.mozilla.org/en-US/firefox/addon/github-hovercard/)
 * [Opera extension](https://addons.opera.com/extensions/details/github-hovercard/)
 * [Userscript](https://justineo.github.io/github-hovercard/userscript/dist/github-hovercard.user.js)
+
+### Manual installation
+
+* [Edge extension](https://github.com/Justineo/github-hovercard/raw/master/extensions/packed/github-hovercard.edge.zip)
+
+  See [Adding and removing extensions for Microsoft Edge](https://docs.microsoft.com/en-us/microsoft-edge/extensions/guides/adding-and-removing-extensions).
+
+* [Safari extension](https://minhaskamal.github.io/DownGit/#/home?url=https://github.com/Justineo/github-hovercard/tree/master/extensions/github-hovercard.safariextension)
+
+  See [Using Extension Builder](https://developer.apple.com/library/content/documentation/Tools/Conceptual/SafariExtensionGuide/UsingExtensionBuilder/UsingExtensionBuilder.html#//apple_ref/doc/uid/TP40009977-CH2-SW10) to learn how to activate the Extension Builder. And then:
+
+  1. Use “Add Extension” instead of “Create Extension”.
+  2. Choose the downloaded directory.
+  3. Click “install” to load the extension.
 
 ## FAQ
 

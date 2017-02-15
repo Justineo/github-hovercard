@@ -2,6 +2,7 @@ Changelog
 ---
 ## 0.9.4
 * Minor style tweaks.
+* Added Safari version.
 
 ## 0.9.3
 * Fixed the display of issues without body.

@@ -15,6 +15,7 @@ var babel = require('gulp-babel');
 var DataURI = require('datauri');
 var marked = require('marked');
 var cheerio = require('cheerio');
+var plist = require('plist');
 var pack = require('./package.json');
 var version = pack.version;
 
@@ -125,6 +126,21 @@ gulp.task('chrome:cp', ['resource:inline', 'css'], function () {
   ];
   return gulp.src(targets)
     .pipe(gulp.dest('./extensions/chrome'));
+});
+
+gulp.task('safari:cp', ['resource:inline', 'css'], function () {
+  var infoPath = './extensions/github-hovercard.safariextension/Info.plist';
+  var info = plist.parse(fs.readFileSync(infoPath, { encoding: 'utf8' }));
+  info.CFBundleShortVersionString = version;
+  info.CFBundleVersion = version;
+  fs.writeFileSync(infoPath, plist.build(info));
+
+  var targets = [
+    './src/*', '!./src/hovercard.js', './tmp/hovercard.js', '!./src/*.styl',
+    '!./src/tooltipster.css', './tmp/tooltipster.css', './icon.png'
+  ];
+  return gulp.src(targets)
+    .pipe(gulp.dest('./extensions/github-hovercard.safariextension'));
 });
 
 gulp.task('edge:hack', ['resource:inline'], function () {
@@ -281,7 +297,7 @@ gulp.task('cleanup', function (cb) {
   return del(['./tmp']);
 });
 
-gulp.task('extensions', ['chrome:zip', 'edge:zip', 'firefox:xpi', 'opera:nex']);
+gulp.task('extensions', ['chrome:zip', 'edge:zip', 'firefox:xpi', 'opera:nex', 'safari:cp']);
 gulp.task('build', ['extensions', 'demo', 'userscript']);
 gulp.task('default', function (cb) {
   run('build', 'cleanup', cb);

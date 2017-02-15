@@ -1,0 +1,293 @@
+/* Tomorrow theme from GitHub-Dark (https://github.com/StylishThemes/GitHub-Dark) */
+.ghh .pl-c,
+.ghh .pl-c span {
+  color: #969896;
+}
+.ghh .pl-c1 {
+  color: #de935f;
+}
+.ghh .pl-cce {
+  color: #de935f;
+}
+.ghh .pl-cn {
+  color: #de935f;
+}
+.ghh .pl-coc {
+  color: #de935f;
+}
+.ghh .pl-cos {
+  color: #b5bd68;
+}
+.ghh .pl-e {
+  color: #f0c674;
+}
+.ghh .pl-ef {
+  color: #f0c674;
+}
+.ghh .pl-en {
+  color: #f0c674;
+}
+.ghh .pl-enc {
+  color: #de935f;
+}
+.ghh .pl-enf {
+  color: #f0c674;
+}
+.ghh .pl-enm {
+  color: #f0c674;
+}
+.ghh .pl-ens {
+  color: #de935f;
+}
+.ghh .pl-ent {
+  color: #b294bb;
+}
+.ghh .pl-entc {
+  color: #f0c674;
+}
+.ghh .pl-enti {
+  color: #f0c674;
+  font-weight: 700;
+}
+.ghh .pl-entm {
+  color: #c66;
+}
+.ghh .pl-eoa {
+  color: #b294bb;
+}
+.ghh .pl-eoac {
+  color: #c66;
+}
+.ghh .pl-eoac .pl-pde {
+  color: #c66;
+}
+.ghh .pl-eoai {
+  color: #b294bb;
+}
+.ghh .pl-eoai .pl-pde {
+  color: #b294bb;
+}
+.ghh .pl-eoi {
+  color: #f0c674;
+}
+.ghh .pl-k {
+  color: #b294bb;
+}
+.ghh .pl-ko {
+  color: #b294bb;
+}
+.ghh .pl-kolp {
+  color: #b294bb;
+}
+.ghh .pl-kos {
+  color: #de935f;
+}
+.ghh .pl-kou {
+  color: #de935f;
+}
+.ghh .pl-mai .pl-sf {
+  color: #c66;
+}
+.ghh .pl-mb {
+  color: #b5bd68;
+  font-weight: 700;
+}
+.ghh .pl-mc {
+  color: #b294bb;
+}
+.ghh .pl-mh {
+  color: #8db4f5;
+}
+.ghh .pl-mh .pl-pdh {
+  color: #de935f;
+}
+.ghh .pl-mi {
+  color: #b294bb;
+}
+.ghh .pl-ml {
+  color: #b5bd68;
+}
+.ghh .pl-mm {
+  color: #c66;
+}
+.ghh .pl-mp {
+  color: #81a2be;
+}
+.ghh .pl-mp1 .pl-sf {
+  color: #81a2be;
+}
+.ghh .pl-mq {
+  color: #de935f;
+}
+.ghh .pl-mr {
+  color: #b294bb;
+}
+.ghh .pl-ms {
+  color: #b294bb;
+}
+.ghh .pl-pdb {
+  color: #b5bd68;
+  font-weight: 700;
+}
+.ghh .pl-pdc {
+  color: #969896;
+}
+.ghh .pl-pdc1 {
+  color: #de935f;
+}
+.ghh .pl-pde {
+  color: #de935f;
+}
+.ghh .pl-pdi {
+  color: #b294bb;
+}
+.ghh .pl-pds {
+  color: #b5bd68;
+}
+.ghh .pl-pdv {
+  color: #c66;
+}
+.ghh .pl-pse {
+  color: #de935f;
+}
+.ghh .pl-pse .pl-s2 {
+  color: #de935f;
+}
+.ghh .pl-s {
+  color: #b294bb;
+}
+.ghh .pl-s1 {
+  color: #b5bd68;
+}
+.ghh .pl-s2 {
+  color: #c5c8c6;
+}
+.ghh .pl-mp .pl-s3 {
+  color: #b294bb;
+}
+.ghh .pl-s3 {
+  color: #81a2be;
+}
+.ghh .pl-sc {
+  color: #c5c8c6;
+}
+.ghh .pl-scp {
+  color: #de935f;
+}
+.ghh .pl-sf {
+  color: #dad085;
+}
+.ghh .pl-smc {
+  color: #f0c674;
+}
+.ghh .pl-smi {
+  color: #c5c8c6;
+}
+.ghh .pl-smp {
+  color: #c5c8c6;
+}
+.ghh .pl-sok {
+  color: #b294bb;
+}
+.ghh .pl-sol {
+  color: #b5bd68;
+}
+.ghh .pl-som {
+  color: #c66;
+}
+.ghh .pl-sr {
+  color: #c66;
+}
+.ghh .pl-sra {
+  color: #b294bb;
+}
+.ghh .pl-src {
+  color: #b294bb;
+}
+.ghh .pl-sre {
+  color: #b294bb;
+}
+.ghh .pl-st {
+  color: #b294bb;
+}
+.ghh .pl-stj {
+  color: #c5c8c6;
+}
+.ghh .pl-stp {
+  color: #de935f;
+}
+.ghh .pl-sv {
+  color: #de935f;
+}
+.ghh .pl-v {
+  color: #de935f;
+}
+.ghh .pl-vi {
+  color: #de935f;
+}
+.ghh .pl-vo {
+  color: #c66;
+}
+.ghh .pl-vpf {
+  color: #de935f;
+}
+.ghh .pl-mi1 {
+  color: #8f9d6a;
+  background: rgba(0,64,0,0.5);
+}
+.ghh .pl-mdht {
+  color: #8f9d6a;
+  background: rgba(0,64,0,0.5);
+}
+.ghh .pl-md {
+  color: #c66;
+  background: rgba(64,0,0,0.5);
+}
+.ghh .pl-mdhf {
+  color: #c66;
+  background: rgba(64,0,0,0.5);
+}
+.ghh .pl-mdr {
+  color: #de935f;
+  font-weight: 400;
+}
+.ghh .pl-mdh {
+  color: #c66;
+  font-weight: 400;
+}
+.ghh .pl-mdi {
+  color: #c66;
+  font-weight: 400;
+}
+.ghh .pl-ib {
+  background-color: #c66;
+}
+.ghh .pl-id {
+  background-color: #c66;
+  color: #fff;
+}
+.ghh .pl-ii {
+  background-color: #c66;
+  color: #fff;
+}
+.ghh .pl-iu {
+  background-color: #c66;
+}
+.ghh .pl-mo {
+  color: #c5c8c6;
+}
+.ghh .pl-mri {
+  color: #de935f;
+}
+.ghh .pl-ms1 {
+  background-color: #c5c8c6;
+}
+.ghh .pl-va {
+  color: #de935f;
+}
+.ghh .pl-vpu {
+  color: #de935f;
+}
+.ghh .pl-entl {
+  color: #c5c8c6;
+}

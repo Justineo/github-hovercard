@@ -1,0 +1,562 @@
+/**********
+ * Utils
+ **********/
+/**********
+ * Global
+ **********/
+.ghh {
+  max-width: 320px;
+  min-width: 160px;
+  font-style: normal;
+  line-height: 2;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+}
+.ghh.extended {
+  max-width: 640px;
+}
+.ghh p {
+  margin: 0 0 4px;
+  vertical-align: middle;
+  line-height: 1.2;
+  clear: both;
+}
+.ghh a {
+  color: #bdf;
+}
+.ghh small {
+  opacity: 0.8;
+}
+.ghh [title] {
+  cursor: help;
+}
+.ghh .octicon {
+  fill: currentColor;
+}
+.windows .ghh ::-webkit-scrollbar {
+  width: 20px;
+  height: 20px;
+  padding: 3px;
+  background-color: transparent;
+}
+.windows .ghh ::-webkit-scrollbar-button {
+  display: none;
+}
+.windows .ghh ::-webkit-scrollbar-thumb {
+  background-color: rgba(255,255,255,0.15);
+  border: 6px solid transparent;
+  background-clip: padding-box;
+  border-radius: 12px;
+}
+.windows .ghh ::-webkit-scrollbar-corner {
+  background-color: transparent;
+}
+/**********
+ * Mixins
+ **********/
+/**********
+ * Placeholders
+ **********/
+.ghh-repo {
+  position: relative;
+  float: left;
+  margin-top: 2px;
+  margin-bottom: 6px;
+  padding-left: 24px;
+}
+.ghh-repo .octicon {
+  position: absolute;
+  top: 0;
+  left: 0;
+  line-height: 1;
+}
+.ghh-readme > :first-child,
+.ghh-issue-body > :first-child {
+  margin-top: 0;
+}
+.ghh-readme > :last-child,
+.ghh-issue-body > :last-child {
+  margin-bottom: 0;
+}
+.ghh-readme,
+.ghh-issue-body {
+  clear: left;
+  overflow: auto;
+  max-height: 280px;
+  margin: 8px 0 3px;
+  padding: 8px 10px;
+  border-radius: 2px;
+  background-color: rgba(255,255,255,0.15);
+  font-size: 12px;
+  line-height: 1.6;
+  word-wrap: break-word;
+/* some special vendor optimizations */
+}
+.ghh-readme h1,
+.ghh-issue-body h1,
+.ghh-readme h2,
+.ghh-issue-body h2,
+.ghh-readme h3,
+.ghh-issue-body h3,
+.ghh-readme h4,
+.ghh-issue-body h4,
+.ghh-readme h5,
+.ghh-issue-body h5,
+.ghh-readme h6,
+.ghh-issue-body h6 {
+  margin-top: 1em;
+  margin-bottom: 12px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+.ghh-readme h1 tt,
+.ghh-issue-body h1 tt,
+.ghh-readme h2 tt,
+.ghh-issue-body h2 tt,
+.ghh-readme h3 tt,
+.ghh-issue-body h3 tt,
+.ghh-readme h4 tt,
+.ghh-issue-body h4 tt,
+.ghh-readme h5 tt,
+.ghh-issue-body h5 tt,
+.ghh-readme h6 tt,
+.ghh-issue-body h6 tt,
+.ghh-readme h1 code,
+.ghh-issue-body h1 code,
+.ghh-readme h2 code,
+.ghh-issue-body h2 code,
+.ghh-readme h3 code,
+.ghh-issue-body h3 code,
+.ghh-readme h4 code,
+.ghh-issue-body h4 code,
+.ghh-readme h5 code,
+.ghh-issue-body h5 code,
+.ghh-readme h6 code,
+.ghh-issue-body h6 code {
+  font-size: inherit;
+  font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
+}
+.ghh-readme h1,
+.ghh-issue-body h1 {
+  font-size: 1.25em;
+}
+.ghh-readme h2,
+.ghh-issue-body h2 {
+  font-size: 1.2em;
+}
+.ghh-readme h3,
+.ghh-issue-body h3 {
+  font-size: 1.15em;
+}
+.ghh-readme h4,
+.ghh-issue-body h4 {
+  font-size: 1.1em;
+}
+.ghh-readme h5,
+.ghh-issue-body h5 {
+  font-size: 1.05em;
+}
+.ghh-readme h6,
+.ghh-issue-body h6 {
+  font-size: 1em;
+}
+.ghh-readme p,
+.ghh-issue-body p,
+.ghh-readme blockquote,
+.ghh-issue-body blockquote,
+.ghh-readme ul,
+.ghh-issue-body ul,
+.ghh-readme ol,
+.ghh-issue-body ol,
+.ghh-readme dl,
+.ghh-issue-body dl,
+.ghh-readme table,
+.ghh-issue-body table,
+.ghh-readme pre,
+.ghh-issue-body pre {
+  margin-top: 0;
+  margin-bottom: 1em;
+}
+.ghh-readme hr,
+.ghh-issue-body hr {
+  height: 0;
+  padding: 0;
+  margin: 16px 0;
+  border-bottom: 2px dotted rgba(255,255,255,0.2);
+}
+.ghh-readme a:not([href]),
+.ghh-issue-body a:not([href]) {
+  color: inherit;
+}
+.ghh-readme p,
+.ghh-issue-body p {
+  overflow: visible;
+  white-space: normal;
+  line-height: 1.6;
+}
+.ghh-readme ul,
+.ghh-issue-body ul,
+.ghh-readme ol,
+.ghh-issue-body ol {
+  padding-left: 2em;
+}
+.ghh-readme ul ol,
+.ghh-issue-body ul ol,
+.ghh-readme ol ol,
+.ghh-issue-body ol ol,
+.ghh-readme ul ul,
+.ghh-issue-body ul ul,
+.ghh-readme ol ul,
+.ghh-issue-body ol ul {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+.ghh-readme dl,
+.ghh-issue-body dl {
+  padding: 0;
+}
+.ghh-readme dt,
+.ghh-issue-body dt {
+  padding: 0;
+  margin-top: 1em;
+  font-size: 1em;
+  font-style: italic;
+  font-weight: 600;
+}
+.ghh-readme dd,
+.ghh-issue-body dd {
+  padding: 0 1em;
+  margin-bottom: 1em;
+}
+.ghh-readme blockquote,
+.ghh-issue-body blockquote {
+  padding: 0 1em;
+  border-left: 3px solid #ccc;
+}
+.ghh-readme table,
+.ghh-issue-body table {
+  width: 100%;
+  overflow: auto;
+  word-break: normal;
+  word-break: keep-all;
+}
+.ghh-readme th,
+.ghh-issue-body th {
+  font-weight: 600;
+}
+.ghh-readme th,
+.ghh-issue-body th,
+.ghh-readme tr:nth-child(even) td,
+.ghh-issue-body tr:nth-child(even) td {
+  background-color: rgba(108,108,108,0.5);
+}
+.ghh-readme th,
+.ghh-issue-body th,
+.ghh-readme td,
+.ghh-issue-body td {
+  border: 1px solid #777;
+  padding: 0.5em 1em;
+}
+.ghh-readme img,
+.ghh-issue-body img {
+  max-width: 100%;
+}
+.ghh-readme code,
+.ghh-issue-body code,
+.ghh-readme tt,
+.ghh-issue-body tt {
+  padding: 0.2em 0.4em;
+  margin: 0;
+  background-color: rgba(255,255,255,0.1);
+  border-radius: 2px;
+}
+.ghh-readme code br,
+.ghh-issue-body code br,
+.ghh-readme tt br,
+.ghh-issue-body tt br {
+  display: none;
+}
+.ghh-readme pre,
+.ghh-issue-body pre {
+  padding: 0.6em;
+  overflow: auto;
+  line-height: 1.45;
+  background-color: rgba(108,108,108,0.5);
+  border-radius: 2px;
+  word-wrap: normal;
+}
+.ghh-readme pre code,
+.ghh-issue-body pre code,
+.ghh-readme pre tt,
+.ghh-issue-body pre tt {
+  background-color: transparent;
+}
+.ghh-readme img,
+.ghh-issue-body img {
+  max-width: 100%;
+  box-sizing: content-box;
+}
+.ghh-readme img[align="left"],
+.ghh-issue-body img[align="left"] {
+  max-width: 30% !important;
+  padding-right: 20px;
+}
+.ghh-readme img[align="right"],
+.ghh-issue-body img[align="right"] {
+  max-width: 30% !important;
+  padding-left: 20px;
+}
+.ghh-readme a[href^="https://saucelabs.com/"] img,
+.ghh-issue-body a[href^="https://saucelabs.com/"] img {
+  background-color: #fff;
+  border-radius: 2px;
+}
+.ghh-pull-meta p,
+.ghh-commit-meta p {
+  line-height: 18px;
+}
+.ghh-pull-meta .ghh-branch,
+.ghh-commit-meta .ghh-branch {
+  display: flex;
+}
+.ghh-pull-meta .commit-ref,
+.ghh-commit-meta .commit-ref {
+  flex: 0 1 auto;
+  float: left;
+  border-radius: 2px;
+  background-color: rgba(255,255,255,0.15);
+  color: inherit;
+  font-size: inherit;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.ghh-pull-meta .commit-ref + span,
+.ghh-commit-meta .commit-ref + span {
+  flex: 0 0 auto;
+  float: left;
+  padding: 0 5px;
+}
+.ghh-pull-meta .commit-ref + span > .octicon,
+.ghh-commit-meta .commit-ref + span > .octicon {
+  height: 22px;
+  vertical-align: middle;
+}
+.ghh-pull-meta .commit-ref + .octicon,
+.ghh-commit-meta .commit-ref + .octicon {
+  margin: 0;
+}
+.ghh-pull-meta .commit-ref .user,
+.ghh-commit-meta .commit-ref .user {
+  color: inherit;
+  opacity: 0.5;
+}
+.ghh-pull-meta .octicon,
+.ghh-commit-meta .octicon {
+  opacity: 0.8;
+  margin-left: 10px;
+}
+.ghh-pull-meta .octicon:first-child,
+.ghh-commit-meta .octicon:first-child {
+  margin-left: 0;
+}
+.ghh-pull-meta .diffstat,
+.ghh-commit-meta .diffstat {
+  margin-left: 10px;
+}
+.ghh-pull-meta .text-diff-added,
+.ghh-commit-meta .text-diff-added {
+  color: #84d063 !important;
+}
+.ghh-pull-meta .text-diff-deleted,
+.ghh-commit-meta .text-diff-deleted {
+  color: #ff3c00 !important;
+}
+/**********
+ * More
+ **********/
+.ghh-more {
+  clear: left;
+}
+.ghh-more p {
+  position: relative;
+  padding-left: 18px;
+  line-height: 18px;
+}
+.ghh-more strong {
+  font-weight: 600;
+}
+.ghh-more .ghh-repo-desc {
+  white-space: normal;
+  height: auto;
+}
+.ghh-more .emoji {
+  vertical-align: middle;
+}
+.ghh-more .octicon {
+  position: absolute;
+  top: 2px;
+  left: 0;
+  margin: 0;
+  opacity: 0.8;
+}
+/**********
+ * User
+ **********/
+.ghh-person {
+  float: left;
+}
+.ghh-person strong {
+  font-size: 120%;
+}
+.ghh-avatar {
+  float: left;
+  width: 32px;
+  height: 32px;
+  margin: 0 8px 8px 0;
+  border: 2px solid rgba(255,255,255,0.1);
+  border-radius: 2px;
+  background-color: #fff;
+}
+/**********
+ * Repo
+ **********/
+.ghh-repo strong {
+  font-size: 120%;
+  font-weight: 600;
+}
+.ghh-repo p {
+  max-width: 296px;
+}
+.ghh-repo p:first-of-type {
+  font-size: 13px;
+}
+.ghh-stats {
+  display: flex;
+  min-width: 180px;
+  margin-bottom: 10px;
+  padding: 3px;
+  border-radius: 2px;
+  background-color: rgba(255,255,255,0.15);
+  line-height: 1;
+}
+.ghh-stats strong,
+.ghh-stats span {
+  display: block;
+  padding: 2px 4px;
+  line-height: 1;
+  text-align: center;
+}
+.ghh-stats span {
+  font-style: 70%;
+  color: #fff;
+  opacity: 0.8;
+}
+.ghh-stats a {
+  display: block;
+  flex: 1 1 auto;
+}
+.ghh-stats a:hover {
+  text-decoration: none;
+}
+/**********
+ * Issue
+ **********/
+.ghh-issue {
+  margin-bottom: 8px;
+}
+.ghh-issue strong {
+  font-size: 120%;
+}
+.ghh-issue .issue-number {
+  opacity: 0.8;
+}
+.ghh-issue-meta p {
+  line-height: 16px;
+}
+.ghh-issue-meta .state {
+  margin-right: 5px;
+  padding: 0 4px;
+  text-transform: capitalize;
+}
+.ghh-issue-meta .state .octicon {
+  margin-right: 4px;
+}
+.ghh-issue-meta .ghh-avatar {
+  margin: 0 5px 0 0;
+  width: 16px;
+  height: 16px;
+  border-width: 1px;
+  vertical-align: middle;
+  line-height: 1.2;
+}
+/**********
+ * Commit
+ **********/
+.ghh-commit {
+  margin-bottom: 8px;
+}
+.ghh-commit strong {
+  font-size: 120%;
+}
+.ghh .ghh-commit-author {
+  margin-bottom: 6px;
+}
+.ghh .ghh-tags {
+  white-space: normal;
+}
+.ghh-commit-body {
+  overflow: auto;
+  max-height: 280px;
+  margin: 8px 0 10px;
+  padding: 8px 10px;
+  border-radius: 2px;
+  background-color: rgba(255,255,255,0.15);
+  font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
+  font-size: 12px;
+  line-height: 1.2;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+.ghh-tags {
+  white-space: normal;
+}
+/**********
+ * Error
+ **********/
+.ghh-error {
+  max-width: 320px;
+}
+.ghh-error p {
+  line-height: 1.6;
+  white-space: normal;
+}
+.ghh-error .octicon {
+  display: inline-block;
+  position: static;
+  margin-right: 5px;
+}
+/**********
+ * Overlay
+ **********/
+.ghh-overlay {
+  position: fixed;
+  z-index: 10000000;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background-color: rgba(0,0,0,0.6);
+}
+.ghh-overlay form {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border: 3px solid rgba(0,0,0,0.75);
+  padding: 0 20px;
+  border-radius: 5px;
+  background-color: #fff;
+}
+.ghh-overlay form p {
+  margin: 10px 0;
+}
