@@ -22,10 +22,6 @@ pageMod.PageMod({
     emojiMap: JSON.parse(data.load('emoji.json')),
     prefs: prefs
   },
-  // onAttach: function (worker) {
-  //   console.log('OOOOOOOOOOOOps');
-  //   worker.port.emit('prefs', { delay: prefs.delay, readme: prefs.readme });
-  // },
   contentStyleFile: [
     data.url('tooltipster.css'),
     data.url('hovercard.css'),

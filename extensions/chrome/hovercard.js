@@ -875,7 +875,7 @@ $(() => {
                         break;
                     }
                     case EXTRACTOR.TEXT_NODE_URL: {
-                        let nodes = elem[0].childNodes;
+                        let nodes = [...elem[0].childNodes];
                         let textNode = nodes.find(node => trim(node.nodeValue));
                         target = $(` <span>${textNode.nodeValue}</span>`);
                         textNode.parentNode.replaceChild(target[0], textNode);
@@ -982,7 +982,7 @@ $(() => {
                         break;
                     }
                     case EXTRACTOR.TEXT_NODE_USER: {
-                        let nodes = elem[0].childNodes;
+                        let nodes = [...elem[0].childNodes];
                         let textNode = nodes.find(node => trim(node.nodeValue));
 
                         if (textNode) {
