@@ -1,5 +1,8 @@
 Changelog
 ---
+## 0.9.5
+* Updated Octicons.
+
 ## 0.9.4
 * Minor style tweaks.
 * Added Safari version.

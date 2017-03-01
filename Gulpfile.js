@@ -17,6 +17,7 @@ var marked = require('marked');
 var cheerio = require('cheerio');
 var plist = require('plist');
 var pack = require('./package.json');
+var octicons = require('octicons');
 var version = pack.version;
 
 function getCommentHandler() {
@@ -38,6 +39,29 @@ function getCommentHandler() {
   }
 }
 
+gulp.task('icons', function () {
+  var used = [
+    'alert', 'arrow-right', 'code', 'diff', 'git-commit', 'git-pull-request',
+    'info', 'issue-closed', 'issue-opened', 'link', 'location', 'organization',
+    'person', 'repo-forked', 'repo', 'git-branch', 'tag'
+  ];
+
+  var data = used.map(function (name) {
+    var icon = octicons[name];
+    var data = {};
+    data[name] = {
+      width: parseFloat(icon.width),
+      height: parseFloat(icon.height),
+      d: icon.path.match(/\bd="([^"]+)"/)[1]
+    };
+    return data;
+  }).reduce(function (acc, val) {
+    return Object.assign(acc, val)
+  }, {});
+
+  fs.writeFileSync('./assets/octicons.json', JSON.stringify(data, null, '  '));
+});
+
 gulp.task('css:prepare', function () {
   return gulp.src('./src/tooltipster.css')
     .pipe(replace(
@@ -54,7 +78,7 @@ gulp.task('css:compile', function () {
 
 gulp.task('css', ['css:prepare', 'css:compile']);
 
-gulp.task('resource:inline', function () {
+gulp.task('resource:inline', ['icons'], function () {
   return gulp.src('./src/hovercard.js')
     .pipe(replace('\'__OCTICONS__\'', JSON.stringify(require('./assets/octicons.json'))))
     .pipe(replace('\'__EMOJI_DATA__\'', JSON.stringify(require('./assets/emoji.json'))))
@@ -114,7 +138,7 @@ gulp.task('userscript', ['userscript:inject-styles', 'userscript:prepare'], func
     .pipe(gulp.dest('./userscript/dist'));
 });
 
-gulp.task('chrome:cp', ['resource:inline', 'css'], function () {
+gulp.task('chrome:cp', ['resource:inline', 'css', 'icons'], function () {
   var manifestPath = './extensions/chrome/manifest.json';
   var manifest = JSON.parse(fs.readFileSync(manifestPath, { encoding: 'utf8' }));
   manifest.version = version;
@@ -128,7 +152,7 @@ gulp.task('chrome:cp', ['resource:inline', 'css'], function () {
     .pipe(gulp.dest('./extensions/chrome'));
 });
 
-gulp.task('safari:cp', ['resource:inline', 'css'], function () {
+gulp.task('safari:cp', ['resource:inline', 'css', 'icons'], function () {
   var infoPath = './extensions/github-hovercard.safariextension/Info.plist';
   var info = plist.parse(fs.readFileSync(infoPath, { encoding: 'utf8' }));
   info.CFBundleShortVersionString = version;
@@ -149,7 +173,7 @@ gulp.task('edge:hack', ['resource:inline'], function () {
     .pipe(gulp.dest('./extensions/edge'));
 });
 
-gulp.task('edge:cp', ['edge:hack', 'css'], function () {
+gulp.task('edge:cp', ['edge:hack', 'css', 'icons'], function () {
   var manifestPath = './extensions/edge/manifest.json';
   var manifest = JSON.parse(fs.readFileSync(manifestPath, { encoding: 'utf8' }));
   manifest.version = version;
@@ -163,7 +187,7 @@ gulp.task('edge:cp', ['edge:hack', 'css'], function () {
     .pipe(gulp.dest('./extensions/edge'));
 });
 
-gulp.task('firefox:cp', ['firefox:resource', 'css'], function () {
+gulp.task('firefox:cp', ['firefox:resource', 'css', 'icons'], function () {
   var fxPackPath = './extensions/firefox/package.json';
   var fxPack = JSON.parse(fs.readFileSync(fxPackPath, { encoding: 'utf8' }));
   fxPack.version = version;
