@@ -21,7 +21,7 @@
   clear: both;
 }
 .ghh a {
-  color: #bdf;
+  color: #b4d6fe;
 }
 .ghh small {
   opacity: 0.8;
@@ -56,13 +56,14 @@
 /**********
  * Placeholders
  **********/
+.ghh-person,
 .ghh-repo {
   position: relative;
-  float: left;
   margin-top: 2px;
-  margin-bottom: 6px;
+  margin-bottom: 12px;
   padding-left: 24px;
 }
+.ghh-person .octicon,
 .ghh-repo .octicon {
   position: absolute;
   top: 0;
@@ -266,7 +267,7 @@
 .ghh-issue-body tt {
   padding: 0.2em 0.4em;
   margin: 0;
-  background-color: rgba(255,255,255,0.1);
+  background-color: rgba(255,255,255,0.15);
   border-radius: 2px;
 }
 .ghh-readme code br,
@@ -372,6 +373,68 @@
   color: #ff3c00 !important;
 }
 /**********
+ * Common
+ **********/
+.ghh button {
+  padding: 0 4px;
+  border-radius: 2px;
+  border: none;
+  outline: none;
+  color: #fff;
+  line-height: 1.8;
+  font-size: 90%;
+  font-weight: 600;
+}
+.ghh button:disabled {
+  opacity: 0.75;
+  cursor: default;
+}
+.ghh button.ghh-primary {
+  background-color: rgba(3,102,214,0.8);
+}
+.ghh button.ghh-primary:hover {
+  background-color: #0366d6;
+}
+.ghh button.ghh-aux {
+  background-color: rgba(255,255,255,0.2);
+  color: rgba(255,255,255,0.8);
+}
+.ghh button.ghh-aux:hover {
+  background-color: rgba(255,255,255,0.3);
+  color: #fff;
+}
+.ghh button .octicon {
+  position: static;
+}
+.ghh-title-row {
+  display: flex;
+}
+.ghh-title-row .ghh-title {
+  flex: 0 1 auto;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.ghh-title-row .ghh-title.no-meta {
+  flex-grow: 1;
+}
+.ghh-title-row .ghh-meta,
+.ghh-title-row button {
+  white-space: nowrap;
+  margin-left: 10px;
+}
+.ghh-title-row .ghh-meta {
+  flex: 0 0 auto;
+  margin-left: 5px;
+  line-height: 15px;
+}
+.ghh-title-row .ghh-meta:last-of-type {
+  flex-grow: 1;
+}
+.ghh-title-row button {
+  flex: 0 0 auto;
+}
+/**********
  * More
  **********/
 .ghh-more {
@@ -403,13 +466,15 @@
  * User
  **********/
 .ghh-person {
-  float: left;
+  padding-left: 40px;
 }
 .ghh-person strong {
   font-size: 120%;
 }
 .ghh-avatar {
-  float: left;
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 32px;
   height: 32px;
   margin: 0 8px 8px 0;
@@ -421,14 +486,15 @@
  * Repo
  **********/
 .ghh-repo strong {
-  font-size: 120%;
+  font-size: 110%;
   font-weight: 600;
 }
 .ghh-repo p {
   max-width: 296px;
 }
-.ghh-repo p:first-of-type {
+.ghh-repo .ghh-title {
   font-size: 13px;
+  flex-grow: 1;
 }
 .ghh-stats {
   display: flex;

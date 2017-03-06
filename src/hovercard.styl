@@ -4,498 +4,562 @@
 $sans-serif = -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"
 $monospace = Consolas, "Liberation Mono", Menlo, Courier, monospace
 $content-background = rgba(255, 255, 255, .15)
+$primary-color = #0366d6
 
 /**********
  * Global
  **********/
 .ghh
-    max-width 320px
-    min-width 160px
-    font-style normal
-    line-height 2
-    font-family $sans-serif
+  max-width 320px
+  min-width 160px
+  font-style normal
+  line-height 2
+  font-family $sans-serif
 
-    &.extended
-        max-width 640px
+  &.extended
+    max-width 640px
 
-    p
-        margin 0 0 4px
-        vertical-align middle
-        line-height 1.2
-        ellipsis()
-        clear both
+  p
+    margin 0 0 4px
+    vertical-align middle
+    line-height 1.2
+    ellipsis()
+    clear both
 
-    a
-        color #bdf
+  a
+    color lightness($primary-color, 85%)
 
-    small
-        opacity .8
+  small
+    opacity .8
 
-    [title]
-        cursor help
+  [title]
+    cursor help
 
-    .octicon
-        fill currentColor
+  .octicon
+    fill currentColor
 
-    .windows &
-        ::-webkit-scrollbar
-            width 20px
-            height 20px
-            padding 3px
-            background-color transparent
+  .windows &
+    ::-webkit-scrollbar
+      width 20px
+      height 20px
+      padding 3px
+      background-color transparent
 
-        ::-webkit-scrollbar-button
-            display none
+    ::-webkit-scrollbar-button
+      display none
 
-        ::-webkit-scrollbar-thumb
-            background-color $content-background
-            border: 6px solid transparent
-            background-clip: padding-box
-            border-radius: 12px
+    ::-webkit-scrollbar-thumb
+      background-color $content-background
+      border: 6px solid transparent
+      background-clip: padding-box
+      border-radius: 12px
 
-        ::-webkit-scrollbar-corner
-            background-color transparent
+    ::-webkit-scrollbar-corner
+      background-color transparent
 
 /**********
  * Mixins
  **********/
 ellipsis()
-    white-space nowrap
-    overflow hidden
-    text-overflow ellipsis
+  white-space nowrap
+  overflow hidden
+  text-overflow ellipsis
 
 square(s)
-    width s
-    height s
+  width s
+  height s
 
 /**********
  * Placeholders
  **********/
 $with-large-icon
-    position relative
-    float left
-    margin-top 2px
-    margin-bottom 6px
-    padding-left 24px
+  position relative
+  margin-top 2px
+  margin-bottom 12px
+  padding-left 24px
 
-    .octicon
-        position absolute
-        top 0
-        left 0
-        line-height 1
+  .octicon
+    position absolute
+    top 0
+    left 0
+    line-height 1
 
 $fix-margin
-    & > :first-child
-        margin-top 0
+  & > :first-child
+    margin-top 0
 
-    & > :last-child
-        margin-bottom 0
+  & > :last-child
+    margin-bottom 0
 
 $markdown-body
-    @extends $fix-margin
+  @extends $fix-margin
 
-    clear left
-    overflow auto
-    max-height 280px
-    margin 8px 0 3px
-    padding 8px 10px
-    border-radius 2px
-    background-color $content-background
-    font-size 12px
+  clear left
+  overflow auto
+  max-height 280px
+  margin 8px 0 3px
+  padding 8px 10px
+  border-radius 2px
+  background-color $content-background
+  font-size 12px
+  line-height 1.6
+  word-wrap break-word
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6
+    margin-top 1em
+    margin-bottom 12px
+    font-weight 600
+    line-height 1.4
+
+    tt,
+    code
+      font-size inherit
+      font-family $monospace
+
+  h1
+    font-size 1.25em
+  h2
+    font-size 1.2em
+  h3
+    font-size 1.15em
+  h4
+    font-size 1.1em
+  h5
+    font-size 1.05em
+  h6
+    font-size 1em
+
+  p,
+  blockquote,
+  ul,
+  ol,
+  dl,
+  table,
+  pre
+    margin-top 0
+    margin-bottom 1em
+
+  hr
+    height 0
+    padding 0
+    margin 16px 0
+    border-bottom 2px dotted rgba(255, 255, 255, .2)
+
+  a:not([href])
+    color inherit
+
+  p
+    overflow visible
+    white-space normal
     line-height 1.6
-    word-wrap break-word
 
-    h1,
-    h2,
-    h3,
-    h4,
-    h5,
-    h6
-        margin-top 1em
-        margin-bottom 12px
-        font-weight 600
-        line-height 1.4
+  ul,
+  ol
+    padding-left 2em
 
-        tt,
-        code
-            font-size inherit
-            font-family $monospace
-
-    h1
-        font-size 1.25em
-    h2
-        font-size 1.2em
-    h3
-        font-size 1.15em
-    h4
-        font-size 1.1em
-    h5
-        font-size 1.05em
-    h6
-        font-size 1em
-
-    p,
-    blockquote,
-    ul,
     ol,
-    dl,
-    table,
-    pre
-        margin-top 0
-        margin-bottom 1em
+    ul
+      margin-top 0
+      margin-bottom 0
 
-    hr
-        height 0
-        padding 0
-        margin 16px 0
-        border-bottom 2px dotted rgba(255, 255, 255, .2)
+  dl
+    padding 0
 
-    a:not([href])
-        color inherit
+  dt
+    padding 0
+    margin-top 1em
+    font-size 1em
+    font-style italic
+    font-weight 600
 
-    p
-        overflow visible
-        white-space normal
-        line-height 1.6
+  dd
+    padding 0 1em
+    margin-bottom 1em
 
-    ul,
-    ol
-        padding-left 2em
+  blockquote
+    padding 0 1em
+    border-left 3px solid #ccc
 
-        ol,
-        ul
-            margin-top 0
-            margin-bottom 0
+  table
+    width 100%
+    overflow auto
+    word-break normal
+    word-break keep-all
 
-    dl
-        padding 0
+  th
+    font-weight 600
 
-    dt
-        padding 0
-        margin-top 1em
-        font-size 1em
-        font-style italic
-        font-weight 600
+  th,
+  tr:nth-child(even) td
+    background-color rgba(108, 108, 108, .5)
 
-    dd
-        padding 0 1em
-        margin-bottom 1em
+  th,
+  td
+    border 1px solid #777
+    padding .5em 1em
 
-    blockquote
-        padding 0 1em
-        border-left 3px solid #ccc
+  img
+    max-width 100%
 
-    table
-        width 100%
-        overflow auto
-        word-break normal
-        word-break keep-all
+  code,
+  tt
+    padding .2em .4em
+    margin 0
+    background-color rgba(255, 255, 255, .15)
+    border-radius 2px
 
-    th
-        font-weight 600
+    br
+      display none
 
-    th,
-    tr:nth-child(even) td
-        background-color rgba(108, 108, 108, .5)
-
-    th,
-    td
-        border 1px solid #777
-        padding .5em 1em
-
-    img
-        max-width 100%
+  pre
+    padding .6em
+    overflow auto
+    line-height 1.45
+    background-color rgba(108, 108, 108, .5)
+    border-radius 2px
+    word-wrap normal
 
     code,
     tt
-        padding .2em .4em
-        margin 0
-        background-color rgba(255, 255, 255, .1)
-        border-radius 2px
+      background-color transparent
 
-        br
-            display none
+  img
+    max-width 100%
+    box-sizing content-box
 
-    pre
-        padding .6em
-        overflow auto
-        line-height 1.45
-        background-color rgba(108, 108, 108, .5)
-        border-radius 2px
-        word-wrap normal
+    &[align="left"]
+      max-width 30% !important
+      padding-right 20px
 
-        code,
-        tt
-            background-color transparent
+    &[align="right"]
+      max-width 30% !important
+      padding-left 20px
 
-    img
-        max-width 100%
-        box-sizing content-box
-
-        &[align="left"]
-            max-width 30% !important
-            padding-right 20px
-
-        &[align="right"]
-            max-width 30% !important
-            padding-left 20px
-
-    /* some special vendor optimizations */
-    a[href^="https://saucelabs.com/"] img
-        background-color #fff
-        border-radius 2px
+  /* some special vendor optimizations */
+  a[href^="https://saucelabs.com/"] img
+    background-color #fff
+    border-radius 2px
 
 $contribution
-    p
-        line-height 18px
+  p
+    line-height 18px
 
-    .ghh-branch
-        display flex
+  .ghh-branch
+    display flex
 
-    .commit-ref
-        flex 0 1 auto
-        float left
-        border-radius 2px
-        background-color $content-background
-        color inherit
-        font-size inherit
-        ellipsis()
+  .commit-ref
+    flex 0 1 auto
+    float left
+    border-radius 2px
+    background-color $content-background
+    color inherit
+    font-size inherit
+    ellipsis()
 
-        & + span
-            flex 0 0 auto
-            float left
-            padding 0 5px
+    & + span
+      flex 0 0 auto
+      float left
+      padding 0 5px
 
-            & > .octicon
-                height 22px
-                vertical-align middle
+      & > .octicon
+        height 22px
+        vertical-align middle
 
-        & + .octicon
-            margin 0
+    & + .octicon
+      margin 0
 
-        .user
-            color inherit
-            opacity .5
+    .user
+      color inherit
+      opacity .5
+
+  .octicon
+    opacity .8
+    margin-left 10px
+
+    &:first-child
+      margin-left 0
+
+  .diffstat
+    margin-left 10px
+
+  .text-diff-added
+    color #84d063 !important
+
+  .text-diff-deleted
+    color #ff3c00 !important
+
+/**********
+ * Common
+ **********/
+.ghh
+  button
+    padding 0 4px
+    border-radius 2px
+    border none
+    outline none
+    color #fff
+    line-height 1.8
+    font-size 90%
+    font-weight 600
+
+    &:disabled
+      opacity .75
+      cursor default
+
+    &.ghh-primary
+      background-color alpha($primary-color, .8)
+
+      &:hover
+        background-color $primary-color
+
+    &.ghh-aux
+      background-color rgba(255, 255, 255, .2)
+      color rgba(255, 255, 255, .8)
+
+      &:hover
+        background-color rgba(255, 255, 255, .3)
+        color #fff
 
     .octicon
-        opacity .8
-        margin-left 10px
+      position static
 
-        &:first-child
-            margin-left 0
+.ghh-title-row
+  display flex
 
-    .diffstat
-        margin-left 10px
+  .ghh-title
+    flex 0 1 auto
+    ellipsis()
 
-    .text-diff-added
-        color #84d063 !important
+    &.no-meta
+      flex-grow 1
 
-    .text-diff-deleted
-        color #ff3c00 !important
+  .ghh-meta,
+  button
+    white-space nowrap
+    margin-left 10px
+
+  .ghh-meta
+    flex 0 0 auto
+    margin-left 5px
+    line-height 15px
+
+    &:last-of-type
+      flex-grow 1
+
+  button
+    flex 0 0 auto
 
 /**********
  * More
  **********/
 .ghh-more
-    clear left
+  clear left
 
-    p
-        position relative
-        padding-left 18px
-        line-height 18px
+  p
+    position relative
+    padding-left 18px
+    line-height 18px
 
-    strong
-        font-weight 600
+  strong
+    font-weight 600
 
-    .ghh-repo-desc
-        white-space normal
-        height auto
+  .ghh-repo-desc
+    white-space normal
+    height auto
 
-    .emoji
-        vertical-align middle
+  .emoji
+    vertical-align middle
 
-    .octicon
-        position absolute
-        top 2px
-        left 0
-        margin 0
-        opacity .8
-
+  .octicon
+    position absolute
+    top 2px
+    left 0
+    margin 0
+    opacity .8
 
 /**********
  * User
  **********/
 .ghh-person
-    float left
+  @extends $with-large-icon
+  padding-left 40px
 
-    strong
-        font-size 120%
+  strong
+    font-size 120%
 
 .ghh-avatar
-    float left
-    square(32px)
-    margin 0 8px 8px 0
-    border 2px solid rgba(255, 255, 255, .1)
-    border-radius 2px
-    background-color #fff
+  position absolute
+  top 0
+  left 0
+  square(32px)
+  margin 0 8px 8px 0
+  border 2px solid rgba(255, 255, 255, .1)
+  border-radius 2px
+  background-color #fff
 
 /**********
  * Repo
  **********/
 .ghh-repo
-    @extends $with-large-icon
+  @extends $with-large-icon
 
-    strong
-        font-size 120%
-        font-weight 600
+  strong
+    font-size 110%
+    font-weight 600
 
-    p
-        max-width 296px
+  p
+    max-width 296px
 
-    p:first-of-type
-        font-size 13px
+  .ghh-title
+    font-size 13px
+    flex-grow 1
 
 .ghh-stats
-    display flex
-    min-width 180px
-    margin-bottom 10px
-    padding 3px
-    border-radius 2px
-    background-color $content-background
+  display flex
+  min-width 180px
+  margin-bottom 10px
+  padding 3px
+  border-radius 2px
+  background-color $content-background
+  line-height 1
+
+  strong,
+  span
+    display block
+    padding 2px 4px
     line-height 1
+    text-align center
 
-    strong,
-    span
-        display block
-        padding 2px 4px
-        line-height 1
-        text-align center
+  span
+    font-style 70%
+    color #fff
+    opacity .8
 
-    span
-        font-style 70%
-        color #fff
-        opacity .8
+  a
+    display block
+    flex 1 1 auto
 
-    a
-        display block
-        flex 1 1 auto
-
-        &:hover
-            text-decoration none
+    &:hover
+      text-decoration none
 
 .ghh-readme
-    @extends $markdown-body
+  @extends $markdown-body
 
 /**********
  * Issue
  **********/
 .ghh-issue
-    margin-bottom 8px
+  margin-bottom 8px
 
-    strong
-        font-size 120%
+  strong
+    font-size 120%
 
-    .issue-number
-        opacity .8
+  .issue-number
+    opacity .8
 
 
 .ghh-issue-meta
-    p
-        line-height 16px
+  p
+    line-height 16px
 
-    .state
-        margin-right 5px
-        padding 0 4px
-        text-transform capitalize
+  .state
+    margin-right 5px
+    padding 0 4px
+    text-transform capitalize
 
-        .octicon
-            margin-right 4px
+    .octicon
+      margin-right 4px
 
-    .ghh-avatar
-        margin 0 5px 0 0
-        square(16px)
-        border-width 1px
-        vertical-align middle
-        line-height 1.2
+  .ghh-avatar
+    margin 0 5px 0 0
+    square(16px)
+    border-width 1px
+    vertical-align middle
+    line-height 1.2
 
 .ghh-pull-meta
-    @extends $contribution
+  @extends $contribution
 
 .ghh-issue-body
-    @extends $markdown-body
+  @extends $markdown-body
 
 /**********
  * Commit
  **********/
 .ghh-commit
-    margin-bottom 8px
+  margin-bottom 8px
 
-    strong
-        font-size 120%
+  strong
+    font-size 120%
 
 
 .ghh
-    .ghh-commit-author
-        margin-bottom 6px
+  .ghh-commit-author
+    margin-bottom 6px
 
-    .ghh-tags
-        white-space normal
+  .ghh-tags
+    white-space normal
 
 .ghh-commit-meta
-    @extends $contribution
+  @extends $contribution
 
 .ghh-commit-body
-    overflow auto
-    max-height 280px
-    margin 8px 0 10px
-    padding 8px 10px
-    border-radius 2px
-    background-color $content-background
-    font-family $monospace
-    font-size 12px
-    line-height 1.2
-    white-space pre-wrap
-    word-wrap break-word
+  overflow auto
+  max-height 280px
+  margin 8px 0 10px
+  padding 8px 10px
+  border-radius 2px
+  background-color $content-background
+  font-family $monospace
+  font-size 12px
+  line-height 1.2
+  white-space pre-wrap
+  word-wrap break-word
 
 .ghh-tags
-    white-space normal
+  white-space normal
 
 /**********
  * Error
  **********/
 .ghh-error
-    max-width 320px
+  max-width 320px
 
-    p
-        line-height 1.6
-        white-space normal
+  p
+    line-height 1.6
+    white-space normal
 
-    .octicon
-        display inline-block
-        position static
-        margin-right 5px
+  .octicon
+    display inline-block
+    position static
+    margin-right 5px
 
 /**********
  * Overlay
  **********/
 .ghh-overlay
-    position fixed
-    z-index 10000000
-    top 0
-    right 0
-    bottom 0
-    left 0
-    background-color rgba(0, 0, 0, .6)
+  position fixed
+  z-index 10000000
+  top 0
+  right 0
+  bottom 0
+  left 0
+  background-color rgba(0, 0, 0, .6)
 
-    form
-        position absolute
-        top 50%
-        left 50%
-        transform translate(-50%, -50%)
-        border 3px solid rgba(0, 0, 0, .75)
-        padding 0 20px
-        border-radius 5px
-        background-color #fff
+  form
+    position absolute
+    top 50%
+    left 50%
+    transform translate(-50%, -50%)
+    border 3px solid rgba(0, 0, 0, .75)
+    padding 0 20px
+    border-radius 5px
+    background-color #fff
 
-        p
-            margin 10px 0
+    p
+      margin 10px 0

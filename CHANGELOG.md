@@ -1,5 +1,8 @@
 Changelog
 ---
+## 1.0.0
+* Now it's possible to follow/unfollow a user or star/unstar a repo through the hovercard when logged in.
+
 ## 0.9.5
 * Updated Octicons.
 
