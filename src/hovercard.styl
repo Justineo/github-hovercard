@@ -328,6 +328,17 @@ $contribution
     .octicon
       position static
 
+  .state
+    margin-right 5px
+    padding 0 4px
+    text-transform capitalize
+
+    .octicon
+      margin-right 4px
+
+  .ghh-state-verified
+    background-color #28a745
+
 .ghh-title-row
   display flex
 
@@ -353,6 +364,7 @@ $contribution
 
   button
     flex 0 0 auto
+    transition all .3s
 
 /**********
  * More
@@ -387,6 +399,8 @@ $contribution
  **********/
 .ghh-person
   @extends $with-large-icon
+  min-height 32px
+  margin-bottom 8px
   padding-left 40px
 
   strong
@@ -466,14 +480,6 @@ $contribution
 .ghh-issue-meta
   p
     line-height 16px
-
-  .state
-    margin-right 5px
-    padding 0 4px
-    text-transform capitalize
-
-    .octicon
-      margin-right 4px
 
   .ghh-avatar
     margin 0 5px 0 0
@@ -556,10 +562,15 @@ $contribution
     top 50%
     left 50%
     transform translate(-50%, -50%)
+    display flex
     border 3px solid rgba(0, 0, 0, .75)
-    padding 0 20px
+    padding 15px 20px
     border-radius 5px
     background-color #fff
 
-    p
-      margin 10px 0
+    button
+      flex 0 0 auto
+      margin-left 10px
+
+    input
+      flex 1 1 auto

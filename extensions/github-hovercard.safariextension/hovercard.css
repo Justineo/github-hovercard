@@ -406,6 +406,17 @@
 .ghh button .octicon {
   position: static;
 }
+.ghh .state {
+  margin-right: 5px;
+  padding: 0 4px;
+  text-transform: capitalize;
+}
+.ghh .state .octicon {
+  margin-right: 4px;
+}
+.ghh .ghh-state-verified {
+  background-color: #28a745;
+}
 .ghh-title-row {
   display: flex;
 }
@@ -433,6 +444,7 @@
 }
 .ghh-title-row button {
   flex: 0 0 auto;
+  transition: all 0.3s;
 }
 /**********
  * More
@@ -466,6 +478,8 @@
  * User
  **********/
 .ghh-person {
+  min-height: 32px;
+  margin-bottom: 8px;
   padding-left: 40px;
 }
 .ghh-person strong {
@@ -539,14 +553,6 @@
 .ghh-issue-meta p {
   line-height: 16px;
 }
-.ghh-issue-meta .state {
-  margin-right: 5px;
-  padding: 0 4px;
-  text-transform: capitalize;
-}
-.ghh-issue-meta .state .octicon {
-  margin-right: 4px;
-}
 .ghh-issue-meta .ghh-avatar {
   margin: 0 5px 0 0;
   width: 16px;
@@ -618,11 +624,16 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+  display: flex;
   border: 3px solid rgba(0,0,0,0.75);
-  padding: 0 20px;
+  padding: 15px 20px;
   border-radius: 5px;
   background-color: #fff;
 }
-.ghh-overlay form p {
-  margin: 10px 0;
+.ghh-overlay form button {
+  flex: 0 0 auto;
+  margin-left: 10px;
+}
+.ghh-overlay form input {
+  flex: 1 1 auto;
 }

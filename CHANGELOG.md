@@ -1,7 +1,11 @@
 Changelog
 ---
 ## 1.0.0
-* Now it's possible to follow/unfollow a user or star/unstar a repo through the hovercard when logged in.
+* Now you can see if a user is following you or not.
+* Now it's possible to follow/unfollow a user in hovercards.
+* Now it's possible to star/unstar a repo in hovercards.
+* All features above are available after loggin in and attaching an access token with adequate scopes.
+* Added verification badge for signed commits.
 
 ## 0.9.5
 * Updated Octicons.

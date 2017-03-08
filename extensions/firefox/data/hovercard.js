@@ -247,7 +247,7 @@ $(() => {
             <span class="ghh-title{{^hasMeta}} no-meta{{/hasMeta}}"><strong><a href="{{userUrl}}">{{loginName}}</a></strong></span>
             {{#isAdmin}}<small class="ghh-meta">(Staff)</small>{{/isAdmin}}
             {{#isOrg}}<small class="ghh-meta">(Organization)</small>{{/isOrg}}
-            ${me ? '{{^isOrg}}{{#followedByMe}}<button class="ghh-aux" data-action="unfollow" data-args="{{loginName}}">Unfollow{{/followedByMe}}{{^followedByMe}}<button class="ghh-primary" data-action="follow" data-args="{{loginName}}">Follow{{/followedByMe}}</button>{{/isOrg}}' : ''}
+            {{#hasToken}}${me ? '{{^isOrg}}{{#followedByMe}}<button class="ghh-aux" data-action="unfollow" data-args="{{loginName}}">Unfollow{{/followedByMe}}{{^followedByMe}}<button class="ghh-primary" data-action="follow" data-args="{{loginName}}">Follow{{/followedByMe}}</button>{{/isOrg}}' : ''}{{/hasToken}}
           </p>
           {{#hasSubtitle}}<p>{{#realName}}{{realName}}{{/realName}}${me ? ' {{#followingMe}}<small>(Following you)</small>{{/followingMe}}' : ''}</p>{{/hasSubtitle}}
         </div>
@@ -276,7 +276,7 @@ $(() => {
           {{{icons.repo}}}
           <p class="ghh-title-row">
             <span class="ghh-title"><a href="{{ownerUrl}}">{{owner}}</a> / <strong><a href="{{repoUrl}}">{{repo}}</a></strong></span>
-            ${me ? '{{#starredByMe}}<button class="ghh-aux" data-action="unstar" data-args="{{owner}}/{{repo}}">{{{icons.star}}} Unstar{{/starredByMe}}{{^starredByMe}}<button class="ghh-primary" data-action="star" data-args="{{owner}}/{{repo}}">{{{icons.star}}} Star{{/starredByMe}}</button>' : ''}
+            {{#hasToken}}${me ? '{{#starredByMe}}<button class="ghh-aux" data-action="unstar" data-args="{{owner}}/{{repo}}">{{{icons.star}}} Unstar{{/starredByMe}}{{^starredByMe}}<button class="ghh-primary" data-action="star" data-args="{{owner}}/{{repo}}">{{{icons.star}}} Star{{/starredByMe}}</button>' : ''}{{/hasToken}}
           </p>
           {{#parent}}<p><span>forked from <a href="{{url}}">{{repo}}</a></span></p>{{/parent}}
         </div>
@@ -322,8 +322,8 @@ $(() => {
       </div>`,
     comment: `
       <div class="ghh">
-        <img src="{{avatar}}&s=32" class="ghh-avatar">
         <div class="ghh-person">
+          <img src="{{avatar}}&s=32" class="ghh-avatar">
           <p><strong><a href="{{userUrl}}">{{loginName}}</a></strong></p>
           <p>Commented on {{{createTime}}}{{#updatedTime}} • {{{.}}}{{/updatedTime}}</p>
         </div>
@@ -335,7 +335,7 @@ $(() => {
           <p><a href="{{commitUrl}}" title="{{title}}"><strong>{{title}}</strong></a></p>
         </div>
         {{#body}}<pre class="ghh-commit-body">{{.}}</pre>{{/body}}
-        <p class="ghh-commit-author">{{#authorUrl}}<a href="{{.}}"><strong>{{author}}</strong></a>{{/authorUrl}}{{^authorUrl}}<strong title="{{authorEmail}}">{{author}}</strong>{{/authorUrl}} committed{{#isGitHub}} on <strong>GitHub</strong>{{/isGitHub}}{{^isGitHub}}{{#committer}} with {{#committerUrl}}<a href="{{.}}"><strong>{{committer}}</strong></a>{{/committerUrl}}{{^committerUrl}}<strong title="{{committerEmail}}">{{committer}}</strong>{{/committerUrl}}{{/committer}}{{/isGitHub}} on {{{authorTime}}}</p>
+        <p class="ghh-commit-author">{{#verified}}<span class="state ghh-state-verified" title="This commit was signed with a verified signature.">{{{icons.verified}}}Verified</span> {{/verified}}{{#authorUrl}}<a href="{{.}}"><strong>{{author}}</strong></a>{{/authorUrl}}{{^authorUrl}}<strong title="{{authorEmail}}">{{author}}</strong>{{/authorUrl}} committed{{#isGitHub}} on <strong>GitHub</strong>{{/isGitHub}}{{^isGitHub}}{{#committer}} with {{#committerUrl}}<a href="{{.}}"><strong>{{committer}}</strong></a>{{/committerUrl}}{{^committerUrl}}<strong title="{{committerEmail}}">{{committer}}</strong>{{/committerUrl}}{{/committer}}{{/isGitHub}} on {{{authorTime}}}</p>
         <div class="ghh-more">
           <p class="ghh-commit-sha">{{{icons.commit}}} <code>{{sha}}</code></p>
           {{#branch}}<p>{{{icons.branch}}} <a href="/{{fullRepo}}/tree/{{branch}}"><strong>{{branch}}</strong></a>{{#pull}} (<a href="/{{fullRepo}}/pull/{{.}}">#{{.}}</a>){{/pull}}</p>
@@ -356,11 +356,9 @@ $(() => {
     form: `
       <div class="ghh-overlay">
         <form>
-          <p>
-            <input class="ghh-token" type="text" placeholder="Paste access token here..." size="40" />
-            <button class="btn btn-primary ghh-save">Save</button>
-            <button class="btn ghh-cancel">Cancel</button>
-          </p>
+          <input class="ghh-token form-control" type="text" placeholder="Paste access token here..." size="40">
+          <button class="btn btn-primary ghh-save">Save</button>
+          <button class="btn ghh-cancel">Cancel</button>
         </form>
       </div>`
   };
@@ -606,6 +604,7 @@ $(() => {
         repos: formatNumber(raw.public_repos),
         hasSubtitle: raw.name || raw.following_me,
         hasMeta: raw.site_admin || raw.type === 'Organization',
+        hasToken: !!token,
         followersUrl: `//${GH_DOMAIN}/${raw.login}/followers`,
         followingUrl: `//${GH_DOMAIN}/${raw.login}/following`,
         reposUrl: `//${GH_DOMAIN}/${raw.login}?tab=repositories`,
@@ -633,6 +632,7 @@ $(() => {
           : null,
         readme: raw.readme,
         starredByMe: raw.starred_by_me,
+        hasToken: !!token,
         starsUrl: `//${GH_DOMAIN}/${raw.full_name}/stargazers`,
         forksUrl: `//${GH_DOMAIN}/${raw.full_name}/network`,
         issuesUrl: `//${GH_DOMAIN}/${raw.full_name}/issues`,
@@ -726,11 +726,13 @@ $(() => {
         mainTag: raw.mainTag,
         otherTags: raw.otherTags,
         fullRepo: raw.fullRepo,
+        verified: raw.commit.verification.verified,
         icons: {
           branch: getIcon('git-branch', 0.875),
           tag: getIcon('tag', 0.875),
           commit: getIcon('git-commit', 0.875),
-          diff: getIcon('diff', 0.875)
+          diff: getIcon('diff', 0.875),
+          verified: getIcon('verified', 0.875)
         }
       };
     }
@@ -1200,16 +1202,15 @@ $(() => {
           };
 
           let request = function () {
-            let authOptions = {};
+            let headers = {};
             if (token && !isRetry) {
-              authOptions = {
-                headers: {
-                  Authorization: `token ${token}`
-                }
-              };
+              headers.Authorization = `token ${token}`;
             }
+            if (type === EXTRACT_TYPE.COMMIT) {
+              headers.Accept = 'application/vnd.github.cryptographer-preview';
+            };
 
-            let requestOptions = Object.assign({}, baseOptions, authOptions);
+            let requestOptions = Object.assign({}, baseOptions, {headers});
 
             function renderMarkdown(content, context) {
               let options = {
@@ -1440,7 +1441,7 @@ $(() => {
           value: true,
           className: 'ghh-aux',
           action: 'unfollow',
-          content: `Unfollow @${args[0]}`
+          content: `Unfollow`
         },
         unfollow: {
           type: 'user',
@@ -1448,7 +1449,7 @@ $(() => {
           value: false,
           className: 'ghh-primary',
           action: 'follow',
-          content: `Follow @${args[0]}`
+          content: `Follow`
         },
         star: {
           type: 'repo',
@@ -1485,11 +1486,9 @@ $(() => {
           };
         }
 
-        if (token) {
-          options.headers = {
-            Authorization: `token ${token}`
-          }
-        }
+        options.headers = {
+          Authorization: `token ${token}`
+        };
 
         this.disabled = true;
         $.ajax(options)
