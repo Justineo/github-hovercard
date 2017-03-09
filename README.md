@@ -57,21 +57,21 @@ For browser extension versions, GitHub Hovercard provide following options:
 
 ## Screenshots
 
-![Avatars in trending repos](screenshots/1.png)
+<img src="screenshots/1.png" alt="Users in trending repo avatars" width="640" height="400">
 
-![Repo names in activity messages](screenshots/2.png)
+<img src="screenshots/2.png" alt="Repos in activity feeds" width="640" height="400">
 
-![Users/organizations in repo title](screenshots/3.png)
+<img src="screenshots/3.png" alt="Users/organizations in repo titles" width="640" height="400">
 
-![Repo names in activity feed](screenshots/4.png)
+<img src="screenshots/4.png" alt="Forked repos" width="640" height="400">
 
-![Forked repos](screenshots/5.png)
+<img src="screenshots/5.png" alt="User/organization links anywhere" width="640" height="400">
 
-![User/organization links in any place](screenshots/6.png)
+<img src="screenshots/6.png" alt="Issues" width="640" height="400">
 
-![Repo links in any place](screenshots/7.png)
+<img src="screenshots/7.png" alt="Pull requests" width="640" height="400">
 
-![Issue in news feed](screenshots/8.png)
+<img src="screenshots/8.png" alt="Commits" width="640" height="400">
 
 ## Known issues
 
