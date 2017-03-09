@@ -364,6 +364,7 @@ $(() => {
   };
 
   const CREATE_TOKEN_PATH = `//${GH_DOMAIN}/settings/tokens/new`;
+  const EDIT_TOKEN_PATH = `//${GH_DOMAIN}/settings/tokens`;
   const IS_ENTERPRISE = GH_DOMAIN !== 'github.com';
   const API_PREFIX = IS_ENTERPRISE ? `//${GH_DOMAIN}/api/v3` : `//api.${GH_DOMAIN}`;
   const SITE_PREFIX = `//${GH_DOMAIN}/`;
@@ -1130,10 +1131,9 @@ $(() => {
 
           let isRetry = false;
           let handleError = function (xhr) {
-            let status = xhr.status;
+            let {status} = xhr;
             let title = '';
             let message = '';
-            let needToken = false;
 
             switch (status) {
               case 0:
@@ -1150,7 +1150,6 @@ $(() => {
               case 401:
                 title = 'Invalid token';
                 message = encodeHTML`<a href="${CREATE_TOKEN_PATH}" class="token-link" target="_blank">Create a new access token</a>, <a href="#" class="token-link">paste it back here</a> and try again.`;
-                needToken = true;
                 break;
               case 403:
                 if (xhr.getAllResponseHeaders().indexOf('X-RateLimit-Remaining: 0') !== -1) {
@@ -1162,13 +1161,11 @@ $(() => {
                   title = 'Forbidden';
                   message = encodeHTML`You are not allowed to access GitHub API. <a href="${CREATE_TOKEN_PATH}" class="token-link" target="_blank">Create a new access token</a>, <a href="#" class="token-link">paste it back here</a> and try again.`;
                 }
-                needToken = true;
                 break;
               case 404:
                 title = 'Not found';
                 if (type === EXTRACT_TYPE.REPO || type === EXTRACT_TYPE.ISSUE) {
                   message = encodeHTML`The repository doesn't exist or is private. <a href="${CREATE_TOKEN_PATH}" class="token-link" target="_blank">Create a new access token</a>, <a href="#" class="token-link">paste it back here</a> and try again.`;
-                  needToken = true;
                 } else if (type === EXTRACT_TYPE.USER) {
                   message = 'The user doesn\'t exist.';
                 }
@@ -1191,9 +1188,8 @@ $(() => {
             }
 
             let error = {
-              title: title,
-              message: message,
-              needToken: needToken,
+              title,
+              message,
               icons: {
                 alert: getIcon('alert')
               }
@@ -1499,6 +1495,16 @@ $(() => {
             this.className = state.className;
             this.disabled = false;
             cache[state.type][args][state.field] = state.value;
+          })
+          .fail(() => {
+            let error = {
+              title: 'Forbidden',
+              message: encodeHTML`Please ensure your access token contains these scopes: </p><ul><li><code>public_repo</code></li><li><code>user:follow</code></li></ul><p><a href="${EDIT_TOKEN_PATH}" target="_blank">Edit token scopes</a> and try again.`,
+              icons: {
+                alert: getIcon('alert')
+              }
+            };
+            $(this).closest('.tooltipster-content').html(getErrorHTML(error));
           });
       });
     }

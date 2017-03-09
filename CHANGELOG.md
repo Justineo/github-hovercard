@@ -1,5 +1,8 @@
 Changelog
 ---
+## 1.0.1
+* Added error handling for actions lacking token scopes.
+
 ## 1.0.0
 * Now you can see if a user is following you or not.
 * Now it's possible to follow/unfollow a user in hovercards.

@@ -27,6 +27,10 @@ Neat hovercards for GitHub.
 
 ## FAQ
 
+* How can I make the follow/unfollow button work?
+
+  First you need to provide an access token with adequate scopes.
+
 * Why Chrome warns me the extension might read my browser history?
 
     It's because GitHub Hovercard uses `webNavigation` module to dynamically inject content scripts (to support GitHub Enterprise). See [#34](https://github.com/Justineo/github-hovercard/issues/34). GitHub Hovercard won't track or record any of these private data.

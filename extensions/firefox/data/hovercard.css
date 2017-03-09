@@ -602,6 +602,9 @@
   line-height: 1.6;
   white-space: normal;
 }
+.ghh-error li {
+  list-style-type: square;
+}
 .ghh-error .octicon {
   display: inline-block;
   position: static;
