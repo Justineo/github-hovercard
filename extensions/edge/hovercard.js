@@ -307,7 +307,7 @@ document.addEventListener('DOMContentLoaded', () => {
           <p><span class="issue-number">#{{number}}</span> <a href="{{issueUrl}}" title="{{title}}"><strong>{{title}}</strong></a></p>
         </div>
         <div class="ghh-issue-meta">
-          <p><span class="state state-{{state}}">{{{icons.state}}}{{state}}</span><a href="{{userUrl}}">{{user}}</a> created on {{{createTime}}}</p>
+          <p><span class="ghh-state ghh-state-{{state}}">{{{icons.state}}}{{state}}</span><a href="{{userUrl}}">{{user}}</a> created on {{{createTime}}}</p>
         </div>
         {{#isPullRequest}}<div class="ghh-pull-meta">
           <p>{{{icons.commit}}} {{commits}} commit{{^isSingleCommit}}s{{/isSingleCommit}}{{{icons.diff}}} {{changedFiles}} file{{^isSingleFile}}s{{/isSingleFile}} changed

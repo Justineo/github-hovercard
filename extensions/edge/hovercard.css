@@ -406,13 +406,30 @@
 .ghh button .octicon {
   position: static;
 }
-.ghh .state {
+.ghh .ghh-state {
+  display: inline-block;
   margin-right: 5px;
   padding: 0 4px;
+  border-radius: 3px;
+  color: #fff;
+  font-weight: 600;
+  line-height: 20px;
+  vertical-align: middle;
+  text-align: center;
   text-transform: capitalize;
 }
-.ghh .state .octicon {
+.ghh .ghh-state-open {
+  background-color: #2cbe4e;
+}
+.ghh .ghh-state-closed {
+  background-color: #cb2431;
+}
+.ghh .ghh-state-merged {
+  background-color: #6f42c1;
+}
+.ghh .ghh-state .octicon {
   margin-right: 4px;
+  vertical-align: -3px;
 }
 .ghh .ghh-state-verified {
   background-color: #28a745;
@@ -601,6 +618,9 @@
 .ghh-error p {
   line-height: 1.6;
   white-space: normal;
+}
+.ghh-error ul {
+  padding-left: 16px;
 }
 .ghh-error li {
   list-style-type: square;

@@ -328,13 +328,30 @@ $contribution
     .octicon
       position static
 
-  .state
+  .ghh-state
+    display inline-block
     margin-right 5px
     padding 0 4px
+    border-radius 3px
+    color #fff
+    font-weight 600
+    line-height 20px
+    vertical-align middle
+    text-align center
     text-transform capitalize
+
+    &-open
+      background-color #2cbe4e
+
+    &-closed
+      background-color #cb2431
+
+    &-merged
+      background-color #6f42c1
 
     .octicon
       margin-right 4px
+      vertical-align -3px
 
   .ghh-state-verified
     background-color #28a745

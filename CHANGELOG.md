@@ -1,5 +1,8 @@
 Changelog
 ---
+## 1.0.2
+* Fixed badge styles.
+
 ## 1.0.1
 * Added error handling for actions lacking token scopes.
 

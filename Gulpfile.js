@@ -244,10 +244,8 @@ gulp.task('firefox:xpi', ['firefox:cp'], function (cb) {
   }, function (error, stdout, stderr) {
     if (error) {
       return cb(error);
-    } else {
-      fs.renameSync('./extensions/firefox/@' + pack.name + '-' + version + '.xpi', './extensions/packed/' + pack.name + '.xpi');
-      cb();
     }
+    cb();
   });
 });
 
