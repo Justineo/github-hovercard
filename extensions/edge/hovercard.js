@@ -580,7 +580,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function fixRef(elem, base, branch) {
     ['href', 'src'].forEach(attr => {
       let url = elem.attr(attr);
-      if (url && url.indexOf('//') === -1) {
+      if (url && url.indexOf('//') === -1 && url.indexOf('mailto:') === -1) {
         elem.attr(attr, `${base}/raw/${branch}/${url}`);
       }
     });
