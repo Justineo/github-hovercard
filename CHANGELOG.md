@@ -2,6 +2,7 @@ Changelog
 ---
 ## 1.0.4
 * Added new reserved keyword `marketplace`.
+* Displayed commit tags now have a limit number of 10.
 
 ## 1.0.3
 * Fixed extraction for users from avatar in issue details.

@@ -338,7 +338,7 @@ document.addEventListener('DOMContentLoaded', () => {
         <div class="ghh-more">
           <p class="ghh-commit-sha">{{{icons.commit}}} <code>{{sha}}</code></p>
           {{#branch}}<p>{{{icons.branch}}} <a href="/{{fullRepo}}/tree/{{branch}}"><strong>{{branch}}</strong></a>{{#pull}} (<a href="/{{fullRepo}}/pull/{{.}}">#{{.}}</a>){{/pull}}</p>
-          {{#mainTag}}<p class="ghh-tags">{{{icons.tag}}} <a href="/{{fullRepo}}/releases/tag/{{.}}"><strong>{{.}}</strong></a>{{#otherTags}}, <a href="/{{fullRepo}}/releases/tag/{{.}}">{{.}}</a>{{/otherTags}}</p>{{/mainTag}}{{/branch}}
+          {{#mainTag}}<p class="ghh-tags">{{{icons.tag}}} <a href="/{{fullRepo}}/releases/tag/{{.}}"><strong>{{.}}</strong></a>{{#otherTags}}, <a href="/{{fullRepo}}/releases/tag/{{.}}">{{.}}</a>{{/otherTags}}{{#truncatedTagNumber}} <span title="{{truncatedTagNumber}} more tag(s)">...</span>{{/truncatedTagNumber}}</p>{{/mainTag}}{{/branch}}
           <p class="ghh-commit-meta">{{{icons.diff}}} {{changedFiles}} file{{^isSingleFile}}s{{/isSingleFile}} changed
             <span class="diffstat">
               <span class="text-diff-added">+{{additions}}</span>
@@ -725,6 +725,7 @@ document.addEventListener('DOMContentLoaded', () => {
         pull: raw.pull,
         mainTag: raw.mainTag,
         otherTags: raw.otherTags,
+        truncatedTagNumber: raw.truncatedTagNumber,
         fullRepo: raw.fullRepo,
         verified: raw.commit.verification.verified,
         icons: {
@@ -1406,7 +1407,13 @@ document.addEventListener('DOMContentLoaded', () => {
                         let tags = branches.find('.branches-tag-list a').map(function () {
                           return this.textContent;
                         }).get();
+
+                        let maxTags = 10;
                         if (tags.length) {
+                          if (tags.length > maxTags) {
+                            raw.truncatedTagNumber = tags.length - maxTags;
+                            tags.splice(maxTags);
+                          }
                           raw.mainTag = tags[0];
                           raw.otherTags = tags.slice(1);
                         }
