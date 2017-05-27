@@ -38,7 +38,7 @@ $(() => {
     'dashboard', 'notifications', 'search', 'developer', 'account',
     'pulls', 'issues', 'features', 'contact', 'security', 'join',
     'login', 'watching', 'new', 'integrations', 'pricing',
-    'personal', 'business', 'open-source'
+    'personal', 'business', 'open-source', 'marketplace'
   ];
 
   const GH_RESERVED_REPO_NAMES = [
