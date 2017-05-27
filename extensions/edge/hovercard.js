@@ -175,7 +175,6 @@ document.addEventListener('DOMContentLoaded', () => {
     '.select-menu-item-gravatar': EXTRACTOR.NEXT_TEXT_USER,
 
     // - Detail
-    '.timeline-comment-avatar': EXTRACTOR.ALT_USER,
     '.discussion-item-header strong': EXTRACTOR.SLUG,
 
     // Projects

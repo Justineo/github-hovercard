@@ -245,6 +245,7 @@ gulp.task('firefox:xpi', ['firefox:cp'], function (cb) {
     if (error) {
       return cb(error);
     }
+    fs.renameSync('./extensions/firefox/github-hovercard.xpi', './extensions/packed/github-hovercard.xpi');
     cb();
   });
 });

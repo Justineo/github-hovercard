@@ -1,5 +1,8 @@
 Changelog
 ---
+## 1.0.3
+* Fixed extraction for users from avatar in issue details.
+
 ## 1.0.2
 * Fixed badge styles.
 
