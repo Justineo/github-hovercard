@@ -43,7 +43,7 @@ gulp.task('icons', function () {
   var used = [
     'alert', 'arrow-right', 'code', 'diff', 'git-commit', 'git-pull-request',
     'info', 'issue-closed', 'issue-opened', 'link', 'location', 'organization',
-    'person', 'repo-forked', 'repo', 'git-branch', 'tag', 'logo-github', 'star',
+    'person', 'repo-forked', 'repo', 'git-branch', 'tag', 'bookmark', 'star',
     'verified'
   ];
 

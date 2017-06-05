@@ -297,6 +297,7 @@ $(() => {
           {{#desc}}<p class="ghh-repo-desc">{{{icons.info}}}{{{.}}}</p>{{/desc}}
           {{#homepage}}<p>{{{icons.link}}}<a href="{{.}}">{{.}}</a></p>{{/homepage}}
           {{#language}}<p>{{{icons.code}}}{{.}}</p>{{/language}}
+          {{#hasTopics}}<p>{{{icons.bookmark}}}{{#topics}}<a class="ghh-topic" href="https://github.com/search?q=topic%3A{{query}}&type=Repositories">{{name}}</a>{{/topics}}</p>{{/hasTopics}}
         </div>
         {{#readme}}<div class="ghh-readme">{{{.}}}</div>{{/readme}}
       </div>`,
@@ -610,8 +611,7 @@ $(() => {
         reposUrl: `//${GH_DOMAIN}/${raw.login}?tab=repositories`,
         icons: {
           location: getIcon('location', 0.875),
-          organization: getIcon('organization', 0.875),
-          github: getIcon('logo-github', 0.6)
+          organization: getIcon('organization', 0.875)
         }
       };
     } else if (type === EXTRACT_TYPE.REPO) {
@@ -631,6 +631,13 @@ $(() => {
           ? raw.homepage.match(/^https?:\/\//) ? raw.homepage : `http://${raw.homepage}`
           : null,
         readme: raw.readme,
+        topics: raw.topics.map(topic => {
+          return {
+            name: topic,
+            query: encodeURIComponent(topic)
+          }
+        }),
+        hasTopics: raw.topics.length > 0,
         starredByMe: raw.starred_by_me,
         hasToken: !!token,
         starsUrl: `//${GH_DOMAIN}/${raw.full_name}/stargazers`,
@@ -641,6 +648,7 @@ $(() => {
           info: getIcon('info', 0.875),
           link: getIcon('link', 0.875),
           code: getIcon('code', 0.875),
+          bookmark: getIcon('bookmark', 0.875),
           star: getIcon('star', 0.75)
         }
       };
@@ -1204,7 +1212,9 @@ $(() => {
             }
             if (type === EXTRACT_TYPE.COMMIT) {
               headers.Accept = 'application/vnd.github.cryptographer-preview';
-            };
+            } else if (type === EXTRACT_TYPE.REPO) {
+              headers.Accept = 'application/vnd.github.mercy-preview+json'
+            }
 
             let requestOptions = Object.assign({}, baseOptions, {headers});
 

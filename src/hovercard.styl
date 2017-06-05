@@ -84,6 +84,7 @@ $with-large-icon
     left 0
     line-height 1
 
+
 $fix-margin
   & > :first-child
     margin-top 0
@@ -408,6 +409,7 @@ $contribution
     position absolute
     top 2px
     left 0
+    width 16px
     margin 0
     opacity .8
 
@@ -449,6 +451,18 @@ $contribution
   .ghh-title
     font-size 13px
     flex-grow 1
+
+.ghh-topic
+  display inline-block
+  background-color $content-background
+  padding 0 3px
+  line-height 18px
+  color #fff
+  border-radius 3px
+  text-decoration none !important
+
+  &:not(:last-child)
+    margin-right 4px
 
 .ghh-stats
   display flex

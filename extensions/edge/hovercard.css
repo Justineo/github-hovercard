@@ -488,6 +488,7 @@
   position: absolute;
   top: 2px;
   left: 0;
+  width: 16px;
   margin: 0;
   opacity: 0.8;
 }
@@ -526,6 +527,18 @@
 .ghh-repo .ghh-title {
   font-size: 13px;
   flex-grow: 1;
+}
+.ghh-topic {
+  display: inline-block;
+  background-color: rgba(255,255,255,0.15);
+  padding: 0 3px;
+  line-height: 18px;
+  color: #fff;
+  border-radius: 3px;
+  text-decoration: none !important;
+}
+.ghh-topic:not(:last-child) {
+  margin-right: 4px;
 }
 .ghh-stats {
   display: flex;
