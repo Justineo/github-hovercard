@@ -530,12 +530,13 @@
 }
 .ghh-topic {
   display: inline-block;
-  background-color: rgba(255,255,255,0.15);
+  margin-bottom: 3px;
   padding: 0 3px;
-  line-height: 18px;
+  background-color: rgba(255,255,255,0.15);
   color: #fff;
-  border-radius: 3px;
+  line-height: 18px;
   text-decoration: none !important;
+  border-radius: 3px;
 }
 .ghh-topic:not(:last-child) {
   margin-right: 4px;

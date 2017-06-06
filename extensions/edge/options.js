@@ -10,6 +10,7 @@ let addBtn = $('#add');
 let msg = $('#message');
 let delayInput = $('#delay');
 let readmeInput = $('#readme');
+let projectsInput = $('#projects');
 let current;
 let storage = browser.storage.sync || browser.storage.local;
 
@@ -22,17 +23,19 @@ function concat(a, b) {
 }
 
 function restore() {
-    storage.get({ domains: [], delay: 200, readme: true }, item => {
+    storage.get({ domains: [], delay: 200, readme: true, disableProjects: false }, item => {
         current = item.domains;
         list.append(Mustache.render(ITEM_TPL, { domains: current }));
         delayInput.val(item.delay);
         readmeInput.prop('checked', item.readme);
+        projectsInput.prop('checked', item.disableProjects);
     });
 }
 
 function save() {
     let delay = delayInput.val();
     let readme = readmeInput.prop('checked');
+    let disableProjects = projectsInput.prop('checked');
 
     let domains = [];
     $('.domain').each(function () {
@@ -42,7 +45,7 @@ function save() {
         }
     });
 
-    let options = { delay, readme };
+    let options = { delay, readme, disableProjects };
     Object.assign(options, { domains });
     current = domains;
 

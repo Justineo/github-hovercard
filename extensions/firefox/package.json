@@ -29,6 +29,13 @@
       "type": "bool",
       "description": "Show readme content for repos.",
       "value": true
+    },
+    {
+      "name": "disableProjects",
+      "title": "Disable Projects",
+      "type": "bool",
+      "description": "Disable hovercards on projects.",
+      "value": false
     }
   ],
   "engines": {

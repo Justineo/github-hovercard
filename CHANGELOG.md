@@ -1,9 +1,10 @@
 Changelog
 ---
-## 1.0.4
+## 1.1.0
 * Added new reserved keyword `marketplace`.
 * Displayed commit tags now have a limit number of 10.
 * Added topic information for repos.
+* Added option to disable hovercards on projects.
 
 ## 1.0.3
 * Fixed extraction for users from avatar in issue details.

@@ -78,6 +78,7 @@ $(() => {
   const GH_DOMAIN_PATTERN = GH_DOMAIN.replace(/\./g, '\\.');
   const URL_USER_PATTERN = `^https?:\\/\\/${GH_DOMAIN_PATTERN}\\/([^/?#]+)(?:\\/$|[^/]*$)`;
   const URL_REPO_PATTERN = `^https?:\\/\\/${GH_DOMAIN_PATTERN}\\/([^/?#]+)\\/([^/?#]+)(?:\\/$|[^/]*$)`;
+  const URL_PROJECT_PATTERN = `^https?:\\/\\/${GH_DOMAIN_PATTERN}\\/([^/?#]+)\\/([^/?#]+)\\/projects\\/(\\d+)`;
   const URL_ISSUE_PATTERN = `^https?:\\/\\/${GH_DOMAIN_PATTERN}\\/([^/?#]+)\\/([^/?#]+)\\/(?:issues|pull)\\/(\\d+)(?:\\/?(?:[?#](?!issuecomment).*)?$)`;
   const URL_COMMENT_PATTERN = `^https?:\\/\\/${GH_DOMAIN_PATTERN}\\/([^/?#]+)\\/([^/?#]+)\\/(?:issues|pull)\\/(\\d+)#issuecomment-(\\d+)$`;
   const URL_COMMIT_PATTERN = `^https?:\\/\\/${GH_DOMAIN_PATTERN}\\/([^/?#]+)\\/([^/?#]+)\\/(?:pull\\/\\d+\\/commits|commit)\\/([0-9a-f]+)(?:\\/?[^/]*$)`;
@@ -786,6 +787,10 @@ $(() => {
   };
 
   function extract(context) {
+    if (cardOptions.disableProjects && location.href.match(URL_PROJECT_PATTERN)) {
+      return;
+    }
+
     isExtracting = true;
 
     // if on user profile page, we should not show user
@@ -1555,7 +1560,8 @@ $(() => {
 
   let cardOptions = {
     delay: 200,
-    readme: true
+    readme: true,
+    disableProjects: false
   };
 
   // Revert to localStorage
@@ -1563,7 +1569,7 @@ $(() => {
   // In Firefox options are not so flexible so keep tokens in localStorage
   if (chrome && chrome.storage) {
     let storage = chrome.storage.sync || chrome.storage.local;
-    storage.get({token: '', delay: 200, readme: true}, item => {
+    storage.get({token: '', delay: 200, readme: true, disableProjects: false}, item => {
       token = item.token;
       if (token) {
         localStorage.setItem(TOKEN_KEY, token);
@@ -1578,6 +1584,7 @@ $(() => {
         cardOptions.delay = delay;
       }
       cardOptions.readme = item.readme;
+      cardOptions.disableProjects = item.disableProjects;
       extract();
     });
   } else {
