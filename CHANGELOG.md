@@ -1,5 +1,8 @@
 Changelog
 ---
+## 1.1.1
+* Fixed the problem that `marketplace` wasn't actually ignored since last version
+
 ## 1.1.0
 * Added new reserved keyword `marketplace`.
 * Displayed commit tags now have a limit number of 10.
