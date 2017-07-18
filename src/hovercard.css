@@ -658,19 +658,31 @@
 }
 .ghh-overlay form {
   position: absolute;
-  top: 50%;
+  top: 38.2%;
   left: 50%;
-  transform: translate(-50%, -50%);
-  display: flex;
+  transform: translate(-50%, -38.2%);
   border: 3px solid rgba(0,0,0,0.75);
   padding: 15px 20px;
   border-radius: 5px;
   background-color: #fff;
 }
-.ghh-overlay form button {
+.ghh-overlay form h3 {
+  margin-bottom: 10px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 10px;
+  font-size: 16px;
+}
+.ghh-overlay form h3 .octicon {
+  vertical-align: middle;
+}
+.ghh-overlay form p:last-child {
+  display: flex;
+  margin: 15px 0 5px;
+}
+.ghh-overlay form p:last-child button {
   flex: 0 0 auto;
   margin-left: 10px;
 }
-.ghh-overlay form input {
+.ghh-overlay form p:last-child input {
   flex: 1 1 auto;
 }

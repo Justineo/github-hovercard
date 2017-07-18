@@ -1,7 +1,7 @@
 {
   "title": "GitHub Hovercard",
   "name": "github-hovercard",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "description": "Neat hovercards for GitHub.",
   "main": "index.js",
   "author": "Justineo",
@@ -35,6 +35,13 @@
       "title": "Disable Projects",
       "type": "bool",
       "description": "Disable hovercards on projects.",
+      "value": false
+    },
+    {
+      "name": "showSelf",
+      "title": "Hovercards for myself",
+      "type": "bool",
+      "description": "Show user hovercards for myself.",
       "value": false
     }
   ],

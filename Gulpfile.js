@@ -44,7 +44,7 @@ gulp.task('icons', function () {
     'alert', 'arrow-right', 'code', 'diff', 'git-commit', 'git-pull-request',
     'info', 'issue-closed', 'issue-opened', 'link', 'location', 'organization',
     'person', 'repo-forked', 'repo', 'git-branch', 'tag', 'bookmark', 'star',
-    'verified'
+    'verified', 'key'
   ];
 
   var data = used.map(function (name) {

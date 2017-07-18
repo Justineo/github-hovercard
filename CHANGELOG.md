@@ -1,7 +1,15 @@
 Changelog
 ---
+## 1.2.0
+* Now you can start to bind access token after double-clicking any card.
+* Added an option to show user hovercard for logged in user him/herself.
+* Fixed repo extraction on Profile page.
+
+## 1.1.2
+* Fixed extraction for repo slugs on Explore page.
+
 ## 1.1.1
-* Fixed the problem that `marketplace` wasn't actually ignored since last version
+* Fixed the problem that `marketplace` wasn't actually ignored since last version.
 
 ## 1.1.0
 * Added new reserved keyword `marketplace`.

@@ -1,6 +1,6 @@
 'use strict';
 
-const ITEM_TPL = `{{#domains}}<li><input type="text" class="domain" value="{{.}}" placeholder="github.mydomain.com"><button type="button" class="remove">✕</button></li>{{/domains}}`;
+const ITEM_TPL = `{{#domains}}<li><input type="text" ui="wide" class="domain" value="{{.}}" placeholder="github.mydomain.com"><button type="button" class="remove">✕</button></li>{{/domains}}`;
 const GH_DOMAIN = 'github.com';
 
 let list = $('#domains');
@@ -11,6 +11,7 @@ let msg = $('#message');
 let delayInput = $('#delay');
 let readmeInput = $('#readme');
 let projectsInput = $('#projects');
+let showSelfInput = $('#show-self');
 let current;
 let storage = chrome.storage.sync || chrome.storage.local;
 
@@ -23,12 +24,19 @@ function concat(a, b) {
 }
 
 function restore() {
-    storage.get({ domains: [], delay: 200, readme: true, disableProjects: false }, item => {
+    storage.get({
+        domains: [],
+        delay: 200,
+        readme: true,
+        disableProjects: false,
+        showSelf: false
+    }, item => {
         current = item.domains;
         list.append(Mustache.render(ITEM_TPL, { domains: current }));
         delayInput.val(item.delay);
         readmeInput.prop('checked', item.readme);
         projectsInput.prop('checked', item.disableProjects);
+        showSelfInput.prop('checked', item.showSelf);
     });
 }
 
@@ -36,6 +44,7 @@ function save() {
     let delay = delayInput.val();
     let readme = readmeInput.prop('checked');
     let disableProjects = projectsInput.prop('checked');
+    let showSelf = showSelfInput.prop('checked');
 
     let domains = [];
     $('.domain').each(function () {
@@ -56,7 +65,7 @@ function save() {
         chrome.permissions.request({
             origins: granting
         }, granted => {
-            let options = { delay, readme, disableProjects };
+            let options = { delay, readme, disableProjects, showSelf };
             if (granted) {
                 Object.assign(options, { domains });
                 current = domains;

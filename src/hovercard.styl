@@ -597,18 +597,30 @@ $contribution
 
   form
     position absolute
-    top 50%
+    top 38.2%
     left 50%
-    transform translate(-50%, -50%)
-    display flex
+    transform translate(-50%, -38.2%)
     border 3px solid rgba(0, 0, 0, .75)
     padding 15px 20px
     border-radius 5px
     background-color #fff
 
-    button
-      flex 0 0 auto
-      margin-left 10px
+    h3
+      margin-bottom 10px
+      border-bottom 1px solid #eee
+      padding-bottom 10px
+      font-size 16px
 
-    input
-      flex 1 1 auto
+      .octicon
+        vertical-align middle
+
+    p:last-child
+      display flex
+      margin 15px 0 5px
+
+      button
+        flex 0 0 auto
+        margin-left 10px
+
+      input
+        flex 1 1 auto

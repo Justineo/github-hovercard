@@ -128,7 +128,8 @@ $(() => {
     '.profile-timeline-card h3 a': EXTRACTOR.URL,
 
     // Repos
-    '[itemprop$="owns"] h3 + span a': EXTRACTOR.SLUG,
+    '.page-profile [itemprop$="owns"] h3 > a': EXTRACTOR.URL,
+    '.page-profile [itemprop$="owns"] h3 + span a': EXTRACTOR.SLUG,
 
     // Stars
     '.page-profile h3 > a': EXTRACTOR.REPO_LIST_SLUG,
@@ -139,7 +140,7 @@ $(() => {
 
     // Showcases & trending
     '.collection-page .repo-list h3 > a': EXTRACTOR.REPO_LIST_SLUG,
-    '.explore-page .repo-list h3 > a': EXTRACTOR.REPO_LIST_SLUG,
+    '.explore-content .repo-list h3 > a': EXTRACTOR.REPO_LIST_SLUG,
 
     /* Organization profile */
     // Invite member suggestion info
@@ -247,7 +248,7 @@ $(() => {
             <span class="ghh-title{{^hasMeta}} no-meta{{/hasMeta}}"><strong><a href="{{userUrl}}">{{loginName}}</a></strong></span>
             {{#isAdmin}}<small class="ghh-meta">(Staff)</small>{{/isAdmin}}
             {{#isOrg}}<small class="ghh-meta">(Organization)</small>{{/isOrg}}
-            {{#hasToken}}${me ? '{{^isOrg}}{{#followedByMe}}<button class="ghh-aux" data-action="unfollow" data-args="{{loginName}}">Unfollow{{/followedByMe}}{{^followedByMe}}<button class="ghh-primary" data-action="follow" data-args="{{loginName}}">Follow{{/followedByMe}}</button>{{/isOrg}}' : ''}{{/hasToken}}
+            {{^isSelf}}{{#hasToken}}${me ? '{{^isOrg}}{{#followedByMe}}<button class="ghh-aux" data-action="unfollow" data-args="{{loginName}}">Unfollow{{/followedByMe}}{{^followedByMe}}<button class="ghh-primary" data-action="follow" data-args="{{loginName}}">Follow{{/followedByMe}}</button>{{/isOrg}}' : ''}{{/hasToken}}{{/isSelf}}
           </p>
           {{#hasSubtitle}}<p>{{#realName}}{{realName}}{{/realName}}${me ? ' {{#followingMe}}<small>(Following you)</small>{{/followingMe}}' : ''}</p>{{/hasSubtitle}}
         </div>
@@ -357,9 +358,14 @@ $(() => {
     form: `
       <div class="ghh-overlay">
         <form>
-          <input class="ghh-token form-control" type="text" placeholder="Paste access token here..." size="40">
-          <button class="btn btn-primary ghh-save">Save</button>
-          <button class="btn ghh-cancel">Cancel</button>
+          <h3>${getIcon('key')} GitHub Access Token</h3>
+          <p>GitHub limits unauthenticated API requests to 60 per hour but after binding your access token you will be able to enjoy the rate limit of <strong>5,000</strong> requests per hour.</p>
+          <p>You should at lease add permission for <code>public_repo</code> to enable star/unstar, and <code>user:follow</code> to enable follow/unfollow.</p>
+          <p>
+            <input class="ghh-token form-control" type="text" placeholder="Paste access token here..." size="40">
+            <button class="btn btn-primary ghh-save">Save</button>
+            <button class="btn ghh-cancel">Cancel</button>
+          </p>
         </form>
       </div>`
   };
@@ -607,6 +613,7 @@ $(() => {
         hasSubtitle: raw.name || raw.following_me,
         hasMeta: raw.site_admin || raw.type === 'Organization',
         hasToken: !!token,
+        isSelf: raw.login === me,
         followersUrl: `//${GH_DOMAIN}/${raw.login}/followers`,
         followingUrl: `//${GH_DOMAIN}/${raw.login}/following`,
         reposUrl: `//${GH_DOMAIN}/${raw.login}?tab=repositories`,
@@ -772,10 +779,14 @@ $(() => {
     tokenForm.detach();
     return false;
   });
-  $('body').on('click', '.token-link', () => {
+
+  function showTokenForm () {
     tokenForm.appendTo($('body'));
     tokenField.focus();
-  });
+  }
+  $('body')
+    .on('click', '.ghh-token-link', showTokenForm)
+    .on('dblclick', '.ghh', showTokenForm);
 
   // prepare cache objects
   let cache = {
@@ -882,7 +893,7 @@ $(() => {
               }
 
               let repoContents = contents || repo; // safe HTML or plain text
-              if (username === me || username === current) {
+              if (username === me && !cardOptions.showSelf || username === current) {
                 elem.html(slug.replace(fullRepo, encodeHTML`${username}/<span>` + repoContents + '</span>'));
                 markExtracted(elem.children().first(), EXTRACT_TYPE.REPO, fullRepo);
               } else {
@@ -980,7 +991,7 @@ $(() => {
                 fullCommit = `${username}/${repo}@${commit}`;
               }
               // skip hovercard on myself or current profile page owner
-              if ((username === me || username === current) && !repo) {
+              if ((username === me && !cardOptions.showSelf || username === current) && !repo) {
                 username = null;
               }
             }
@@ -1162,23 +1173,23 @@ $(() => {
                 break;
               case 401:
                 title = 'Invalid token';
-                message = encodeHTML`<a href="${CREATE_TOKEN_PATH}" class="token-link" target="_blank">Create a new access token</a>, <a href="#" class="token-link">paste it back here</a> and try again.`;
+                message = encodeHTML`<a href="${CREATE_TOKEN_PATH}" class="ghh-token-link" target="_blank">Create a new access token</a>, <a href="#" class="ghh-token-link">paste it back here</a> and try again.`;
                 break;
               case 403:
                 if (xhr.getAllResponseHeaders().indexOf('X-RateLimit-Remaining: 0') !== -1) {
-                  title = 'API limit exceeded';
+                  title = 'API rate limit exceeded';
                   if (!localStorage.getItem(TOKEN_KEY)) {
-                    message = encodeHTML`API rate limit exceeded for current IP. <a href="${CREATE_TOKEN_PATH}" class="token-link" target="_blank">Create a new access token</a> and <a href="#" class="token-link">paste it back here</a> to get a higher rate limit.`;
+                    message = encodeHTML`API rate limit exceeded for current IP. <a href="${CREATE_TOKEN_PATH}" class="ghh-token-link" target="_blank">Create a new access token</a> and <a href="#" class="ghh-token-link">paste it back here</a> to get a higher rate limit.`;
                   }
                 } else {
                   title = 'Forbidden';
-                  message = encodeHTML`You are not allowed to access GitHub API. <a href="${CREATE_TOKEN_PATH}" class="token-link" target="_blank">Create a new access token</a>, <a href="#" class="token-link">paste it back here</a> and try again.`;
+                  message = encodeHTML`You are not allowed to access GitHub API. <a href="${CREATE_TOKEN_PATH}" class="ghh-token-link" target="_blank">Create a new access token</a>, <a href="#" class="ghh-token-link">paste it back here</a> and try again.`;
                 }
                 break;
               case 404:
                 title = 'Not found';
                 if (type === EXTRACT_TYPE.REPO || type === EXTRACT_TYPE.ISSUE) {
-                  message = encodeHTML`The repository doesn't exist or is private. <a href="${CREATE_TOKEN_PATH}" class="token-link" target="_blank">Create a new access token</a>, <a href="#" class="token-link">paste it back here</a> and try again.`;
+                  message = encodeHTML`The repository doesn't exist or is private. <a href="${CREATE_TOKEN_PATH}" class="ghh-token-link" target="_blank">Create a new access token</a>, <a href="#" class="ghh-token-link">paste it back here</a> and try again.`;
                 } else if (type === EXTRACT_TYPE.USER) {
                   message = 'The user doesn\'t exist.';
                 }
@@ -1245,12 +1256,13 @@ $(() => {
                 // further requests if necessary
                 switch (type) {
                   case EXTRACT_TYPE.USER: {
-                    if (me && raw.type !== 'Organization') {
+                    if (me && value !== me && raw.type !== 'Organization') {
                       let todo = 2;
                       let extra = {
                         following_me: false,
                         followed_by_me: false
                       };
+                      if (value)
                       // if the logged-in user is following the current user
                       $.ajax(Object.assign({}, requestOptions, {
                         url: `${API_PREFIX}/user/following/${value}`
@@ -1561,7 +1573,8 @@ $(() => {
   let cardOptions = {
     delay: 200,
     readme: true,
-    disableProjects: false
+    disableProjects: false,
+    showSelf: false
   };
 
   // Revert to localStorage
@@ -1569,7 +1582,13 @@ $(() => {
   // In Firefox options are not so flexible so keep tokens in localStorage
   if (chrome && chrome.storage) {
     let storage = chrome.storage.sync || chrome.storage.local;
-    storage.get({token: '', delay: 200, readme: true, disableProjects: false}, item => {
+    storage.get({
+      token: '',
+      delay: 200,
+      readme: true,
+      disableProjects: false,
+      showSelf: false
+    }, item => {
       token = item.token;
       if (token) {
         localStorage.setItem(TOKEN_KEY, token);
@@ -1585,6 +1604,7 @@ $(() => {
       }
       cardOptions.readme = item.readme;
       cardOptions.disableProjects = item.disableProjects;
+      cardOptions.showSelf = item.showSelf;
       extract();
     });
   } else {
