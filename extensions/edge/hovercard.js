@@ -786,7 +786,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   $('body')
     .on('click', '.ghh-token-link', showTokenForm)
-    .on('dblclick', '.ghh', showTokenForm);
+    .on('tripleclick', '.ghh', showTokenForm);
 
   // prepare cache objects
   let cache = {

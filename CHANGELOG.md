@@ -1,5 +1,8 @@
 Changelog
 ---
+## 1.2.1
+* Switched trigger event to show access token form from double click to triple click to prevent opening the form unintentionally.
+
 ## 1.2.0
 * Now you can start to bind access token after double-clicking any card.
 * Added an option to show user hovercard for logged in user him/herself.

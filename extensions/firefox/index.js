@@ -15,6 +15,7 @@ pageMod.PageMod({
     data.url('jquery.js'),
     data.url('mustache.js'),
     data.url('tooltipster.js'),
+    data.url('tripleclick.js'),
     data.url('hovercard.js')
   ],
   contentScriptOptions: {

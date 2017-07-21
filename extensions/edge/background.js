@@ -5,6 +5,7 @@ let contentJS = [
     'mustache.js',
     'timeout.js',
     'tooltipster.js',
+    'tripleclick.js',
     'hovercard.js'
 ];
 

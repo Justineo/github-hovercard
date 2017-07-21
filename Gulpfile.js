@@ -130,6 +130,7 @@ gulp.task('userscript', ['userscript:inject-styles', 'userscript:prepare'], func
       './src/jquery.js',
       './src/mustache.js',
       './src/tooltipster.js',
+      './src/tripleclick.js',
       './tmp/hovercard.userscript.js'
     ])
     .pipe(concat('github-hovercard.user.js'))
@@ -295,6 +296,7 @@ gulp.task('demo', ['css', 'demo:prepare', 'demo:index'], function () {
       './src/jquery.js',
       './src/mustache.js',
       './src/tooltipster.js',
+      './src/tripleclick.js',
       './tmp/hovercard.demo.js',
       './tmp/demo.js'
     ])

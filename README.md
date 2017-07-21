@@ -27,9 +27,18 @@ Neat hovercards for GitHub.
 
 ## FAQ
 
+* Why and how should I bind my access token and which scopes should I allow?
+
+    GitHub limits unauthenticated API requests to 60 per hour but after binding your access token you will be able to enjoy the rate limit of **5,000** requests per hour. 
+    
+    **Triple click** on any hovercard and the access token form will pop out.
+
+    You should at lease add permission for `public_repo` to enable star/unstar, and `user:follow` to enable follow/unfollow.
+
+
 * How can I make the follow/unfollow button work?
 
-  First you need to provide an access token with adequate scopes.
+    First you need to provide an access token with adequate scopes.
 
 * Why Chrome warns me the extension might read my browser history?
 
@@ -58,6 +67,10 @@ For browser extension versions, GitHub Hovercard provide following options:
 * Readme
     
     You may disable readme content for repo cards if you don't need it.
+
+* Show self
+
+    You may choose if you want to show user hovercard for yourself.
 
 ## Screenshots
 
