@@ -255,7 +255,8 @@ gulp.task('opera:nex', ['chrome:zip'], function (cb) {
   exec(''
     + '"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"'
     + ' --pack-extension=' + path.join(__dirname, 'extensions/chrome')
-    + ' --pack-extension-key=' + path.join(process.env.HOME, '.ssh/chrome.pem'),
+    + ' --pack-extension-key=' + path.join(process.env.HOME, '.ssh/chrome.pem')
+    + ' --disable-gpu',
     function (error, stdout, stderr) {
       if (error) {
         return cb(error);

@@ -931,10 +931,14 @@ document.addEventListener('DOMContentLoaded', () => {
             if (href) {
               href = href.baseVal || href; // support SVG elements
 
-              let url = new URL(href);
-              // skip local anchors
-              if (`${url.host}${url.pathname}` === `${location.host}${location.pathname}`
-                && !url.hash.match(/#issuecomment-/)) {
+              try {
+                let url = new URL(href);
+                // skip local anchors
+                if (`${url.host}${url.pathname}` === `${location.host}${location.pathname}`
+                  && !url.hash.match(/#issuecomment-/)) {
+                  return;
+                }
+              } catch (e) {
                 return;
               }
 

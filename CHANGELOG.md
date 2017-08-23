@@ -1,5 +1,11 @@
 Changelog
 ---
+## 1.2.3
+* Added support for inline code referrals in issues.
+
+## 1.2.2
+* Added exception handling for URL resolving.
+
 ## 1.2.1
 * Switched trigger event to show access token form from double click to triple click to prevent opening the form unintentionally.
 

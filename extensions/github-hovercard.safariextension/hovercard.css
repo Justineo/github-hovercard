@@ -284,12 +284,77 @@
   background-color: rgba(108,108,108,0.5);
   border-radius: 2px;
   word-wrap: normal;
+  font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
 }
 .ghh-readme pre code,
 .ghh-issue-body pre code,
 .ghh-readme pre tt,
 .ghh-issue-body pre tt {
   background-color: transparent;
+}
+.ghh-readme .border.rounded-1.my-2,
+.ghh-issue-body .border.rounded-1.my-2 {
+  overflow: hidden;
+}
+.ghh-readme .px-3.py-2,
+.ghh-issue-body .px-3.py-2 {
+  padding: 0.6em !important;
+}
+.ghh-readme .border,
+.ghh-issue-body .border {
+  border: 1px solid rgba(255,255,255,0.2) !important;
+}
+.ghh-readme .border-bottom,
+.ghh-issue-body .border-bottom {
+  border-bottom: 1px solid rgba(255,255,255,0.1) !important;
+}
+.ghh-readme .rounded-1,
+.ghh-issue-body .rounded-1 {
+  border-radius: 2px !important;
+}
+.ghh-readme .text-gray-light,
+.ghh-issue-body .text-gray-light {
+  color: #fff !important;
+}
+.ghh-readme .f6,
+.ghh-issue-body .f6 {
+  font-size: 11px !important;
+}
+.ghh-readme .bg-gray-light,
+.ghh-issue-body .bg-gray-light {
+  background-color: rgba(255,255,255,0.15) !important;
+}
+.ghh-readme .bg-white,
+.ghh-issue-body .bg-white {
+  background-color: transparent !important;
+}
+.ghh-readme .blob-wrapper,
+.ghh-issue-body .blob-wrapper {
+  padding: 0.5em 0 !important;
+  background-color: rgba(108,108,108,0.5) !important;
+}
+.ghh-readme .blob-num,
+.ghh-issue-body .blob-num {
+  min-width: 30px !important;
+  padding: 0 0.6em !important;
+  color: rgba(255,255,255,0.5) !important;
+  font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace !important;
+}
+.ghh-readme .blob-num,
+.ghh-issue-body .blob-num,
+.ghh-readme .blob-code,
+.ghh-issue-body .blob-code {
+  line-height: 1.45;
+}
+.ghh-readme .blob-code-inner,
+.ghh-issue-body .blob-code-inner {
+  color: #fff !important;
+  font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace !important;
+}
+.ghh-readme .js-line-number,
+.ghh-issue-body .js-line-number {
+  pointer-events: none !important;
+  cursor: default;
 }
 .ghh-readme img,
 .ghh-issue-body img {
