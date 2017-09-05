@@ -1,5 +1,8 @@
 Changelog
 ---
+## 1.2.4
+* Fix repo slug extraction on explore page.
+
 ## 1.2.3
 * Added support for inline code referrals in issues.
 

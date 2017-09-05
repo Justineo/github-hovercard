@@ -135,7 +135,10 @@ document.addEventListener('DOMContentLoaded', () => {
     '.page-profile h3 > a': EXTRACTOR.REPO_LIST_SLUG,
 
     /* Explore */
-    // Trending summary
+    // Explore dashboard
+    '.pl-6.ml-3 .h4': EXTRACTOR.SLUG,
+    
+        // Trending summary
     '.repo-collection .repo-name': EXTRACTOR.SLUG,
 
     // Showcases & trending
