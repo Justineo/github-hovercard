@@ -138,7 +138,7 @@ $(() => {
     // Explore dashboard
     '.pl-6.ml-3 .h4': EXTRACTOR.SLUG,
     
-        // Trending summary
+    // Trending summary
     '.repo-collection .repo-name': EXTRACTOR.SLUG,
 
     // Showcases & trending
@@ -178,6 +178,7 @@ $(() => {
     '.select-menu-list[data-filter="org"] .select-menu-item-text': EXTRACTOR.TEXT_USER,
     '[data-filterable-for="assignee-filter-field"] .select-menu-item-heading': EXTRACTOR.TEXT_NODE_USER,
     '.select-menu-item-gravatar': EXTRACTOR.NEXT_TEXT_USER,
+    '.opened-by a': EXTRACTOR.TEXT_USER,
 
     // - Detail
     '.discussion-item-header strong': EXTRACTOR.SLUG,
@@ -322,7 +323,8 @@ $(() => {
             </span>
           </p>
           <p class="ghh-branch"><span class="commit-ref" title="{{headUser}}:{{headRef}}"><span class="user">{{headUser}}</span>:{{headRef}}</span><span>{{{icons.arrow}}}</span><span class="commit-ref" title="{{baseUser}}:{{baseRef}}"><span class="user">{{baseUser}}</span>:{{baseRef}}</span></p>
-        </div>{{/isPullRequest}}
+          {{^isMerged}}<ul class="ghh-reviews"><li title="{{mergeability.desc}}"><span class="ghh-state-icon ghh-state-icon-{{mergeability.type}}">{{{mergeability.icon}}}</span> {{mergeability.label}}</li>{{#hasReviews}}{{#reviews}}<li class="ghh-state-{{state.type}}" title="{{name}} {{state.desc}}">{{{state.icon}}} <a href="{{url}}">{{name}}</a></li>{{/reviews}}{{/hasReviews}}</ul>{{/isMerged}}
+          </div>{{/isPullRequest}}
         {{#body}}<div class="ghh-issue-body">{{{.}}}</div>{{/body}}
       </div>`,
     comment: `
@@ -690,6 +692,28 @@ $(() => {
         }
       };
       if (raw.pull_request) {
+        const REVIEW_STATE_MAP = {
+          COMMENTED: {
+            icon: getIcon('comment', 0.75),
+            type: 'normal',
+            desc: 'left review comments'
+          },
+          CHANGES_REQUESTED: {
+            icon: getIcon('x', 0.75),
+            type: 'alert',
+            desc: 'requested changes'
+          },
+          APPROVED: {
+            icon: getIcon('check', 0.75),
+            type: 'success',
+            desc: 'approved these changes'
+          },
+          PENDING: {
+            icon: getIcon('primitive-dot', 0.75),
+            type: 'warning',
+            desc: 'was requested for review'
+          }
+        };
         Object.assign(data, {
           headRef: raw.head.ref,
           headUser: raw.head.user.login,
@@ -699,8 +723,21 @@ $(() => {
           additions: raw.additions,
           deletions: raw.deletions,
           changedFiles: raw.changed_files,
+          mergeability: {
+            type: raw.mergeable ? 'success' : 'problem',
+            icon: raw.mergeable ? getIcon('check', 0.5) : getIcon('alert', 0.5),
+            label: raw.mergeable ? 'No conflicts' : 'Has conflicts',
+            desc: raw.mergeable ? 'This branch has no conflicts with the base branch' : 'This branch has conflicts that must be resolved'
+          },
+          isMerged: raw.merged,
           isSingleCommit: raw.commits === 1,
-          isSingleFile: raw.changed_files === 1
+          isSingleFile: raw.changed_files === 1,
+          hasReviews: raw.reviews.length > 0,
+          reviews: raw.reviews.map(review => {
+            return Object.assign({}, review, {
+              state: REVIEW_STATE_MAP[review.state]
+            })
+          })
         });
       }
     } else if (type === EXTRACT_TYPE.COMMENT) {
@@ -787,9 +824,26 @@ $(() => {
     tokenForm.appendTo($('body'));
     tokenField.focus();
   }
+
+  function toggleBodyLock (lock) {
+    $('body').toggleClass('ghh-noscroll', lock)
+  }
+
+  function checkBodyLock (elem, lock) {
+    if (elem.scrollHeight > elem.offsetHeight) {
+      toggleBodyLock(lock)
+    }
+  }
+
   $('body')
     .on('click', '.ghh-token-link', showTokenForm)
-    .on('tripleclick', '.ghh', showTokenForm);
+    .on('tripleclick', '.ghh', showTokenForm)
+    .on('mouseenter', '.ghh-readme, .ghh-issue-body, .ghh-commit-body', function () {
+      checkBodyLock(this, true)
+    })
+    .on('mouseleave', '.ghh-readme, .ghh-issue-body, .ghh-commit-body, .ghh', function () {
+      checkBodyLock(this, false)
+    });
 
   // prepare cache objects
   let cache = {
@@ -846,15 +900,15 @@ $(() => {
             break;
           }
           case EXTRACTOR.TITLE_USER: {
-            username = trim(elem.attr('title').replace(/[@\/]/g, ''));
+            username = trim((elem.attr('title') || '').replace(/[@\/]/g, ''));
             break;
           }
           case EXTRACTOR.ALT_USER: {
-            username = trim(elem.attr('alt').replace(/[@\/]/g, ''));
+            username = trim((elem.attr('alt') || '').replace(/[@\/]/g, ''));
             break;
           }
           case EXTRACTOR.HREF_USER: {
-            username = trim(elem.attr('href').replace(/[@\/]/g, ''));
+            username = trim((elem.attr('href') || '').replace(/[@\/]/g, ''));
             break;
           }
           case EXTRACTOR.TEXT_MY_REPO: {
@@ -1378,19 +1432,21 @@ $(() => {
                         .fail(handleError);
                     }
                     if (raw.pull_request) {
+                      // load PR
                       todo++;
                       let prPath = apiPath.replace(/\/issues\/(\d+)$/, '/pulls/$1');
-                      let options = {
+                      let prOptions = {
                         url: `${API_PREFIX}/${prPath}`,
                         dataType: 'json'
                       };
-                      $.ajax(Object.assign({}, requestOptions, options))
+                      $.ajax(Object.assign({}, requestOptions, prOptions))
                         .done(pull => {
                           let extra = {
                             commits: pull.commits,
                             additions: pull.additions,
                             deletions: pull.deletions,
                             changed_files: pull.changed_files,
+                            mergeable: pull.mergeable,
                             head: pull.head,
                             base: pull.base
                           };
@@ -1404,6 +1460,79 @@ $(() => {
                           }
                         })
                         .fail(handleError);
+
+                      let allReviews = []
+                      Object.assign(raw, { reviews: allReviews });
+                      Object.assign(cache[type][value], { reviews: allReviews });
+
+                      // load reviews
+                      todo++;
+                      let reviewPath = `${prPath}/reviews`;
+                      let reviewOptions = {
+                        url: `${API_PREFIX}/${reviewPath}`,
+                        dataType: 'json'
+                      };
+                      $.ajax(Object.assign({}, requestOptions, reviewOptions))
+                        .done(reviews => {
+                          let logged = reviews.reduce((acc, { user, state }) => {
+                            let record = acc[user.login]
+                            if (user.login !== raw.user.login // not self
+                              && (state !== 'COMMENTED' || (!record && state === 'COMMENTED'))) {
+                              acc[user.login] = {
+                                name: user.login,
+                                url: user.html_url,
+                                avatar: user.avatar_url,
+                                state: state
+                              }
+                            }
+                            return acc
+                          }, {})
+                          let results = Object.keys(logged).map(login => logged[login])
+                          allReviews.unshift(...results);
+                          if (!--todo) {
+                            elem.tooltipster('content', getCardHTML(type, raw));
+                          }
+                        })
+                        .fail(handleError);
+
+                        // load reviews
+                        todo++;
+                        let reviewReqPath = `${prPath}/requested_reviewers`;
+                        let reviewReqOptions = {
+                          url: `${API_PREFIX}/${reviewReqPath}`,
+                          dataType: 'json'
+                        };
+                        let opts = Object.assign({}, requestOptions, reviewReqOptions);
+                        opts.headers.Accept = 'application/vnd.github.thor-preview+json';
+                          $.ajax(opts)
+                          .done(reqs => {
+                            let [owner] = value.split('/');
+                            let users = reqs.users || reqs
+                            let reviewers = users.map(user => {
+                              return {
+                                name: user.login,
+                                url: user.html_url,
+                                avatar: user.avatar_url,
+                                state: 'PENDING'
+                              }
+                            });
+                            if (reqs.teams) {
+                              reviewers.push(...reqs.teams.map(team => {
+                                return {
+                                  name: team.name,
+                                  url: `${SITE_PREFIX}orgs/${owner}/teams/${team.slug}`,
+                                  avatar: '',
+                                  state: 'PENDING'
+                                }
+                              }));
+                            }
+
+                            allReviews.push(...reviewers);
+                            if (!--todo) {
+                              elem.tooltipster('content', getCardHTML(type, raw));
+                            }
+                          })
+                          .fail(handleError);
                     }
                     if (!todo) {
                       break;

@@ -440,6 +440,9 @@
 /**********
  * Common
  **********/
+.ghh-noscroll {
+  overflow: hidden;
+}
 .ghh button {
   padding: 0 4px;
   border-radius: 2px;
@@ -495,6 +498,15 @@
 .ghh .ghh-state .octicon {
   margin-right: 4px;
   vertical-align: -3px;
+}
+.ghh .ghh-state-alert {
+  color: #ff3c00;
+}
+.ghh .ghh-state-success {
+  color: #84d063;
+}
+.ghh .ghh-state-warning {
+  color: #dbab09;
 }
 .ghh .ghh-state-verified {
   background-color: #28a745;
@@ -656,6 +668,55 @@
   border-width: 1px;
   vertical-align: middle;
   line-height: 1.2;
+}
+.ghh-pull-meta .ghh-reviews {
+  margin-top: 8px;
+}
+.ghh-pull-meta .ghh-reviews li {
+  display: inline-block;
+  margin-right: 5px;
+  margin-bottom: 4px;
+  padding: 0 5px;
+  border-radius: 2px;
+  background-color: rgba(255,255,255,0.15);
+  height: 22px;
+  line-height: 22px;
+}
+.ghh-pull-meta .ghh-reviews .ghh-state-icon {
+  display: inline-block;
+  position: relative;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  vertical-align: -1.5px;
+  color: #fff;
+}
+.ghh-pull-meta .ghh-reviews .ghh-state-icon .octicon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+.ghh-pull-meta .ghh-reviews .ghh-state-icon-alert {
+  background-color: #ff3c00;
+}
+.ghh-pull-meta .ghh-reviews .ghh-state-icon-success {
+  background-color: #84d063;
+}
+.ghh-pull-meta .ghh-reviews .ghh-state-icon-warning {
+  background-color: #dbab09;
+}
+.ghh-pull-meta .ghh-reviews .ghh-state-icon-problem {
+  background-color: #6a737d;
+}
+.ghh-pull-meta .ghh-reviews .ghh-state-icon-problem .octicon {
+  top: 47%;
+}
+.ghh-pull-meta .ghh-reviews .octicon {
+  position: relative;
+  top: 50%;
+  transform: translateY(-50%);
+  vertical-align: top;
 }
 /**********
  * Commit

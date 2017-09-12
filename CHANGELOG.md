@@ -1,5 +1,9 @@
 Changelog
 ---
+## 1.3.0
+* Disabled body scroll when hovering scrollable area in hovercards.
+* Added review status to PR cards.
+
 ## 1.2.4
 * Fix repo slug extraction on explore page.
 

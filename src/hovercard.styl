@@ -349,6 +349,9 @@ $contribution
  * Common
  **********/
 .ghh
+  &-noscroll
+    overflow hidden
+
   button
     padding 0 4px
     border-radius 2px
@@ -404,6 +407,15 @@ $contribution
     .octicon
       margin-right 4px
       vertical-align -3px
+
+    &-alert
+      color #ff3c00
+
+    &-success
+      color #84d063
+
+    &-warning
+      color #dbab09
 
   .ghh-state-verified
     background-color #28a745
@@ -559,7 +571,6 @@ $contribution
   .issue-number
     opacity .8
 
-
 .ghh-issue-meta
   p
     line-height 16px
@@ -573,6 +584,55 @@ $contribution
 
 .ghh-pull-meta
   @extends $contribution
+
+  .ghh-reviews
+    margin-top 8px
+
+    li
+      display inline-block
+      margin-right 5px
+      margin-bottom 4px
+      padding 0 5px
+      border-radius 2px
+      background-color $bright-background
+      height 22px
+      line-height 22px
+
+    .ghh-state-icon
+      display inline-block
+      position relative
+      width 12px
+      height 12px
+      border-radius 50%
+      vertical-align -1.5px
+      color #fff
+
+      .octicon
+        position absolute
+        top 50%
+        left 50%
+        transform translate(-50%, -50%)
+
+      &-alert
+        background-color #ff3c00
+
+      &-success
+        background-color #84d063
+
+      &-warning
+        background-color #dbab09
+
+      &-problem
+        background-color #6a737d
+
+        .octicon
+          top: 47%
+
+    .octicon
+      position relative
+      top 50%
+      transform translateY(-50%)
+      vertical-align top
 
 .ghh-issue-body
   @extends $markdown-body
