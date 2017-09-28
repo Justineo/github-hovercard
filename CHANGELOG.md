@@ -1,5 +1,8 @@
 Changelog
 ---
+## 1.3.1
+* Hide review states after pull requests are merged.
+
 ## 1.3.0
 * Disabled body scroll when hovering scrollable area in hovercards.
 * Added review status to PR cards.

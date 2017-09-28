@@ -1447,6 +1447,7 @@ $(() => {
                             deletions: pull.deletions,
                             changed_files: pull.changed_files,
                             mergeable: pull.mergeable,
+                            merged: pull.merged,
                             head: pull.head,
                             base: pull.base
                           };
