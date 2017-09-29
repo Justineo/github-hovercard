@@ -12,22 +12,26 @@
     ],
     "persistent": false
   },
+  "content_security_policy": "script-src 'self' https://*.github.com; object-src 'self'",
   "permissions": [
     "webNavigation",
+    "webRequest",
     "tabs",
     "storage",
-    "https://github.com/*"
+    "https://github.com/*",
+    "https://api.github.com/*"
   ],
   "optional_permissions": [
     "<all_urls>"
   ],
-  "externally_connectable": {
-    "matches": [
-      "*://justineo.github.io/*"
-    ]
-  },
   "options_ui": {
     "page": "options.html",
     "chrome_style": true
+  },
+  "applications": {
+    "gecko": {
+      "id": "github-hovercard@justineo.github.io",
+      "strict_min_version": "55.0"
+    }
   }
 }

@@ -822,7 +822,7 @@ $(() => {
 
   function showTokenForm () {
     tokenForm.appendTo($('body'));
-    tokenField.focus();
+    tokenField.val(token).select();
   }
 
   function toggleBodyLock (lock) {
@@ -1704,53 +1704,31 @@ $(() => {
   const EMOJI_MAP = '__EMOJI_DATA__';
 
   const TOKEN_KEY = 'hovercard-token';
-  let token = '';
+  let token = localStorage.getItem(TOKEN_KEY);
   let chrome = window.chrome;
 
-  let cardOptions = {
+  const DEFAULT_OPTIONS = {
     delay: 200,
     readme: true,
     disableProjects: false,
     showSelf: false
   };
 
-  // Revert to localStorage
-  // May switch back to chrome.storage when options are properly designed
-  // In Firefox options are not so flexible so keep tokens in localStorage
+  let cardOptions = Object.assign({}, DEFAULT_OPTIONS);
+
   if (chrome && chrome.storage) {
     let storage = chrome.storage.sync || chrome.storage.local;
-    storage.get({
-      token: '',
-      delay: 200,
-      readme: true,
-      disableProjects: false,
-      showSelf: false
-    }, item => {
-      token = item.token;
-      if (token) {
-        localStorage.setItem(TOKEN_KEY, token);
-        storage.remove('token');
-      } else {
-        token = localStorage.getItem(TOKEN_KEY);
-      }
+    storage.get(Object.assign({}, DEFAULT_OPTIONS), ({ delay, readme, disableProjects, showSelf }) => {
+      delay = parseInt(delay, 10)
+      delay = isNaN(delay) ? 200 : delay
 
-      // Other options
-      let delay = parseFloat(item.delay);
-      if (!isNaN(delay)) {
-        cardOptions.delay = delay;
-      }
-      cardOptions.readme = item.readme;
-      cardOptions.disableProjects = item.disableProjects;
-      cardOptions.showSelf = item.showSelf;
+      Object.assign(cardOptions, {
+        delay, readme, disableProjects, showSelf
+      });
+
       extract();
     });
   } else {
-    token = localStorage.getItem(TOKEN_KEY);
-
-    // Firefox options
-    if (self.options) {
-      cardOptions = self.options.prefs;
-    }
     extract();
   }
 });

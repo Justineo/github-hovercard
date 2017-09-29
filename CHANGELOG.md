@@ -1,5 +1,8 @@
 Changelog
 ---
+## 1.3.2
+* Automatically fill token field with bound token when editing.
+
 ## 1.3.1
 * Hide review states after pull requests are merged.
 

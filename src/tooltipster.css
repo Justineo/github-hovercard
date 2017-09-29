@@ -204,8 +204,6 @@ width, height, top, and left */
 	width: 32px;
 	height: 32px;
 	margin: 0 32px;
-
-	/*! Spinner icon from GitHub */
     background: url(spinner.gif) no-repeat center center;
     background-size: 24px auto;
 }

@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>GitHub Hovercard Options</title>
+<style>
+body {
+    padding-bottom: 36px;
+}
+
+p {
+    line-height: normal;
+}
+
+input[ui~="wide"] {
+    width: 280px;
+}
+
+:-webkit-any(#form, #actions) button {
+    margin-left: 10px;
+}
+
+:-webkit-any(#form, #actions) button:first-child {
+    margin-left: 0;
+}
+
+#domains {
+    padding: 0;
+}
+
+#domains li {
+    margin-bottom: 5px;
+    list-style: none;
+}
+
+.fixed {
+    opacity: .5;
+}
+
+#form .remove {
+    display: inline-block;
+    padding: 0;
+    min-width: 28px;
+    min-height: 28px;
+    width: 28px;
+    height: 28px;
+    font-size: 22px;
+    background: none;
+    border: none;
+    box-shadow: none;
+    text-shadow: none;
+    transform-origin: 50% 50%;
+    transform: scale(0.5);
+    vertical-align: middle;
+    color: #727272;
+}
+
+#form .remove:hover {
+    background: #727272;
+    border: none;
+    border-radius: 50%;
+    box-shadow: none;
+    color: #fff;
+}
+
+#actions {
+    display: flex;
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    padding: 14px 17px;
+    background: #fff;
+}
+
+#message {
+    flex-grow: 1;
+    padding-left: 5px;
+    color: #666;
+    line-height: 24px;
+}
+
+.aux {
+    color: #999;
+}
+
+#save:not(:focus) {
+    border-color: rgba(0, 0, 0, 0.5);
+}
+</style>
+</head>
+<body>
+<section id="form">
+    <h3>Delay</h3>
+    <section>
+        <p><input type="number" id="delay" placeholder="Time in milliseconds..."> ms <span class="aux">(<code>200</code> by default)</span></p>
+    </section>
+    <h3>Optional Features</h3>
+    <section>
+        <p><label><input type="checkbox" id="show-self"> Show user hovercards for myself</label></p>
+        <p><label><input type="checkbox" id="readme"> Show readme content for repos</label></p>
+        <p><label><input type="checkbox" id="projects"> Disable hovercards for projects</label></p>
+    </section>
+    <h3>Applicable Domains</h3>
+    <section>
+        <ul id="domains">
+            <li><input type="text" ui="wide" value="github.com (required)" readonly class="fixed"></li>
+        </ul>
+    </section>
+</section>
+<section id="actions">
+    <button id="add">Add</button>
+    <span id="message"></span>
+    <div>
+        <button id="cancel">Cancel</button><button id="save" class="default-button">Save</button>
+    </div>
+</section>
+<script src="jquery.js"></script>
+<script src="mustache.js"></script>
+<script src="options.js"></script>
+</body>
+</html>
