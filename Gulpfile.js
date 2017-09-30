@@ -246,7 +246,7 @@ gulp.task('chrome:zip', ['chrome:cp'], function (cb) {
 gulp.task('firefox:zip', ['firefox:cp'], function (cb) {
   exec(
     'find . -path \'*/.*\' -prune -o -type f -print | zip ../packed/github-hovercard.firefox.zip -@',
-    { cwd: 'extensions/chrome' },
+    { cwd: 'extensions/firefox' },
     function (error, stdout, stderr) {
       if (error) {
         return cb(error);

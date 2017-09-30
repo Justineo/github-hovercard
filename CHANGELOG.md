@@ -1,5 +1,8 @@
 Changelog
 ---
+## 1.3.3
+* Fix build script so that Firefox version can actually work.
+
 ## 1.3.2
 * Automatically fill token field with bound token when editing.
 
