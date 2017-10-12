@@ -1,5 +1,9 @@
 Changelog
 ---
+## 1.4.0
+* Fixed extraction failures due to GitHub's recent update.
+* Fixed an XSS vulnerability on notification titles.
+
 ## 1.3.3
 * Fix build script so that Firefox version can actually work.
 

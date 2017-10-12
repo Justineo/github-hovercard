@@ -2,7 +2,7 @@
   "manifest_version": 2,
   "name": "GitHub Hovercard",
   "description": "Neat hovercards for GitHub.",
-  "version": "1.3.3",
+  "version": "1.4.0",
   "icons": {
     "128": "icon.png"
   },

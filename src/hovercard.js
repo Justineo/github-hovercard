@@ -37,8 +37,8 @@ $(() => {
     'explore', 'styleguide', 'showcases', 'trending', 'stars',
     'dashboard', 'notifications', 'search', 'developer', 'account',
     'pulls', 'issues', 'features', 'contact', 'security', 'join',
-    'login', 'watching', 'new', 'integrations', 'pricing',
-    'personal', 'business', 'open-source', 'marketplace'
+    'login', 'watching', 'new', 'integrations', 'pricing', 'topics',
+    'personal', 'business', 'open-source', 'marketplace', 'collections'
   ];
 
   const GH_RESERVED_REPO_NAMES = [
@@ -111,6 +111,9 @@ $(() => {
     '.repo-and-owner .owner': EXTRACTOR.TEXT_USER,
     '.repo-and-owner .repo': EXTRACTOR.ANCESTOR_URL_REPO,
 
+    // Discover
+    '#recommended-repositories-container [itemprop~="codeRepository"]': EXTRACTOR.REPO_LIST_SLUG,
+    
     /* User profile */
     // Pinned repos
     '.pinned-repo-item-content .owner': EXTRACTOR.TEXT_USER,
@@ -130,21 +133,17 @@ $(() => {
     // Repos
     '.page-profile [itemprop$="owns"] h3 > a': EXTRACTOR.URL,
     '.page-profile [itemprop$="owns"] h3 + span a': EXTRACTOR.SLUG,
-
+    
     // Stars
     '.page-profile h3 > a': EXTRACTOR.REPO_LIST_SLUG,
 
     /* Explore */
-    // Explore dashboard
-    '.pl-6.ml-3 .h4': EXTRACTOR.SLUG,
+    // Trending
+    '#trending ~ div h3 > a': EXTRACTOR.REPO_LIST_SLUG,
     
-    // Trending summary
-    '.repo-collection .repo-name': EXTRACTOR.SLUG,
-
-    // Showcases & trending
-    '.collection-page .repo-list h3 > a': EXTRACTOR.REPO_LIST_SLUG,
-    '.explore-content .repo-list h3 > a': EXTRACTOR.REPO_LIST_SLUG,
-
+    // Collections
+    '.MarketingBody h3 > a': EXTRACTOR.REPO_LIST_SLUG,
+    
     /* Organization profile */
     // Invite member suggestion info
     '.member-suggestion-info .member-login': EXTRACTOR.TEXT_USER,
@@ -443,7 +442,7 @@ $(() => {
 
   // '<span>ecomfe/</span><em>ecomfe</em>.github.io'
   function fixRepoSlug(html) {
-    let [, leading, content, ending] = html.match(/^(\s*)(.+?)(\s*)$/);
+    let [, leading, content, ending] = html.replace(/\n/g, ' ').match(/^(\s*)(.+?)(\s*)$/);
 
     let parts = content
       .replace(/<\//g, '${END}')
@@ -904,7 +903,7 @@ $(() => {
             break;
           }
           case EXTRACTOR.ALT_USER: {
-            username = trim((elem.attr('alt') || '').replace(/[@\/]/g, ''));
+            username = trim((elem.attr('alt') || '').split(/\s+/)[0].replace(/[@\/]/g, ''));
             break;
           }
           case EXTRACTOR.HREF_USER: {
@@ -976,7 +975,7 @@ $(() => {
           case EXTRACTOR.TEXT_NODE_URL: {
             let nodes = [...elem[0].childNodes];
             let textNode = nodes.find(node => trim(node.nodeValue));
-            target = $(` <span>${textNode.nodeValue}</span>`);
+            target = $(encodeHTML` <span>${textNode.nodeValue}</span>`);
             textNode.parentNode.replaceChild(target[0], textNode);
             markExtracted(elem);
           }
