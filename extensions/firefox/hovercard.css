@@ -812,3 +812,18 @@
 .ghh-overlay form p:last-child input {
   flex: 1 1 auto;
 }
+/*******************
+ * Conflict resoler
+ *******************/
+.ghh-user-x.tooltipped::before,
+.ghh-repo-x.tooltipped::before,
+.ghh-issue-x.tooltipped::before,
+.ghh-comment-x.tooltipped::before,
+.ghh-commit-x.tooltipped::before,
+.ghh-user-x.tooltipped::after,
+.ghh-repo-x.tooltipped::after,
+.ghh-issue-x.tooltipped::after,
+.ghh-comment-x.tooltipped::after,
+.ghh-commit-x.tooltipped::after {
+  display: none !important;
+}

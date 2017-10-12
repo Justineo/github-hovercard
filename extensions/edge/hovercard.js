@@ -389,9 +389,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function markExtracted(elem, type, value) {
     if (value) {
-      elem.data(TYPE_KEY, type);
-      elem.data(VALUE_KEY, value);
-      elem.addClass(getTypeClass(type));
+      elem
+        .data(TYPE_KEY, type)
+        .data(VALUE_KEY, value)
+        .addClass(getTypeClass(type));
     }
     if (!type || !value) {
       elem.data(TYPE_KEY, EXTRACT_TYPE.SKIP);
