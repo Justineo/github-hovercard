@@ -367,8 +367,8 @@ document.addEventListener('DOMContentLoaded', () => {
       <div class="ghh-overlay">
         <form>
           <h3>${getIcon('key')} GitHub Access Token</h3>
-          <p>GitHub limits unauthenticated API requests to 60 per hour but after binding your access token you will be able to enjoy the rate limit of <strong>5,000</strong> requests per hour.</p>
-          <p>You should at lease add permission for <code>public_repo</code> to enable star/unstar, and <code>user:follow</code> to enable follow/unfollow.</p>
+          <p>GitHub limits unauthenticated API requests to 60 per hour, but after binding your access token you will be able to enjoy the rate limit of <strong>5,000</strong> requests per hour.</p>
+          <p>You should at least add permission for <code>public_repo</code> to enable star/unstar, and <code>user:follow</code> to enable follow/unfollow.</p>
           <p>
             <input class="ghh-token form-control" type="text" placeholder="Paste access token here..." size="40">
             <button class="btn btn-primary ghh-save">Save</button>
