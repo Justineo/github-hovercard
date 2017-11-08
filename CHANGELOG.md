@@ -1,5 +1,11 @@
 Changelog
 ---
+## 1.4.2
+* Add `<relative-time>` tags to the exclusion list to get better performance on release pages.
+
+## 1.4.1
+* Added more fixes for extraction rules.
+
 ## 1.4.0
 * Fixed extraction failures due to GitHub's recent update.
 * Fixed an XSS vulnerability on notification titles.

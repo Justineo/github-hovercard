@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const GH_DOMAIN = location.host;
 
-  const EXCLUDES = '.tooltipster-base, .tooltipster-sizer, .timestamp, .time, .octotree_sidebar, time-ago';
+  const EXCLUDES = '.tooltipster-base, .tooltipster-sizer, .timestamp, .time, .octotree_sidebar, time-ago, relative-time';
   const DEFAULT_TARGET = document.body;
   let isExtracting = false;
   let observer = new MutationObserver(mutations => {
@@ -112,7 +112,7 @@ document.addEventListener('DOMContentLoaded', () => {
     '.repo-and-owner .repo': EXTRACTOR.ANCESTOR_URL_REPO,
 
     // Discover
-    '#recommended-repositories-container [itemprop~="codeRepository"]': EXTRACTOR.REPO_LIST_SLUG,
+    '#recommended-repositories-container h3 > a': EXTRACTOR.REPO_LIST_SLUG,
     
     /* User profile */
     // Pinned repos
@@ -140,6 +140,10 @@ document.addEventListener('DOMContentLoaded', () => {
     /* Explore */
     // Trending
     '#trending ~ div h3 > a': EXTRACTOR.REPO_LIST_SLUG,
+    '.repo-list h3 > a': EXTRACTOR.REPO_LIST_SLUG,
+
+    // Topics
+    '.topic h3 > a': EXTRACTOR.REPO_LIST_SLUG,
     
     // Collections
     '.MarketingBody h3 > a': EXTRACTOR.REPO_LIST_SLUG,
