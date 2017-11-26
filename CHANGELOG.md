@@ -1,5 +1,8 @@
 Changelog
 ---
+## 1.4.3
+* Use `wheel` event for handling scroll more precisely.
+
 ## 1.4.2
 * Add `<relative-time>` tags to the exclusion list to get better performance on release pages.
 

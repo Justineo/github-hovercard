@@ -440,9 +440,6 @@
 /**********
  * Common
  **********/
-.ghh-noscroll {
-  overflow: hidden;
-}
 .ghh button {
   padding: 0 4px;
   border-radius: 2px;

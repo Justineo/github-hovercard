@@ -829,24 +829,18 @@ document.addEventListener('DOMContentLoaded', () => {
     tokenField.val(token).select();
   }
 
-  function toggleBodyLock (lock) {
-    $('body').toggleClass('ghh-noscroll', lock)
-  }
-
-  function checkBodyLock (elem, lock) {
-    if (elem.scrollHeight > elem.offsetHeight) {
-      toggleBodyLock(lock)
-    }
-  }
-
   $('body')
     .on('click', '.ghh-token-link', showTokenForm)
     .on('tripleclick', '.ghh', showTokenForm)
-    .on('mouseenter', '.ghh-readme, .ghh-issue-body, .ghh-commit-body', function () {
-      checkBodyLock(this, true)
-    })
-    .on('mouseleave', '.ghh-readme, .ghh-issue-body, .ghh-commit-body, .ghh', function () {
-      checkBodyLock(this, false)
+    .on('wheel', '.ghh-readme, .ghh-issue-body, .ghh-commit-body', function (e) {
+      if (this.scrollTop + e.originalEvent.deltaY + this.clientHeight >= this.scrollHeight) {
+        e.preventDefault();
+        this.scrollTop = this.scrollHeight
+      }
+      if (this.scrollTop + e.originalEvent.deltaY <= 0) {
+        e.preventDefault();
+        this.scrollTop = 0
+      }
     });
 
   // prepare cache objects
