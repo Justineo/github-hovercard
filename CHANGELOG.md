@@ -1,10 +1,13 @@
 Changelog
 ---
+## 1.4.4
+* Increased `z-index` to stop being covered by Octotree's sidebar.
+
 ## 1.4.3
-* Use `wheel` event for handling scroll more precisely.
+* Used `wheel` event for handling scroll more precisely.
 
 ## 1.4.2
-* Add `<relative-time>` tags to the exclusion list to get better performance on release pages.
+* Added `<relative-time>` tags to the exclusion list to get better performance on release pages.
 
 ## 1.4.1
 * Added more fixes for extraction rules.

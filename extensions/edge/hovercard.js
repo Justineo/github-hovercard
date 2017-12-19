@@ -1170,6 +1170,7 @@ document.addEventListener('DOMContentLoaded', () => {
       debug: false,
       delay: cardOptions.delay,
       // trigger: 'click',
+      zIndex: 2147483647,
       functionBefore(self, event) {
         let elem = $(event.origin);
         elem.tooltipster('content', $('<span class="loading"></span>'));

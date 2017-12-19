@@ -1,58 +1,58 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
-<dict>
-	<key>Author</key>
-	<string>Justineo</string>
-	<key>Builder Version</key>
-	<string>13604.1.38.1.6</string>
-	<key>CFBundleDisplayName</key>
-	<string>GitHub Hovercard</string>
-	<key>CFBundleIdentifier</key>
-	<string>justineo.github.io.github-hovercard</string>
-	<key>CFBundleInfoDictionaryVersion</key>
-	<string>6.0</string>
-	<key>CFBundleShortVersionString</key>
-	<string>1.4.3</string>
-	<key>CFBundleVersion</key>
-	<string>1.4.3</string>
-	<key>Content</key>
-	<dict>
-		<key>Scripts</key>
-		<dict>
-			<key>End</key>
-			<array>
-				<string>jquery.js</string>
-				<string>tooltipster.js</string>
-				<string>tripleclick.js</string>
-				<string>mustache.js</string>
-				<string>hovercard.js</string>
-				<string>styles.js</string>
-			</array>
-		</dict>
-	</dict>
-	<key>Description</key>
-	<string>Neat hovercards for GitHub.</string>
-	<key>DeveloperIdentifier</key>
-	<string>0000000000</string>
-	<key>ExtensionInfoDictionaryVersion</key>
-	<string>1.0</string>
-	<key>Permissions</key>
-	<dict>
-		<key>Website Access</key>
-		<dict>
-			<key>Allowed Domains</key>
-			<array>
-				<string>http://github.com/*</string>
-				<string>https://github.com/*</string>
-			</array>
-			<key>Include Secure Pages</key>
-			<true/>
-			<key>Level</key>
-			<string>Some</string>
-		</dict>
-	</dict>
-	<key>Website</key>
-	<string>https://justineo.github.io/github-hovercard</string>
-</dict>
+  <dict>
+    <key>Author</key>
+    <string>Justineo</string>
+    <key>Builder Version</key>
+    <string>13604.1.38.1.6</string>
+    <key>CFBundleDisplayName</key>
+    <string>GitHub Hovercard</string>
+    <key>CFBundleIdentifier</key>
+    <string>justineo.github.io.github-hovercard</string>
+    <key>CFBundleInfoDictionaryVersion</key>
+    <string>6.0</string>
+    <key>CFBundleShortVersionString</key>
+    <string>1.4.4</string>
+    <key>CFBundleVersion</key>
+    <string>1.4.4</string>
+    <key>Content</key>
+    <dict>
+      <key>Scripts</key>
+      <dict>
+        <key>End</key>
+        <array>
+          <string>jquery.js</string>
+          <string>tooltipster.js</string>
+          <string>tripleclick.js</string>
+          <string>mustache.js</string>
+          <string>hovercard.js</string>
+          <string>styles.js</string>
+        </array>
+      </dict>
+    </dict>
+    <key>Description</key>
+    <string>Neat hovercards for GitHub.</string>
+    <key>DeveloperIdentifier</key>
+    <string>0000000000</string>
+    <key>ExtensionInfoDictionaryVersion</key>
+    <string>1.0</string>
+    <key>Permissions</key>
+    <dict>
+      <key>Website Access</key>
+      <dict>
+        <key>Allowed Domains</key>
+        <array>
+          <string>http://github.com/*</string>
+          <string>https://github.com/*</string>
+        </array>
+        <key>Include Secure Pages</key>
+        <true/>
+        <key>Level</key>
+        <string>Some</string>
+      </dict>
+    </dict>
+    <key>Website</key>
+    <string>https://justineo.github.io/github-hovercard</string>
+  </dict>
 </plist>
