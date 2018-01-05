@@ -23,7 +23,7 @@
     "gulp-replace": "^0.5.4",
     "gulp-stylus": "^2.6.0",
     "gulp-uglify": "^1.5.4",
-    "marked": "^0.3.6",
+    "marked": "^0.3.9",
     "merge-stream": "^1.0.1",
     "octicons": "^5.0.1",
     "plist": "^2.1.0",
