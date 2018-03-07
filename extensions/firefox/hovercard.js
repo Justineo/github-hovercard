@@ -1704,7 +1704,7 @@ $(() => {
 
   const TOKEN_KEY = 'hovercard-token';
   let token = localStorage.getItem(TOKEN_KEY);
-  let chrome = window.chrome;
+  let platform = (typeof browser !== 'undefined' ? browser : window.chrome) || null;
 
   const DEFAULT_OPTIONS = {
     delay: 200,
@@ -1715,8 +1715,8 @@ $(() => {
 
   let cardOptions = Object.assign({}, DEFAULT_OPTIONS);
 
-  if (chrome && chrome.storage) {
-    let storage = chrome.storage.sync || chrome.storage.local;
+  if (platform && platform.storage) {
+    let storage = platform.storage.sync || platform.storage.local;
     storage.get(Object.assign({}, DEFAULT_OPTIONS), ({ delay, readme, disableProjects, showSelf }) => {
       delay = parseInt(delay, 10)
       delay = isNaN(delay) ? 200 : delay

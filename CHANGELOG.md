@@ -1,5 +1,8 @@
 Changelog
 ---
+## 1.4.5
+* Fixed options loading in Firefox.
+
 ## 1.4.4
 * Increased `z-index` to stop being covered by Octotree's sidebar.
 
