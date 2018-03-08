@@ -1,4 +1,6 @@
 # GitHub Hovercard
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FJustineo%2Fgithub-hovercard.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2FJustineo%2Fgithub-hovercard?ref=badge_shield)
+
 
 Neat hovercards for GitHub.
 
@@ -105,3 +107,7 @@ Authentication is supported from v0.0.7.
 * Thank [Tooltipster](https://github.com/iamceege/tooltipster/) for the awesome tooltip component.
 * Thank [jQuery](https://github.com/jquery/jquery) for basic operations.
 * Thank [Mustache.js](https://github.com/janl/mustache.js) for templating.
+
+
+## License
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FJustineo%2Fgithub-hovercard.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2FJustineo%2Fgithub-hovercard?ref=badge_large)
