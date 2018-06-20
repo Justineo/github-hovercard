@@ -1,5 +1,10 @@
 Changelog
 ---
+## 1.5.0
+* Merged contextual information provided by GitHub's own hovercards into our hovercards.
+* Fixed extraction to align with GitHub's continuou UI refactor.
+* Added more `403` error handling.
+
 ## 1.4.5
 * Fixed options loading in Firefox.
 

@@ -3,8 +3,24 @@ $(() => {
 
   const GH_DOMAIN = location.host;
 
-  const EXCLUDES = '.tooltipster-base, .tooltipster-sizer, .timestamp, .time, .octotree_sidebar, time-ago, relative-time';
+  const EXCLUDES = [
+    '.tooltipster-base',
+    '.tooltipster-sizer',
+    '.timestamp',
+    '.time',
+    '.octotree_sidebar',
+    'time-ago',
+    'relative-time'
+  ].join(',');
+
   const DEFAULT_TARGET = document.body;
+
+  function isExclude (target) {
+    return $(target).is(EXCLUDES)
+      || $(target).parents(EXCLUDES).length
+      || $(target).is(DEFAULT_TARGET)
+  }
+
   let isExtracting = false;
   let observer = new MutationObserver(mutations => {
     if (isExtracting) {
@@ -13,9 +29,7 @@ $(() => {
     mutations.forEach(mutation => {
       if (mutation.type === 'childList') {
         let target = mutation.target;
-        if (!$(target).is(EXCLUDES)
-          && !$(target).parents(EXCLUDES).length
-          && !$(target).is(DEFAULT_TARGET)) {
+        if (!isExclude(target)) {
           extract(target);
         }
       }
@@ -38,7 +52,8 @@ $(() => {
     'dashboard', 'notifications', 'search', 'developer', 'account',
     'pulls', 'issues', 'features', 'contact', 'security', 'join',
     'login', 'watching', 'new', 'integrations', 'pricing', 'topics',
-    'personal', 'business', 'open-source', 'marketplace', 'collections'
+    'personal', 'business', 'open-source', 'marketplace', 'collections',
+    'hovercards'
   ];
 
   const GH_RESERVED_REPO_NAMES = [
@@ -76,7 +91,7 @@ $(() => {
   };
 
   const GH_DOMAIN_PATTERN = GH_DOMAIN.replace(/\./g, '\\.');
-  const URL_USER_PATTERN = `^https?:\\/\\/${GH_DOMAIN_PATTERN}\\/([^/?#]+)(?:\\/$|[^/]*$)`;
+  const URL_USER_PATTERN = `^https?:\\/\\/${GH_DOMAIN_PATTERN}\\/(?:([^/?#]+)(?:\\/$|[^/]*$)|orgs\\/[^/]+\\/people\\/([^/?#]+))`;
   const URL_REPO_PATTERN = `^https?:\\/\\/${GH_DOMAIN_PATTERN}\\/([^/?#]+)\\/([^/?#]+)(?:\\/$|[^/]*$)`;
   const URL_PROJECT_PATTERN = `^https?:\\/\\/${GH_DOMAIN_PATTERN}\\/([^/?#]+)\\/([^/?#]+)\\/projects\\/(\\d+)`;
   const URL_ISSUE_PATTERN = `^https?:\\/\\/${GH_DOMAIN_PATTERN}\\/([^/?#]+)\\/([^/?#]+)\\/(?:issues|pull)\\/(\\d+)(?:\\/?(?:[?#](?!issuecomment).*)?$)`;
@@ -85,35 +100,37 @@ $(() => {
   const SLUG_PATTERN = /([^\/\s]+)\/([^#@\s]+)(?:#(\d+)|@([0-9a-f]+))?/;
 
   const STRATEGIES = {
-    /* Common */
-    // Avatars
-    'img.avatar:not([alt=""])': EXTRACTOR.ALT_USER,
-    'img.gravatar:not([alt=""])': EXTRACTOR.ALT_USER,
-
     // @ mentions
     '.user-mention': EXTRACTOR.TEXT_USER,
 
     /* Dashboard */
     // News feeds
-    '[data-ga-click~="target:actor"]': EXTRACTOR.TEXT_USER,
-    '[data-ga-click~="target:repository"]': EXTRACTOR.SLUG,
-    '[data-ga-click~="target:repo"]': EXTRACTOR.SLUG,
-    '[data-ga-click~="target:parent"]': EXTRACTOR.SLUG,
-    '[data-ga-click~="target:issue"]': EXTRACTOR.SLUG,
-    '[data-ga-click~="target:issue-comment"]': EXTRACTOR.SLUG,
-    '[data-ga-click~="target:pull"]': EXTRACTOR.SLUG,
-    '[data-ga-click~="target:pull-comment"]': EXTRACTOR.SLUG,
-    '[data-ga-click~="target:commit-comment"]': EXTRACTOR.SLUG,
-    '[data-ga-click~="target:sha"]': EXTRACTOR.URL,
+    '[data-hydro-click*="\\"action_target\\":\\"actor\\""]': EXTRACTOR.TEXT_USER,
+    '[data-hydro-click*="\\"action_target\\":\\"issue\\""]': EXTRACTOR.URL,
+    '[data-hydro-click*="\\"action_target\\":\\"followee\\""]': EXTRACTOR.URL,
+    '[data-hydro-click*="\\"action_target\\":\\"repo\\""]': EXTRACTOR.SLUG,
+    '[data-hydro-click*="\\"action_target\\":\\"repository\\""]': EXTRACTOR.SLUG,
+    '[data-hydro-click*="\\"action_target\\":\\"sha\\""]': EXTRACTOR.URL,
+    '[data-hydro-click*="\\"target\\":\\"ISSUE\\""]': EXTRACTOR.URL,
+    '[data-hydro-click*="\\"target\\":\\"PULL_REQUEST\\""]': EXTRACTOR.URL,
+    '.d-flex:has(.AvatarStack) + .d-flex a:first-child': EXTRACTOR.SLUG,
     'img[alt^="@"]': EXTRACTOR.ALT_USER,
 
     // Sidebar
-    '.repo-and-owner .owner': EXTRACTOR.TEXT_USER,
-    '.repo-and-owner .repo': EXTRACTOR.ANCESTOR_URL_REPO,
+    '.dashboard-sidebar [data-hydro-click*="\\"target\\":\\"REPOSITORY\\""] [title]:first-child': EXTRACTOR.TEXT_USER,
+    '.dashboard-sidebar [data-hydro-click*="\\"target\\":\\"REPOSITORY\\""] [title]:last-child': EXTRACTOR.ANCESTOR_URL_REPO,
 
-    // Discover
-    '#recommended-repositories-container h3 > a': EXTRACTOR.REPO_LIST_SLUG,
-    
+    /* Explore */
+    // Trending
+    '.explore-content .repo-list h3 > a': EXTRACTOR.REPO_LIST_SLUG,
+    '.Story h1 > a': EXTRACTOR.REPO_LIST_SLUG,
+
+    // Topics
+    '.topic h3 > a': EXTRACTOR.REPO_LIST_SLUG,
+
+    // Collections
+    '[data-ga-click^="Repository"]': EXTRACTOR.REPO_LIST_SLUG,
+
     /* User profile */
     // Pinned repos
     '.pinned-repo-item-content .owner': EXTRACTOR.TEXT_USER,
@@ -131,23 +148,12 @@ $(() => {
     '.profile-timeline-card h3 a': EXTRACTOR.URL,
 
     // Repos
-    '.page-profile [itemprop$="owns"] h3 > a': EXTRACTOR.URL,
-    '.page-profile [itemprop$="owns"] h3 + span a': EXTRACTOR.SLUG,
+    '#user-repositories-list [itemprop$="owns"] h3 > a': EXTRACTOR.URL,
+    '#user-repositories-list [itemprop$="owns"] h3 + span a': EXTRACTOR.SLUG,
     
     // Stars
-    '.page-profile h3 > a': EXTRACTOR.REPO_LIST_SLUG,
+    '.user-profile-nav + div h3 > a': EXTRACTOR.REPO_LIST_SLUG,
 
-    /* Explore */
-    // Trending
-    '#trending ~ div h3 > a': EXTRACTOR.REPO_LIST_SLUG,
-    '.repo-list h3 > a': EXTRACTOR.REPO_LIST_SLUG,
-
-    // Topics
-    '.topic h3 > a': EXTRACTOR.REPO_LIST_SLUG,
-    
-    // Collections
-    '.MarketingBody h3 > a': EXTRACTOR.REPO_LIST_SLUG,
-    
     /* Organization profile */
     // Invite member suggestion info
     '.member-suggestion-info .member-login': EXTRACTOR.TEXT_USER,
@@ -162,11 +168,12 @@ $(() => {
     '.org-repo-name .repo-slash': EXTRACTOR.NEXT_TEXT_REPO,
 
     // Teams
-    // - Audit log
-    '.member-username .member-link': EXTRACTOR.TEXT_USER,
-
     // - Team
     '.team-member-username a': EXTRACTOR.TEXT_USER,
+
+    // Settings
+    // - Audit log
+    '.member-username .member-link': EXTRACTOR.TEXT_USER,
 
     // - Repositories details
     '.org-higher-access-member': EXTRACTOR.TEXT_NODE_USER,
@@ -178,31 +185,25 @@ $(() => {
     'img.from-avatar:not([alt=""])': EXTRACTOR.ALT_USER,
     '.fork-flag a': EXTRACTOR.SLUG,
     '.merge-pr-more-commits a:last-child': EXTRACTOR.SLUG,
-    '.select-menu-list[data-filter="org"] .select-menu-item-text': EXTRACTOR.TEXT_USER,
-    '[data-filterable-for="assignee-filter-field"] .select-menu-item-heading': EXTRACTOR.TEXT_NODE_USER,
-    '.select-menu-item-gravatar': EXTRACTOR.NEXT_TEXT_USER,
-    '.opened-by a': EXTRACTOR.TEXT_USER,
+    '.select-menu-list[data-filter="author"] .select-menu-item-text': EXTRACTOR.TEXT_NODE_USER,
+    '.select-menu-list[data-filter="assignee"] .select-menu-item-text': EXTRACTOR.TEXT_NODE_USER,
 
-    // - Detail
-    '.discussion-item-header strong': EXTRACTOR.SLUG,
-
-    // Projects
-    '.issue-card small a': EXTRACTOR.TEXT_USER,
-
-    // Pulse
+    // Insights
+    // - Pulse
     '.pulse-authors-graph .bar image': EXTRACTOR.ALT_USER,
 
-    // Graphs
     // - Contributors
-    '.capped-card img.avatar': EXTRACTOR.NEXT_LINK_TEXT_USER,
-    '.capped-card .aname': EXTRACTOR.TEXT_USER,
+    '.contrib-person .avatar': EXTRACTOR.NEXT_LINK_TEXT_USER,
+    '.contrib-person .avatar ~ a': EXTRACTOR.TEXT_USER,
 
-    // Commits
-    'img.avatar-child': EXTRACTOR.ALT_USER,
-    '.signed-commit-signer-name .signer': EXTRACTOR.TEXT_NODE_USER,
+    // - Dependency graph
+    '.js-dependency .avatar': EXTRACTOR.NEXT_TEXT_USER,
+    '.js-dependency button + a + span > a': EXTRACTOR.REPO_LIST_SLUG,
 
     /* New/import repo */
     '.select-menu-item-gravatar img': EXTRACTOR.ALT_USER,
+    '.select-menu-item-gravatar + .select-menu-item-text': EXTRACTOR.TEXT_USER,
+    '.select-menu-button-gravatar + .js-select-button': EXTRACTOR.TEXT_USER,
 
     /* Notifications */
     '.filter-item .repo-and-owner': EXTRACTOR.SLUG,
@@ -210,16 +211,22 @@ $(() => {
     '.list-group-item-link': EXTRACTOR.TEXT_NODE_URL,
 
     // Watching
-    '.notifications-list .repo-icon + ': EXTRACTOR.SLUG,
+    '.notifications-list .repo-icon + a': EXTRACTOR.SLUG,
 
     /* Pulls/Issues */
     '.issues-listing .js-issue-row .muted-link:first-child': EXTRACTOR.SLUG,
 
     /* Search */
     '.codesearch-results .repo-list h3 > a': EXTRACTOR.REPO_LIST_SLUG,
-    '.code-list-item a:has(.avatar) + .title a:first-child': EXTRACTOR.SLUG, // rule out repo code search title
-    '.issue-list-meta .octicon-repo + a': EXTRACTOR.SLUG,
-    '.wiki-list-item .title a:first-child': EXTRACTOR.SLUG,
+    '.code-list-item a:has(.avatar) ~ div a:first-child': EXTRACTOR.SLUG, // rule out repo code search title
+    '.commits-list-item .commit-author + a': EXTRACTOR.SLUG,
+    '.issue-list-item li:first-child > a': EXTRACTOR.SLUG,
+    '.wiki-list-item a:first-child': EXTRACTOR.SLUG,
+
+    /* Common */
+    // Avatars
+    'img.avatar:not([alt=""])': EXTRACTOR.ALT_USER,
+    'img.gravatar:not([alt=""])': EXTRACTOR.ALT_USER,
 
     /* All links */
     'a': EXTRACTOR.URL
@@ -234,7 +241,8 @@ $(() => {
     '.reponav-item',
     '.intgrs-lstng-logo', // integrations icon
     '.issues-listing .float-right:last-child > a', // issue/pr list comment icon
-    '.commit-links-cell > a:first-child' // commit list comment icon
+    '.commit-links-cell > a:first-child', // commit list comment icon
+    '.user-nav details .dropdown-item'
   ].join(', ');
 
   // Octicons in SVG
@@ -277,6 +285,9 @@ $(() => {
           {{#location}}<p>{{{icons.location}}}</span>{{location}}</p>{{/location}}
           {{#company}}<p>{{{icons.organization}}}{{company}}</p>{{/company}}
         </div>
+        {{#hasContexts}}<hr class="ghh-more-separator"/><div class="ghh-more">
+          {{#contexts}}<p>{{{icon}}}{{message}}</p>{{/contexts}}
+        </div>{{/hasContexts}}
       </address>`,
     repo: `
       <div class="ghh">
@@ -602,6 +613,14 @@ $(() => {
     });
   }
 
+  function getHovercardSubject() {
+    let [type, id] = ($('meta[name="hovercard-subject-tag"]').attr('content') || '').split(':');
+    if (!type || !id) {
+      return null;
+    }
+    return { type, id };
+  }
+
   function getCardHTML(type, raw) {
     let data;
     if (type === EXTRACT_TYPE.USER) {
@@ -629,7 +648,14 @@ $(() => {
         icons: {
           location: getIcon('location', 0.875),
           organization: getIcon('organization', 0.875)
-        }
+        },
+        hasContexts: raw.hovercard && raw.hovercard.length > 0,
+        contexts: (raw.hovercard || []).map(({ message, octicon }) => {
+          return {
+            message,
+            icon: getIcon(octicon, 0.875)
+          }
+        })
       };
     } else if (type === EXTRACT_TYPE.REPO) {
       data = {
@@ -849,7 +875,8 @@ $(() => {
     repo: {},
     issue: {},
     comment: {},
-    commit: {}
+    commit: {},
+    hovercard: {}
   };
 
   function extract(context) {
@@ -863,7 +890,7 @@ $(() => {
     // hovercard for the said user
     let current = location.href.match(URL_USER_PATTERN);
     if (current) {
-      current = current[1];
+      current = current[1] || current[2];
       if (GH_RESERVED_USER_NAMES.indexOf(current) !== -1
         || !GH_USER_NAME_PATTERN.test(current)) {
         current = null;
@@ -948,7 +975,7 @@ $(() => {
               }
 
               let repoContents = contents || repo; // safe HTML or plain text
-              if (username === me && !cardOptions.showSelf || username === current) {
+              if ((username === me || username === current) && !cardOptions.showSelf) {
                 elem.html(slug.replace(fullRepo, encodeHTML`${username}/<span>` + repoContents + '</span>'));
                 markExtracted(elem.children().first(), EXTRACT_TYPE.REPO, fullRepo);
               } else {
@@ -998,7 +1025,7 @@ $(() => {
               }
 
               let match = href.match(URL_USER_PATTERN);
-              username = trim(match && match[1]);
+              username = trim(match && (match[1] || match[2]));
               if (!username) {
                 match = href.match(URL_REPO_PATTERN);
                 username = trim(match && match[1]);
@@ -1050,7 +1077,7 @@ $(() => {
                 fullCommit = `${username}/${repo}@${commit}`;
               }
               // skip hovercard on myself or current profile page owner
-              if ((username === me && !cardOptions.showSelf || username === current) && !repo) {
+              if ((username === me || username === current) && !cardOptions.showSelf && !repo) {
                 username = null;
               }
             }
@@ -1097,10 +1124,11 @@ $(() => {
           }
           case EXTRACTOR.NEXT_TEXT_USER: {
             let textNode = getNextTextNode(elem[0], elem[0].parentNode.parentNode);
-            username = textNode.nodeValue;
+            username = textNode.nodeValue.replace(/[\s\\\/]+/g, '');
             break;
           }
           case EXTRACTOR.REPO_LIST_SLUG: {
+            elem.find('.octicon-repo').insertBefore(elem.closest('a'))
             let slug = elem.text().replace(/\s+/g, '');
             let match = slug.match(SLUG_PATTERN);
             username = trim(match && match[1]);
@@ -1141,7 +1169,7 @@ $(() => {
         } else if (fullRepo) {
           markExtracted(target, EXTRACT_TYPE.REPO, fullRepo);
         } else if (username) {
-          if (username !== me && username !== current) {
+          if (username !== me && username !== current || cardOptions.showSelf) {
             markExtracted(target, EXTRACT_TYPE.USER, username);
           } else {
             markExtracted(target);
@@ -1178,9 +1206,22 @@ $(() => {
         let value = elem.data(VALUE_KEY);
 
         let raw = cache[type][value];
-        if (raw) {
+        if (raw && type !== EXTRACT_TYPE.USER) {
           elem.tooltipster('content', getCardHTML(type, raw));
         } else {
+          if (raw && type === EXTRACT_TYPE.USER) {
+            let subject = getHovercardSubject() || {};
+            // '@' for contextless
+            let subjectSlug = subject ? `${subject.type}:${subject.id}` : '@';
+            if (cache.hovercard[value] && cache.hovercard[value][subjectSlug]) {
+              Object.assign(raw, {
+                hovercard: cache.hovercard[value][subjectSlug]
+              });
+              elem.tooltipster('content', getCardHTML(type, raw));
+              return;
+            }
+          }
+
           let apiPath;
           switch (type) {
             case EXTRACT_TYPE.USER:
@@ -1235,17 +1276,22 @@ $(() => {
                 title = 'Invalid token';
                 message = encodeHTML`<a href="${CREATE_TOKEN_PATH}" class="ghh-token-link" target="_blank">Create a new access token</a>, <a href="#" class="ghh-token-link">paste it back here</a> and try again.`;
                 break;
-              case 403:
+              case 403: {
+                let response = xhr.responseJSON;
                 if (xhr.getAllResponseHeaders().indexOf('X-RateLimit-Remaining: 0') !== -1) {
                   title = 'API rate limit exceeded';
                   if (!localStorage.getItem(TOKEN_KEY)) {
                     message = encodeHTML`API rate limit exceeded for current IP. <a href="${CREATE_TOKEN_PATH}" class="ghh-token-link" target="_blank">Create a new access token</a> and <a href="#" class="ghh-token-link">paste it back here</a> to get a higher rate limit.`;
                   }
+                } else if (type === EXTRACT_TYPE.REPO && response.block && response.block.reason === 'tos') {
+                  title = 'Access blocked';
+                  message = encodeHTML`Access to this repository has been disabled by GitHub staff.`;
                 } else {
                   title = 'Forbidden';
                   message = encodeHTML`You are not allowed to access GitHub API. <a href="${CREATE_TOKEN_PATH}" class="ghh-token-link" target="_blank">Create a new access token</a>, <a href="#" class="ghh-token-link">paste it back here</a> and try again.`;
                 }
                 break;
+              }
               case 404:
                 title = 'Not found';
                 if (type === EXTRACT_TYPE.REPO || type === EXTRACT_TYPE.ISSUE) {
@@ -1316,40 +1362,90 @@ $(() => {
                 // further requests if necessary
                 switch (type) {
                   case EXTRACT_TYPE.USER: {
-                    if (me && value !== me && raw.type !== 'Organization') {
-                      let todo = 2;
-                      let extra = {
-                        following_me: false,
-                        followed_by_me: false
-                      };
-                      if (value)
-                      // if the logged-in user is following the current user
-                      $.ajax(Object.assign({}, requestOptions, {
-                        url: `${API_PREFIX}/user/following/${value}`
-                      }))
-                        .done(() => {
-                          extra.followed_by_me = true;
-                        })
-                        .always(() => {
-                          Object.assign(raw, extra);
-                          if (!--todo) {
-                            elem.tooltipster('content', getCardHTML(type, raw));
+                    if (raw.type !== 'Organization') {
+                      let todo = 0;
+                      let extra = {};
+
+                      if (value) {
+                        if (!cache.hovercard[value]) {
+                          cache.hovercard[value] = {};
+                        }
+
+                        let subject = getHovercardSubject() || {};
+                        // '@' for contextless
+                        let subjectSlug = subject ? `${subject.type}:${subject.id}` : '@';
+                        if (cache.hovercard[value][subjectSlug]) {
+                          extra.hovercard = cache.hovercard[value][subjectSlug];
+                        } else if (token) {
+                          // get hovercard contexts
+                          todo++;
+
+                          let headers = {
+                            Accept: 'application/vnd.github.hagar-preview+json'
+                          };
+                          if (token) {
+                            Object.assign(headers, {
+                              Authorization: `token ${token}`
+                            });
                           }
-                        });
-                      // if the current user is following the logged-in user
-                      $.ajax(Object.assign({}, requestOptions, {
-                        url: `${API_PREFIX}/users/${value}/following/${me}`,
-                        dataType: 'json'
-                      }))
-                        .done(() => {
-                          extra.following_me = true;
-                        })
-                        .always(() => {
-                          Object.assign(raw, extra);
-                          if (!--todo) {
-                            elem.tooltipster('content', getCardHTML(type, raw));
-                          }
-                        });
+                          let options = {
+                            url: `${API_PREFIX}/users/${value}/hovercard`,
+                            method: 'GET',
+                            dataType: 'json',
+                            headers,
+                            data: {
+                              subject_type: subject.type,
+                              subject_id: subject.id
+                            }
+                          };
+                          $.ajax(Object.assign({}, baseOptions, options))
+                            .done(hovercard => {
+                              extra.hovercard = cache.hovercard[value][subjectSlug] = hovercard.contexts;
+                              Object.assign(raw, extra);
+                            })
+                            .always(() => {
+                              if (!--todo) {
+                                elem.tooltipster('content', getCardHTML(type, raw));
+                              }
+                            });
+                        }
+
+                        // if the logged-in user is following the current user
+                        if (me && value !== me) {
+                          todo += 2;
+                          extra = {
+                            following_me: false,
+                            followed_by_me: false
+                          };
+
+                          $.ajax(Object.assign({}, requestOptions, {
+                            url: `${API_PREFIX}/user/following/${value}`
+                          }))
+                            .done(() => {
+                              extra.followed_by_me = true;
+                            })
+                            .always(() => {
+                              Object.assign(raw, extra);
+                              if (!--todo) {
+                                elem.tooltipster('content', getCardHTML(type, raw));
+                              }
+                            });
+                          // if the current user is following the logged-in user
+                          $.ajax(Object.assign({}, requestOptions, {
+                            url: `${API_PREFIX}/users/${value}/following/${me}`,
+                            dataType: 'json'
+                          }))
+                            .done(() => {
+                              extra.following_me = true;
+                            })
+                            .always(() => {
+                              Object.assign(raw, extra);
+                              if (!--todo) {
+                                elem.tooltipster('content', getCardHTML(type, raw));
+                              }
+                            });
+                        }
+                      }
 
                       return;
                     }
@@ -1685,7 +1781,8 @@ $(() => {
     }
 
     // disable original title tooltips
-    tipped.attr('title', '');
+    tipped.attr('title', null)
+      .closest('[data-hovercard-user-id]').attr('data-hovercard-user-id', null);
 
     // block original tooltips
     // see https://github.com/Justineo/github-hovercard/issues/30

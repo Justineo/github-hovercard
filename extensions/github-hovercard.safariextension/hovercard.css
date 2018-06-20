@@ -543,6 +543,12 @@
 .ghh-more {
   clear: left;
 }
+.ghh-more-separator {
+  height: 0;
+  margin: 10px 0 5px;
+  padding: 0;
+  border-bottom: 1px dotted rgba(255,255,255,0.2);
+}
 .ghh-more p {
   position: relative;
   padding-left: 18px;

@@ -3,8 +3,24 @@ $(() => {
 
   const GH_DOMAIN = location.host;
 
-  const EXCLUDES = '.tooltipster-base, .tooltipster-sizer, .timestamp, .time, .octotree_sidebar, time-ago, relative-time';
+  const EXCLUDES = [
+    '.tooltipster-base',
+    '.tooltipster-sizer',
+    '.timestamp',
+    '.time',
+    '.octotree_sidebar',
+    'time-ago',
+    'relative-time'
+  ].join(',');
+
   const DEFAULT_TARGET = document.body;
+
+  function isExclude (target) {
+    return $(target).is(EXCLUDES)
+      || $(target).parents(EXCLUDES).length
+      || $(target).is(DEFAULT_TARGET)
+  }
+
   let isExtracting = false;
   let observer = new MutationObserver(mutations => {
     if (isExtracting) {
@@ -13,9 +29,7 @@ $(() => {
     mutations.forEach(mutation => {
       if (mutation.type === 'childList') {
         let target = mutation.target;
-        if (!$(target).is(EXCLUDES)
-          && !$(target).parents(EXCLUDES).length
-          && !$(target).is(DEFAULT_TARGET)) {
+        if (!isExclude(target)) {
           extract(target);
         }
       }
@@ -38,7 +52,8 @@ $(() => {
     'dashboard', 'notifications', 'search', 'developer', 'account',
     'pulls', 'issues', 'features', 'contact', 'security', 'join',
     'login', 'watching', 'new', 'integrations', 'pricing', 'topics',
-    'personal', 'business', 'open-source', 'marketplace', 'collections'
+    'personal', 'business', 'open-source', 'marketplace', 'collections',
+    'hovercards'
   ];
 
   const GH_RESERVED_REPO_NAMES = [
@@ -76,7 +91,7 @@ $(() => {
   };
 
   const GH_DOMAIN_PATTERN = GH_DOMAIN.replace(/\./g, '\\.');
-  const URL_USER_PATTERN = `^https?:\\/\\/${GH_DOMAIN_PATTERN}\\/([^/?#]+)(?:\\/$|[^/]*$)`;
+  const URL_USER_PATTERN = `^https?:\\/\\/${GH_DOMAIN_PATTERN}\\/(?:([^/?#]+)(?:\\/$|[^/]*$)|orgs\\/[^/]+\\/people\\/([^/?#]+))`;
   const URL_REPO_PATTERN = `^https?:\\/\\/${GH_DOMAIN_PATTERN}\\/([^/?#]+)\\/([^/?#]+)(?:\\/$|[^/]*$)`;
   const URL_PROJECT_PATTERN = `^https?:\\/\\/${GH_DOMAIN_PATTERN}\\/([^/?#]+)\\/([^/?#]+)\\/projects\\/(\\d+)`;
   const URL_ISSUE_PATTERN = `^https?:\\/\\/${GH_DOMAIN_PATTERN}\\/([^/?#]+)\\/([^/?#]+)\\/(?:issues|pull)\\/(\\d+)(?:\\/?(?:[?#](?!issuecomment).*)?$)`;
@@ -85,35 +100,37 @@ $(() => {
   const SLUG_PATTERN = /([^\/\s]+)\/([^#@\s]+)(?:#(\d+)|@([0-9a-f]+))?/;
 
   const STRATEGIES = {
-    /* Common */
-    // Avatars
-    'img.avatar:not([alt=""])': EXTRACTOR.ALT_USER,
-    'img.gravatar:not([alt=""])': EXTRACTOR.ALT_USER,
-
     // @ mentions
     '.user-mention': EXTRACTOR.TEXT_USER,
 
     /* Dashboard */
     // News feeds
-    '[data-ga-click~="target:actor"]': EXTRACTOR.TEXT_USER,
-    '[data-ga-click~="target:repository"]': EXTRACTOR.SLUG,
-    '[data-ga-click~="target:repo"]': EXTRACTOR.SLUG,
-    '[data-ga-click~="target:parent"]': EXTRACTOR.SLUG,
-    '[data-ga-click~="target:issue"]': EXTRACTOR.SLUG,
-    '[data-ga-click~="target:issue-comment"]': EXTRACTOR.SLUG,
-    '[data-ga-click~="target:pull"]': EXTRACTOR.SLUG,
-    '[data-ga-click~="target:pull-comment"]': EXTRACTOR.SLUG,
-    '[data-ga-click~="target:commit-comment"]': EXTRACTOR.SLUG,
-    '[data-ga-click~="target:sha"]': EXTRACTOR.URL,
+    '[data-hydro-click*="\\"action_target\\":\\"actor\\""]': EXTRACTOR.TEXT_USER,
+    '[data-hydro-click*="\\"action_target\\":\\"issue\\""]': EXTRACTOR.URL,
+    '[data-hydro-click*="\\"action_target\\":\\"followee\\""]': EXTRACTOR.URL,
+    '[data-hydro-click*="\\"action_target\\":\\"repo\\""]': EXTRACTOR.SLUG,
+    '[data-hydro-click*="\\"action_target\\":\\"repository\\""]': EXTRACTOR.SLUG,
+    '[data-hydro-click*="\\"action_target\\":\\"sha\\""]': EXTRACTOR.URL,
+    '[data-hydro-click*="\\"target\\":\\"ISSUE\\""]': EXTRACTOR.URL,
+    '[data-hydro-click*="\\"target\\":\\"PULL_REQUEST\\""]': EXTRACTOR.URL,
+    '.d-flex:has(.AvatarStack) + .d-flex a:first-child': EXTRACTOR.SLUG,
     'img[alt^="@"]': EXTRACTOR.ALT_USER,
 
     // Sidebar
-    '.repo-and-owner .owner': EXTRACTOR.TEXT_USER,
-    '.repo-and-owner .repo': EXTRACTOR.ANCESTOR_URL_REPO,
+    '.dashboard-sidebar [data-hydro-click*="\\"target\\":\\"REPOSITORY\\""] [title]:first-child': EXTRACTOR.TEXT_USER,
+    '.dashboard-sidebar [data-hydro-click*="\\"target\\":\\"REPOSITORY\\""] [title]:last-child': EXTRACTOR.ANCESTOR_URL_REPO,
 
-    // Discover
-    '#recommended-repositories-container h3 > a': EXTRACTOR.REPO_LIST_SLUG,
-    
+    /* Explore */
+    // Trending
+    '.explore-content .repo-list h3 > a': EXTRACTOR.REPO_LIST_SLUG,
+    '.Story h1 > a': EXTRACTOR.REPO_LIST_SLUG,
+
+    // Topics
+    '.topic h3 > a': EXTRACTOR.REPO_LIST_SLUG,
+
+    // Collections
+    '[data-ga-click^="Repository"]': EXTRACTOR.REPO_LIST_SLUG,
+
     /* User profile */
     // Pinned repos
     '.pinned-repo-item-content .owner': EXTRACTOR.TEXT_USER,
@@ -131,23 +148,12 @@ $(() => {
     '.profile-timeline-card h3 a': EXTRACTOR.URL,
 
     // Repos
-    '.page-profile [itemprop$="owns"] h3 > a': EXTRACTOR.URL,
-    '.page-profile [itemprop$="owns"] h3 + span a': EXTRACTOR.SLUG,
+    '#user-repositories-list [itemprop$="owns"] h3 > a': EXTRACTOR.URL,
+    '#user-repositories-list [itemprop$="owns"] h3 + span a': EXTRACTOR.SLUG,
     
     // Stars
-    '.page-profile h3 > a': EXTRACTOR.REPO_LIST_SLUG,
+    '.user-profile-nav + div h3 > a': EXTRACTOR.REPO_LIST_SLUG,
 
-    /* Explore */
-    // Trending
-    '#trending ~ div h3 > a': EXTRACTOR.REPO_LIST_SLUG,
-    '.repo-list h3 > a': EXTRACTOR.REPO_LIST_SLUG,
-
-    // Topics
-    '.topic h3 > a': EXTRACTOR.REPO_LIST_SLUG,
-    
-    // Collections
-    '.MarketingBody h3 > a': EXTRACTOR.REPO_LIST_SLUG,
-    
     /* Organization profile */
     // Invite member suggestion info
     '.member-suggestion-info .member-login': EXTRACTOR.TEXT_USER,
@@ -162,11 +168,12 @@ $(() => {
     '.org-repo-name .repo-slash': EXTRACTOR.NEXT_TEXT_REPO,
 
     // Teams
-    // - Audit log
-    '.member-username .member-link': EXTRACTOR.TEXT_USER,
-
     // - Team
     '.team-member-username a': EXTRACTOR.TEXT_USER,
+
+    // Settings
+    // - Audit log
+    '.member-username .member-link': EXTRACTOR.TEXT_USER,
 
     // - Repositories details
     '.org-higher-access-member': EXTRACTOR.TEXT_NODE_USER,
@@ -178,31 +185,25 @@ $(() => {
     'img.from-avatar:not([alt=""])': EXTRACTOR.ALT_USER,
     '.fork-flag a': EXTRACTOR.SLUG,
     '.merge-pr-more-commits a:last-child': EXTRACTOR.SLUG,
-    '.select-menu-list[data-filter="org"] .select-menu-item-text': EXTRACTOR.TEXT_USER,
-    '[data-filterable-for="assignee-filter-field"] .select-menu-item-heading': EXTRACTOR.TEXT_NODE_USER,
-    '.select-menu-item-gravatar': EXTRACTOR.NEXT_TEXT_USER,
-    '.opened-by a': EXTRACTOR.TEXT_USER,
+    '.select-menu-list[data-filter="author"] .select-menu-item-text': EXTRACTOR.TEXT_NODE_USER,
+    '.select-menu-list[data-filter="assignee"] .select-menu-item-text': EXTRACTOR.TEXT_NODE_USER,
 
-    // - Detail
-    '.discussion-item-header strong': EXTRACTOR.SLUG,
-
-    // Projects
-    '.issue-card small a': EXTRACTOR.TEXT_USER,
-
-    // Pulse
+    // Insights
+    // - Pulse
     '.pulse-authors-graph .bar image': EXTRACTOR.ALT_USER,
 
-    // Graphs
     // - Contributors
-    '.capped-card img.avatar': EXTRACTOR.NEXT_LINK_TEXT_USER,
-    '.capped-card .aname': EXTRACTOR.TEXT_USER,
+    '.contrib-person .avatar': EXTRACTOR.NEXT_LINK_TEXT_USER,
+    '.contrib-person .avatar ~ a': EXTRACTOR.TEXT_USER,
 
-    // Commits
-    'img.avatar-child': EXTRACTOR.ALT_USER,
-    '.signed-commit-signer-name .signer': EXTRACTOR.TEXT_NODE_USER,
+    // - Dependency graph
+    '.js-dependency .avatar': EXTRACTOR.NEXT_TEXT_USER,
+    '.js-dependency button + a + span > a': EXTRACTOR.REPO_LIST_SLUG,
 
     /* New/import repo */
     '.select-menu-item-gravatar img': EXTRACTOR.ALT_USER,
+    '.select-menu-item-gravatar + .select-menu-item-text': EXTRACTOR.TEXT_USER,
+    '.select-menu-button-gravatar + .js-select-button': EXTRACTOR.TEXT_USER,
 
     /* Notifications */
     '.filter-item .repo-and-owner': EXTRACTOR.SLUG,
@@ -210,16 +211,22 @@ $(() => {
     '.list-group-item-link': EXTRACTOR.TEXT_NODE_URL,
 
     // Watching
-    '.notifications-list .repo-icon + ': EXTRACTOR.SLUG,
+    '.notifications-list .repo-icon + a': EXTRACTOR.SLUG,
 
     /* Pulls/Issues */
     '.issues-listing .js-issue-row .muted-link:first-child': EXTRACTOR.SLUG,
 
     /* Search */
     '.codesearch-results .repo-list h3 > a': EXTRACTOR.REPO_LIST_SLUG,
-    '.code-list-item a:has(.avatar) + .title a:first-child': EXTRACTOR.SLUG, // rule out repo code search title
-    '.issue-list-meta .octicon-repo + a': EXTRACTOR.SLUG,
-    '.wiki-list-item .title a:first-child': EXTRACTOR.SLUG,
+    '.code-list-item a:has(.avatar) ~ div a:first-child': EXTRACTOR.SLUG, // rule out repo code search title
+    '.commits-list-item .commit-author + a': EXTRACTOR.SLUG,
+    '.issue-list-item li:first-child > a': EXTRACTOR.SLUG,
+    '.wiki-list-item a:first-child': EXTRACTOR.SLUG,
+
+    /* Common */
+    // Avatars
+    'img.avatar:not([alt=""])': EXTRACTOR.ALT_USER,
+    'img.gravatar:not([alt=""])': EXTRACTOR.ALT_USER,
 
     /* All links */
     'a': EXTRACTOR.URL
@@ -234,11 +241,12 @@ $(() => {
     '.reponav-item',
     '.intgrs-lstng-logo', // integrations icon
     '.issues-listing .float-right:last-child > a', // issue/pr list comment icon
-    '.commit-links-cell > a:first-child' // commit list comment icon
+    '.commit-links-cell > a:first-child', // commit list comment icon
+    '.user-nav details .dropdown-item'
   ].join(', ');
 
   // Octicons in SVG
-  const OCTICONS = {"alert":{"width":16,"height":16,"d":"M8.865 1.52c-.18-.31-.51-.5-.87-.5s-.69.19-.87.5L.275 13.5c-.18.31-.18.69 0 1 .19.31.52.5.87.5h13.7c.36 0 .69-.19.86-.5.17-.31.18-.69.01-1L8.865 1.52zM8.995 13h-2v-2h2v2zm0-3h-2V6h2v4z"},"arrow-right":{"width":10,"height":16,"d":"M10 8L4 3v3H0v4h4v3z"},"code":{"width":14,"height":16,"d":"M9.5 3L8 4.5 11.5 8 8 11.5 9.5 13 14 8 9.5 3zm-5 0L0 8l4.5 5L6 11.5 2.5 8 6 4.5 4.5 3z"},"diff":{"width":13,"height":16,"d":"M6 7h2v1H6v2H5V8H3V7h2V5h1v2zm-3 6h5v-1H3v1zM7.5 2L11 5.5V15c0 .55-.45 1-1 1H1c-.55 0-1-.45-1-1V3c0-.55.45-1 1-1h6.5zM10 6L7 3H1v12h9V6zM8.5 0H3v1h5l4 4v8h1V4.5L8.5 0z"},"git-commit":{"width":14,"height":16,"d":"M10.86 7c-.45-1.72-2-3-3.86-3-1.86 0-3.41 1.28-3.86 3H0v2h3.14c.45 1.72 2 3 3.86 3 1.86 0 3.41-1.28 3.86-3H14V7h-3.14zM7 10.2c-1.22 0-2.2-.98-2.2-2.2 0-1.22.98-2.2 2.2-2.2 1.22 0 2.2.98 2.2 2.2 0 1.22-.98 2.2-2.2 2.2z"},"git-pull-request":{"width":12,"height":16,"d":"M11 11.28V5c-.03-.78-.34-1.47-.94-2.06C9.46 2.35 8.78 2.03 8 2H7V0L4 3l3 3V4h1c.27.02.48.11.69.31.21.2.3.42.31.69v6.28A1.993 1.993 0 0 0 10 15a1.993 1.993 0 0 0 1-3.72zm-1 2.92c-.66 0-1.2-.55-1.2-1.2 0-.65.55-1.2 1.2-1.2.65 0 1.2.55 1.2 1.2 0 .65-.55 1.2-1.2 1.2zM4 3c0-1.11-.89-2-2-2a1.993 1.993 0 0 0-1 3.72v6.56A1.993 1.993 0 0 0 2 15a1.993 1.993 0 0 0 1-3.72V4.72c.59-.34 1-.98 1-1.72zm-.8 10c0 .66-.55 1.2-1.2 1.2-.65 0-1.2-.55-1.2-1.2 0-.65.55-1.2 1.2-1.2.65 0 1.2.55 1.2 1.2zM2 4.2C1.34 4.2.8 3.65.8 3c0-.65.55-1.2 1.2-1.2.65 0 1.2.55 1.2 1.2 0 .65-.55 1.2-1.2 1.2z"},"info":{"width":14,"height":16,"d":"M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"},"issue-closed":{"width":16,"height":16,"d":"M7 10h2v2H7v-2zm2-6H7v5h2V4zm1.5 1.5l-1 1L12 9l4-4.5-1-1L12 7l-1.5-1.5zM8 13.7A5.71 5.71 0 0 1 2.3 8c0-3.14 2.56-5.7 5.7-5.7 1.83 0 3.45.88 4.5 2.2l.92-.92A6.947 6.947 0 0 0 8 1C4.14 1 1 4.14 1 8s3.14 7 7 7 7-3.14 7-7l-1.52 1.52c-.66 2.41-2.86 4.19-5.48 4.19v-.01z"},"issue-opened":{"width":14,"height":16,"d":"M7 2.3c3.14 0 5.7 2.56 5.7 5.7s-2.56 5.7-5.7 5.7A5.71 5.71 0 0 1 1.3 8c0-3.14 2.56-5.7 5.7-5.7zM7 1C3.14 1 0 4.14 0 8s3.14 7 7 7 7-3.14 7-7-3.14-7-7-7zm1 3H6v5h2V4zm0 6H6v2h2v-2z"},"link":{"width":16,"height":16,"d":"M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"},"location":{"width":12,"height":16,"d":"M6 0C2.69 0 0 2.5 0 5.5 0 10.02 6 16 6 16s6-5.98 6-10.5C12 2.5 9.31 0 6 0zm0 14.55C4.14 12.52 1 8.44 1 5.5 1 3.02 3.25 1 6 1c1.34 0 2.61.48 3.56 1.36.92.86 1.44 1.97 1.44 3.14 0 2.94-3.14 7.02-5 9.05zM8 5.5c0 1.11-.89 2-2 2-1.11 0-2-.89-2-2 0-1.11.89-2 2-2 1.11 0 2 .89 2 2z"},"organization":{"width":16,"height":16,"d":"M16 12.999c0 .439-.45 1-1 1H7.995c-.539 0-.994-.447-.995-.999H1c-.54 0-1-.561-1-1 0-2.634 3-4 3-4s.229-.409 0-1c-.841-.621-1.058-.59-1-3 .058-2.419 1.367-3 2.5-3s2.442.58 2.5 3c.058 2.41-.159 2.379-1 3-.229.59 0 1 0 1s1.549.711 2.42 2.088C9.196 9.369 10 8.999 10 8.999s.229-.409 0-1c-.841-.62-1.058-.59-1-3 .058-2.419 1.367-3 2.5-3s2.437.581 2.495 3c.059 2.41-.158 2.38-1 3-.229.59 0 1 0 1s3.005 1.366 3.005 4"},"person":{"width":12,"height":16,"d":"M12 14.002a.998.998 0 0 1-.998.998H1.001A1 1 0 0 1 0 13.999V13c0-2.633 4-4 4-4s.229-.409 0-1c-.841-.62-.944-1.59-1-4 .173-2.413 1.867-3 3-3s2.827.586 3 3c-.056 2.41-.159 3.38-1 4-.229.59 0 1 0 1s4 1.367 4 4v1.002z"},"repo-forked":{"width":10,"height":16,"d":"M8 1a1.993 1.993 0 0 0-1 3.72V6L5 8 3 6V4.72A1.993 1.993 0 0 0 2 1a1.993 1.993 0 0 0-1 3.72V6.5l3 3v1.78A1.993 1.993 0 0 0 5 15a1.993 1.993 0 0 0 1-3.72V9.5l3-3V4.72A1.993 1.993 0 0 0 8 1zM2 4.2C1.34 4.2.8 3.65.8 3c0-.65.55-1.2 1.2-1.2.65 0 1.2.55 1.2 1.2 0 .65-.55 1.2-1.2 1.2zm3 10c-.66 0-1.2-.55-1.2-1.2 0-.65.55-1.2 1.2-1.2.65 0 1.2.55 1.2 1.2 0 .65-.55 1.2-1.2 1.2zm3-10c-.66 0-1.2-.55-1.2-1.2 0-.65.55-1.2 1.2-1.2.65 0 1.2.55 1.2 1.2 0 .65-.55 1.2-1.2 1.2z"},"repo":{"width":12,"height":16,"d":"M4 9H3V8h1v1zm0-3H3v1h1V6zm0-2H3v1h1V4zm0-2H3v1h1V2zm8-1v12c0 .55-.45 1-1 1H6v2l-1.5-1.5L3 16v-2H1c-.55 0-1-.45-1-1V1c0-.55.45-1 1-1h10c.55 0 1 .45 1 1zm-1 10H1v2h2v-1h3v1h5v-2zm0-10H2v9h9V1z"},"git-branch":{"width":10,"height":16,"d":"M10 5c0-1.11-.89-2-2-2a1.993 1.993 0 0 0-1 3.72v.3c-.02.52-.23.98-.63 1.38-.4.4-.86.61-1.38.63-.83.02-1.48.16-2 .45V4.72a1.993 1.993 0 0 0-1-3.72C.88 1 0 1.89 0 3a2 2 0 0 0 1 1.72v6.56c-.59.35-1 .99-1 1.72 0 1.11.89 2 2 2 1.11 0 2-.89 2-2 0-.53-.2-1-.53-1.36.09-.06.48-.41.59-.47.25-.11.56-.17.94-.17 1.05-.05 1.95-.45 2.75-1.25S8.95 7.77 9 6.73h-.02C9.59 6.37 10 5.73 10 5zM2 1.8c.66 0 1.2.55 1.2 1.2 0 .65-.55 1.2-1.2 1.2C1.35 4.2.8 3.65.8 3c0-.65.55-1.2 1.2-1.2zm0 12.41c-.66 0-1.2-.55-1.2-1.2 0-.65.55-1.2 1.2-1.2.65 0 1.2.55 1.2 1.2 0 .65-.55 1.2-1.2 1.2zm6-8c-.66 0-1.2-.55-1.2-1.2 0-.65.55-1.2 1.2-1.2.65 0 1.2.55 1.2 1.2 0 .65-.55 1.2-1.2 1.2z"},"tag":{"width":14,"height":16,"d":"M7.73 1.73C7.26 1.26 6.62 1 5.96 1H3.5C2.13 1 1 2.13 1 3.5v2.47c0 .66.27 1.3.73 1.77l6.06 6.06c.39.39 1.02.39 1.41 0l4.59-4.59a.996.996 0 0 0 0-1.41L7.73 1.73zM2.38 7.09c-.31-.3-.47-.7-.47-1.13V3.5c0-.88.72-1.59 1.59-1.59h2.47c.42 0 .83.16 1.13.47l6.14 6.13-4.73 4.73-6.13-6.15zM3.01 3h2v2H3V3h.01z"},"bookmark":{"width":10,"height":16,"d":"M9 0H1C.27 0 0 .27 0 1v15l5-3.09L10 16V1c0-.73-.27-1-1-1zm-.78 4.25L6.36 5.61l.72 2.16c.06.22-.02.28-.2.17L5 6.6 3.12 7.94c-.19.11-.25.05-.2-.17l.72-2.16-1.86-1.36c-.17-.16-.14-.23.09-.23l2.3-.03.7-2.16h.25l.7 2.16 2.3.03c.23 0 .27.08.09.23h.01z"},"star":{"width":14,"height":16,"d":"M14 6l-4.9-.64L7 1 4.9 5.36 0 6l3.6 3.26L2.67 14 7 11.67 11.33 14l-.93-4.74z"},"verified":{"width":16,"height":16,"d":"M15.67 7.06l-1.08-1.34c-.17-.22-.28-.48-.31-.77l-.19-1.7a1.51 1.51 0 0 0-1.33-1.33l-1.7-.19c-.3-.03-.56-.16-.78-.33L8.94.32c-.55-.44-1.33-.44-1.88 0L5.72 1.4c-.22.17-.48.28-.77.31l-1.7.19c-.7.08-1.25.63-1.33 1.33l-.19 1.7c-.03.3-.16.56-.33.78L.32 7.05c-.44.55-.44 1.33 0 1.88l1.08 1.34c.17.22.28.48.31.77l.19 1.7c.08.7.63 1.25 1.33 1.33l1.7.19c.3.03.56.16.78.33l1.34 1.08c.55.44 1.33.44 1.88 0l1.34-1.08c.22-.17.48-.28.77-.31l1.7-.19c.7-.08 1.25-.63 1.33-1.33l.19-1.7c.03-.3.16-.56.33-.78l1.08-1.34c.44-.55.44-1.33 0-1.88zM6.5 12L3 8.5 4.5 7l2 2 5-5L13 5.55 6.5 12z"},"key":{"width":14,"height":16,"d":"M12.83 2.17C12.08 1.42 11.14 1.03 10 1c-1.13.03-2.08.42-2.83 1.17S6.04 3.86 6.01 5c0 .3.03.59.09.89L0 12v1l1 1h2l1-1v-1h1v-1h1v-1h2l1.09-1.11c.3.08.59.11.91.11 1.14-.03 2.08-.42 2.83-1.17S13.97 6.14 14 5c-.03-1.14-.42-2.08-1.17-2.83zM11 5.38c-.77 0-1.38-.61-1.38-1.38 0-.77.61-1.38 1.38-1.38.77 0 1.38.61 1.38 1.38 0 .77-.61 1.38-1.38 1.38z"},"check":{"width":12,"height":16,"d":"M12 5l-8 8-4-4 1.5-1.5L4 10l6.5-6.5z"},"x":{"width":12,"height":16,"d":"M7.48 8l3.75 3.75-1.48 1.48L6 9.48l-3.75 3.75-1.48-1.48L4.52 8 .77 4.25l1.48-1.48L6 6.52l3.75-3.75 1.48 1.48z"},"primitive-dot":{"width":8,"height":16,"d":"M0 8c0-2.2 1.8-4 4-4s4 1.8 4 4-1.8 4-4 4-4-1.8-4-4z"},"comment":{"width":16,"height":16,"d":"M14 1H2c-.55 0-1 .45-1 1v8c0 .55.45 1 1 1h2v3.5L7.5 11H14c.55 0 1-.45 1-1V2c0-.55-.45-1-1-1zm0 9H7l-2 2v-2H2V2h12v8z"}};
+  const OCTICONS = {"alert":{"width":16,"height":16,"d":"M8.865 1.52c-.18-.31-.51-.5-.87-.5s-.69.19-.87.5L.275 13.5c-.18.31-.18.69 0 1 .19.31.52.5.87.5h13.7c.36 0 .69-.19.86-.5.17-.31.18-.69.01-1L8.865 1.52zM8.995 13h-2v-2h2v2zm0-3h-2V6h2v4z"},"arrow-right":{"width":10,"height":16,"d":"M10 8L4 3v3H0v4h4v3z"},"code":{"width":14,"height":16,"d":"M9.5 3L8 4.5 11.5 8 8 11.5 9.5 13 14 8 9.5 3zm-5 0L0 8l4.5 5L6 11.5 2.5 8 6 4.5 4.5 3z"},"diff":{"width":13,"height":16,"d":"M6 7h2v1H6v2H5V8H3V7h2V5h1v2zm-3 6h5v-1H3v1zM7.5 2L11 5.5V15c0 .55-.45 1-1 1H1c-.55 0-1-.45-1-1V3c0-.55.45-1 1-1h6.5zM10 6L7 3H1v12h9V6zM8.5 0H3v1h5l4 4v8h1V4.5L8.5 0z"},"git-commit":{"width":14,"height":16,"d":"M10.86 7c-.45-1.72-2-3-3.86-3-1.86 0-3.41 1.28-3.86 3H0v2h3.14c.45 1.72 2 3 3.86 3 1.86 0 3.41-1.28 3.86-3H14V7h-3.14zM7 10.2c-1.22 0-2.2-.98-2.2-2.2 0-1.22.98-2.2 2.2-2.2 1.22 0 2.2.98 2.2 2.2 0 1.22-.98 2.2-2.2 2.2z"},"git-pull-request":{"width":12,"height":16,"d":"M11 11.28V5c-.03-.78-.34-1.47-.94-2.06C9.46 2.35 8.78 2.03 8 2H7V0L4 3l3 3V4h1c.27.02.48.11.69.31.21.2.3.42.31.69v6.28A1.993 1.993 0 0 0 10 15a1.993 1.993 0 0 0 1-3.72zm-1 2.92c-.66 0-1.2-.55-1.2-1.2 0-.65.55-1.2 1.2-1.2.65 0 1.2.55 1.2 1.2 0 .65-.55 1.2-1.2 1.2zM4 3c0-1.11-.89-2-2-2a1.993 1.993 0 0 0-1 3.72v6.56A1.993 1.993 0 0 0 2 15a1.993 1.993 0 0 0 1-3.72V4.72c.59-.34 1-.98 1-1.72zm-.8 10c0 .66-.55 1.2-1.2 1.2-.65 0-1.2-.55-1.2-1.2 0-.65.55-1.2 1.2-1.2.65 0 1.2.55 1.2 1.2zM2 4.2C1.34 4.2.8 3.65.8 3c0-.65.55-1.2 1.2-1.2.65 0 1.2.55 1.2 1.2 0 .65-.55 1.2-1.2 1.2z"},"info":{"width":14,"height":16,"d":"M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"},"issue-closed":{"width":16,"height":16,"d":"M7 10h2v2H7v-2zm2-6H7v5h2V4zm1.5 1.5l-1 1L12 9l4-4.5-1-1L12 7l-1.5-1.5zM8 13.7A5.71 5.71 0 0 1 2.3 8c0-3.14 2.56-5.7 5.7-5.7 1.83 0 3.45.88 4.5 2.2l.92-.92A6.947 6.947 0 0 0 8 1C4.14 1 1 4.14 1 8s3.14 7 7 7 7-3.14 7-7l-1.52 1.52c-.66 2.41-2.86 4.19-5.48 4.19v-.01z"},"issue-opened":{"width":14,"height":16,"d":"M7 2.3c3.14 0 5.7 2.56 5.7 5.7s-2.56 5.7-5.7 5.7A5.71 5.71 0 0 1 1.3 8c0-3.14 2.56-5.7 5.7-5.7zM7 1C3.14 1 0 4.14 0 8s3.14 7 7 7 7-3.14 7-7-3.14-7-7-7zm1 3H6v5h2V4zm0 6H6v2h2v-2z"},"link":{"width":16,"height":16,"d":"M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"},"location":{"width":12,"height":16,"d":"M6 0C2.69 0 0 2.5 0 5.5 0 10.02 6 16 6 16s6-5.98 6-10.5C12 2.5 9.31 0 6 0zm0 14.55C4.14 12.52 1 8.44 1 5.5 1 3.02 3.25 1 6 1c1.34 0 2.61.48 3.56 1.36.92.86 1.44 1.97 1.44 3.14 0 2.94-3.14 7.02-5 9.05zM8 5.5c0 1.11-.89 2-2 2-1.11 0-2-.89-2-2 0-1.11.89-2 2-2 1.11 0 2 .89 2 2z"},"organization":{"width":16,"height":16,"d":"M16 12.999c0 .439-.45 1-1 1H7.995c-.539 0-.994-.447-.995-.999H1c-.54 0-1-.561-1-1 0-2.634 3-4 3-4s.229-.409 0-1c-.841-.621-1.058-.59-1-3 .058-2.419 1.367-3 2.5-3s2.442.58 2.5 3c.058 2.41-.159 2.379-1 3-.229.59 0 1 0 1s1.549.711 2.42 2.088C9.196 9.369 10 8.999 10 8.999s.229-.409 0-1c-.841-.62-1.058-.59-1-3 .058-2.419 1.367-3 2.5-3s2.437.581 2.495 3c.059 2.41-.158 2.38-1 3-.229.59 0 1 0 1s3.005 1.366 3.005 4"},"person":{"width":12,"height":16,"d":"M12 14.002a.998.998 0 0 1-.998.998H1.001A1 1 0 0 1 0 13.999V13c0-2.633 4-4 4-4s.229-.409 0-1c-.841-.62-.944-1.59-1-4 .173-2.413 1.867-3 3-3s2.827.586 3 3c-.056 2.41-.159 3.38-1 4-.229.59 0 1 0 1s4 1.367 4 4v1.002z"},"repo-forked":{"width":10,"height":16,"d":"M8 1a1.993 1.993 0 0 0-1 3.72V6L5 8 3 6V4.72A1.993 1.993 0 0 0 2 1a1.993 1.993 0 0 0-1 3.72V6.5l3 3v1.78A1.993 1.993 0 0 0 5 15a1.993 1.993 0 0 0 1-3.72V9.5l3-3V4.72A1.993 1.993 0 0 0 8 1zM2 4.2C1.34 4.2.8 3.65.8 3c0-.65.55-1.2 1.2-1.2.65 0 1.2.55 1.2 1.2 0 .65-.55 1.2-1.2 1.2zm3 10c-.66 0-1.2-.55-1.2-1.2 0-.65.55-1.2 1.2-1.2.65 0 1.2.55 1.2 1.2 0 .65-.55 1.2-1.2 1.2zm3-10c-.66 0-1.2-.55-1.2-1.2 0-.65.55-1.2 1.2-1.2.65 0 1.2.55 1.2 1.2 0 .65-.55 1.2-1.2 1.2z"},"repo":{"width":12,"height":16,"d":"M4 9H3V8h1v1zm0-3H3v1h1V6zm0-2H3v1h1V4zm0-2H3v1h1V2zm8-1v12c0 .55-.45 1-1 1H6v2l-1.5-1.5L3 16v-2H1c-.55 0-1-.45-1-1V1c0-.55.45-1 1-1h10c.55 0 1 .45 1 1zm-1 10H1v2h2v-1h3v1h5v-2zm0-10H2v9h9V1z"},"git-branch":{"width":10,"height":16,"d":"M10 5c0-1.11-.89-2-2-2a1.993 1.993 0 0 0-1 3.72v.3c-.02.52-.23.98-.63 1.38-.4.4-.86.61-1.38.63-.83.02-1.48.16-2 .45V4.72a1.993 1.993 0 0 0-1-3.72C.88 1 0 1.89 0 3a2 2 0 0 0 1 1.72v6.56c-.59.35-1 .99-1 1.72 0 1.11.89 2 2 2 1.11 0 2-.89 2-2 0-.53-.2-1-.53-1.36.09-.06.48-.41.59-.47.25-.11.56-.17.94-.17 1.05-.05 1.95-.45 2.75-1.25S8.95 7.77 9 6.73h-.02C9.59 6.37 10 5.73 10 5zM2 1.8c.66 0 1.2.55 1.2 1.2 0 .65-.55 1.2-1.2 1.2C1.35 4.2.8 3.65.8 3c0-.65.55-1.2 1.2-1.2zm0 12.41c-.66 0-1.2-.55-1.2-1.2 0-.65.55-1.2 1.2-1.2.65 0 1.2.55 1.2 1.2 0 .65-.55 1.2-1.2 1.2zm6-8c-.66 0-1.2-.55-1.2-1.2 0-.65.55-1.2 1.2-1.2.65 0 1.2.55 1.2 1.2 0 .65-.55 1.2-1.2 1.2z"},"tag":{"width":14,"height":16,"d":"M7.73 1.73C7.26 1.26 6.62 1 5.96 1H3.5C2.13 1 1 2.13 1 3.5v2.47c0 .66.27 1.3.73 1.77l6.06 6.06c.39.39 1.02.39 1.41 0l4.59-4.59a.996.996 0 0 0 0-1.41L7.73 1.73zM2.38 7.09c-.31-.3-.47-.7-.47-1.13V3.5c0-.88.72-1.59 1.59-1.59h2.47c.42 0 .83.16 1.13.47l6.14 6.13-4.73 4.73-6.13-6.15zM3.01 3h2v2H3V3h.01z"},"bookmark":{"width":10,"height":16,"d":"M9 0H1C.27 0 0 .27 0 1v15l5-3.09L10 16V1c0-.73-.27-1-1-1zm-.78 4.25L6.36 5.61l.72 2.16c.06.22-.02.28-.2.17L5 6.6 3.12 7.94c-.19.11-.25.05-.2-.17l.72-2.16-1.86-1.36c-.17-.16-.14-.23.09-.23l2.3-.03.7-2.16h.25l.7 2.16 2.3.03c.23 0 .27.08.09.23h.01z"},"star":{"width":14,"height":16,"d":"M14 6l-4.9-.64L7 1 4.9 5.36 0 6l3.6 3.26L2.67 14 7 11.67 11.33 14l-.93-4.74z"},"verified":{"width":16,"height":16,"d":"M15.67 7.06l-1.08-1.34c-.17-.22-.28-.48-.31-.77l-.19-1.7a1.51 1.51 0 0 0-1.33-1.33l-1.7-.19c-.3-.03-.56-.16-.78-.33L8.94.32c-.55-.44-1.33-.44-1.88 0L5.72 1.4c-.22.17-.48.28-.77.31l-1.7.19c-.7.08-1.25.63-1.33 1.33l-.19 1.7c-.03.3-.16.56-.33.78L.32 7.05c-.44.55-.44 1.33 0 1.88l1.08 1.34c.17.22.28.48.31.77l.19 1.7c.08.7.63 1.25 1.33 1.33l1.7.19c.3.03.56.16.78.33l1.34 1.08c.55.44 1.33.44 1.88 0l1.34-1.08c.22-.17.48-.28.77-.31l1.7-.19c.7-.08 1.25-.63 1.33-1.33l.19-1.7c.03-.3.16-.56.33-.78l1.08-1.34c.44-.55.44-1.33 0-1.88zM6.5 12L3 8.5 4.5 7l2 2 5-5L13 5.55 6.5 12z"},"key":{"width":14,"height":16,"d":"M12.83 2.17C12.08 1.42 11.14 1.03 10 1c-1.13.03-2.08.42-2.83 1.17S6.04 3.86 6.01 5c0 .3.03.59.09.89L0 12v1l1 1h2l1-1v-1h1v-1h1v-1h2l1.09-1.11c.3.08.59.11.91.11 1.14-.03 2.08-.42 2.83-1.17S13.97 6.14 14 5c-.03-1.14-.42-2.08-1.17-2.83zM11 5.38c-.77 0-1.38-.61-1.38-1.38 0-.77.61-1.38 1.38-1.38.77 0 1.38.61 1.38 1.38 0 .77-.61 1.38-1.38 1.38z"},"check":{"width":12,"height":16,"d":"M12 5l-8 8-4-4 1.5-1.5L4 10l6.5-6.5z"},"x":{"width":12,"height":16,"d":"M7.48 8l3.75 3.75-1.48 1.48L6 9.48l-3.75 3.75-1.48-1.48L4.52 8 .77 4.25l1.48-1.48L6 6.52l3.75-3.75 1.48 1.48z"},"primitive-dot":{"width":8,"height":16,"d":"M0 8c0-2.2 1.8-4 4-4s4 1.8 4 4-1.8 4-4 4-4-1.8-4-4z"},"comment":{"width":16,"height":16,"d":"M14 1H2c-.55 0-1 .45-1 1v8c0 .55.45 1 1 1h2v3.5L7.5 11H14c.55 0 1-.45 1-1V2c0-.55-.45-1-1-1zm0 9H7l-2 2v-2H2V2h12v8z"},"comment-discussion":{"width":16,"height":16,"d":"M15 1H6c-.55 0-1 .45-1 1v2H1c-.55 0-1 .45-1 1v6c0 .55.45 1 1 1h1v3l3-3h4c.55 0 1-.45 1-1V9h1l3 3V9h1c.55 0 1-.45 1-1V2c0-.55-.45-1-1-1zM9 11H4.5L3 12.5V11H1V5h4v3c0 .55.45 1 1 1h3v2zm6-3h-2v1.5L11.5 8H6V2h9v6z"},"clock":{"width":14,"height":16,"d":"M8 8h3v2H7c-.55 0-1-.45-1-1V4h2v4zM7 2.3c3.14 0 5.7 2.56 5.7 5.7s-2.56 5.7-5.7 5.7A5.71 5.71 0 0 1 1.3 8c0-3.14 2.56-5.7 5.7-5.7zM7 1C3.14 1 0 4.14 0 8s3.14 7 7 7 7-3.14 7-7-3.14-7-7-7z"},"jersey":{"width":14,"height":16,"d":"M4.5 6l-.5.5v5l.5.5h2l.5-.5v-5L6.5 6h-2zM6 11H5V7h1v4zm6.27-7.25C12.05 2.37 11.96 1.12 12 0H9.02c0 .27-.13.48-.39.69-.25.2-.63.3-1.13.3-.5 0-.88-.09-1.13-.3-.23-.2-.36-.42-.36-.69H3c.05 1.13-.03 2.38-.25 3.75C2.55 5.13 1.95 5.88 1 6v9c.02.27.11.48.31.69.2.21.42.3.69.31h11c.27-.02.48-.11.69-.31.21-.2.3-.42.31-.69V6c-.95-.13-1.53-.88-1.75-2.25h.02zM13 15H2V7c.89-.5 1.48-1.25 1.72-2.25S4.03 2.5 4 1h1c-.02.78.16 1.47.52 2.06.36.58 1.02.89 2 .94.98-.02 1.64-.33 2-.94.36-.59.5-1.28.48-2.06h1c.02 1.42.13 2.55.33 3.38.2.81.69 2 1.67 2.63v8V15zM8.5 6l-.5.5v5l.5.5h2l.5-.5v-5l-.5-.5h-2zm1.5 5H9V7h1v4z"}};
 
   function getIcon(type, scale = 1) {
     let icon = OCTICONS[type];
@@ -277,6 +285,9 @@ $(() => {
           {{#location}}<p>{{{icons.location}}}</span>{{location}}</p>{{/location}}
           {{#company}}<p>{{{icons.organization}}}{{company}}</p>{{/company}}
         </div>
+        {{#hasContexts}}<hr class="ghh-more-separator"/><div class="ghh-more">
+          {{#contexts}}<p>{{{icon}}}{{message}}</p>{{/contexts}}
+        </div>{{/hasContexts}}
       </address>`,
     repo: `
       <div class="ghh">
@@ -602,6 +613,14 @@ $(() => {
     });
   }
 
+  function getHovercardSubject() {
+    let [type, id] = ($('meta[name="hovercard-subject-tag"]').attr('content') || '').split(':');
+    if (!type || !id) {
+      return null;
+    }
+    return { type, id };
+  }
+
   function getCardHTML(type, raw) {
     let data;
     if (type === EXTRACT_TYPE.USER) {
@@ -629,7 +648,14 @@ $(() => {
         icons: {
           location: getIcon('location', 0.875),
           organization: getIcon('organization', 0.875)
-        }
+        },
+        hasContexts: raw.hovercard && raw.hovercard.length > 0,
+        contexts: (raw.hovercard || []).map(({ message, octicon }) => {
+          return {
+            message,
+            icon: getIcon(octicon, 0.875)
+          }
+        })
       };
     } else if (type === EXTRACT_TYPE.REPO) {
       data = {
@@ -849,7 +875,8 @@ $(() => {
     repo: {},
     issue: {},
     comment: {},
-    commit: {}
+    commit: {},
+    hovercard: {}
   };
 
   function extract(context) {
@@ -863,7 +890,7 @@ $(() => {
     // hovercard for the said user
     let current = location.href.match(URL_USER_PATTERN);
     if (current) {
-      current = current[1];
+      current = current[1] || current[2];
       if (GH_RESERVED_USER_NAMES.indexOf(current) !== -1
         || !GH_USER_NAME_PATTERN.test(current)) {
         current = null;
@@ -948,7 +975,7 @@ $(() => {
               }
 
               let repoContents = contents || repo; // safe HTML or plain text
-              if (username === me && !cardOptions.showSelf || username === current) {
+              if ((username === me || username === current) && !cardOptions.showSelf) {
                 elem.html(slug.replace(fullRepo, encodeHTML`${username}/<span>` + repoContents + '</span>'));
                 markExtracted(elem.children().first(), EXTRACT_TYPE.REPO, fullRepo);
               } else {
@@ -998,7 +1025,7 @@ $(() => {
               }
 
               let match = href.match(URL_USER_PATTERN);
-              username = trim(match && match[1]);
+              username = trim(match && (match[1] || match[2]));
               if (!username) {
                 match = href.match(URL_REPO_PATTERN);
                 username = trim(match && match[1]);
@@ -1050,7 +1077,7 @@ $(() => {
                 fullCommit = `${username}/${repo}@${commit}`;
               }
               // skip hovercard on myself or current profile page owner
-              if ((username === me && !cardOptions.showSelf || username === current) && !repo) {
+              if ((username === me || username === current) && !cardOptions.showSelf && !repo) {
                 username = null;
               }
             }
@@ -1097,10 +1124,11 @@ $(() => {
           }
           case EXTRACTOR.NEXT_TEXT_USER: {
             let textNode = getNextTextNode(elem[0], elem[0].parentNode.parentNode);
-            username = textNode.nodeValue;
+            username = textNode.nodeValue.replace(/[\s\\\/]+/g, '');
             break;
           }
           case EXTRACTOR.REPO_LIST_SLUG: {
+            elem.find('.octicon-repo').insertBefore(elem.closest('a'))
             let slug = elem.text().replace(/\s+/g, '');
             let match = slug.match(SLUG_PATTERN);
             username = trim(match && match[1]);
@@ -1141,7 +1169,7 @@ $(() => {
         } else if (fullRepo) {
           markExtracted(target, EXTRACT_TYPE.REPO, fullRepo);
         } else if (username) {
-          if (username !== me && username !== current) {
+          if (username !== me && username !== current || cardOptions.showSelf) {
             markExtracted(target, EXTRACT_TYPE.USER, username);
           } else {
             markExtracted(target);
@@ -1178,9 +1206,22 @@ $(() => {
         let value = elem.data(VALUE_KEY);
 
         let raw = cache[type][value];
-        if (raw) {
+        if (raw && type !== EXTRACT_TYPE.USER) {
           elem.tooltipster('content', getCardHTML(type, raw));
         } else {
+          if (raw && type === EXTRACT_TYPE.USER) {
+            let subject = getHovercardSubject() || {};
+            // '@' for contextless
+            let subjectSlug = subject ? `${subject.type}:${subject.id}` : '@';
+            if (cache.hovercard[value] && cache.hovercard[value][subjectSlug]) {
+              Object.assign(raw, {
+                hovercard: cache.hovercard[value][subjectSlug]
+              });
+              elem.tooltipster('content', getCardHTML(type, raw));
+              return;
+            }
+          }
+
           let apiPath;
           switch (type) {
             case EXTRACT_TYPE.USER:
@@ -1235,17 +1276,22 @@ $(() => {
                 title = 'Invalid token';
                 message = encodeHTML`<a href="${CREATE_TOKEN_PATH}" class="ghh-token-link" target="_blank">Create a new access token</a>, <a href="#" class="ghh-token-link">paste it back here</a> and try again.`;
                 break;
-              case 403:
+              case 403: {
+                let response = xhr.responseJSON;
                 if (xhr.getAllResponseHeaders().indexOf('X-RateLimit-Remaining: 0') !== -1) {
                   title = 'API rate limit exceeded';
                   if (!localStorage.getItem(TOKEN_KEY)) {
                     message = encodeHTML`API rate limit exceeded for current IP. <a href="${CREATE_TOKEN_PATH}" class="ghh-token-link" target="_blank">Create a new access token</a> and <a href="#" class="ghh-token-link">paste it back here</a> to get a higher rate limit.`;
                   }
+                } else if (type === EXTRACT_TYPE.REPO && response.block && response.block.reason === 'tos') {
+                  title = 'Access blocked';
+                  message = encodeHTML`Access to this repository has been disabled by GitHub staff.`;
                 } else {
                   title = 'Forbidden';
                   message = encodeHTML`You are not allowed to access GitHub API. <a href="${CREATE_TOKEN_PATH}" class="ghh-token-link" target="_blank">Create a new access token</a>, <a href="#" class="ghh-token-link">paste it back here</a> and try again.`;
                 }
                 break;
+              }
               case 404:
                 title = 'Not found';
                 if (type === EXTRACT_TYPE.REPO || type === EXTRACT_TYPE.ISSUE) {
@@ -1316,40 +1362,90 @@ $(() => {
                 // further requests if necessary
                 switch (type) {
                   case EXTRACT_TYPE.USER: {
-                    if (me && value !== me && raw.type !== 'Organization') {
-                      let todo = 2;
-                      let extra = {
-                        following_me: false,
-                        followed_by_me: false
-                      };
-                      if (value)
-                      // if the logged-in user is following the current user
-                      $.ajax(Object.assign({}, requestOptions, {
-                        url: `${API_PREFIX}/user/following/${value}`
-                      }))
-                        .done(() => {
-                          extra.followed_by_me = true;
-                        })
-                        .always(() => {
-                          Object.assign(raw, extra);
-                          if (!--todo) {
-                            elem.tooltipster('content', getCardHTML(type, raw));
+                    if (raw.type !== 'Organization') {
+                      let todo = 0;
+                      let extra = {};
+
+                      if (value) {
+                        if (!cache.hovercard[value]) {
+                          cache.hovercard[value] = {};
+                        }
+
+                        let subject = getHovercardSubject() || {};
+                        // '@' for contextless
+                        let subjectSlug = subject ? `${subject.type}:${subject.id}` : '@';
+                        if (cache.hovercard[value][subjectSlug]) {
+                          extra.hovercard = cache.hovercard[value][subjectSlug];
+                        } else if (token) {
+                          // get hovercard contexts
+                          todo++;
+
+                          let headers = {
+                            Accept: 'application/vnd.github.hagar-preview+json'
+                          };
+                          if (token) {
+                            Object.assign(headers, {
+                              Authorization: `token ${token}`
+                            });
                           }
-                        });
-                      // if the current user is following the logged-in user
-                      $.ajax(Object.assign({}, requestOptions, {
-                        url: `${API_PREFIX}/users/${value}/following/${me}`,
-                        dataType: 'json'
-                      }))
-                        .done(() => {
-                          extra.following_me = true;
-                        })
-                        .always(() => {
-                          Object.assign(raw, extra);
-                          if (!--todo) {
-                            elem.tooltipster('content', getCardHTML(type, raw));
-                          }
-                        });
+                          let options = {
+                            url: `${API_PREFIX}/users/${value}/hovercard`,
+                            method: 'GET',
+                            dataType: 'json',
+                            headers,
+                            data: {
+                              subject_type: subject.type,
+                              subject_id: subject.id
+                            }
+                          };
+                          $.ajax(Object.assign({}, baseOptions, options))
+                            .done(hovercard => {
+                              extra.hovercard = cache.hovercard[value][subjectSlug] = hovercard.contexts;
+                              Object.assign(raw, extra);
+                            })
+                            .always(() => {
+                              if (!--todo) {
+                                elem.tooltipster('content', getCardHTML(type, raw));
+                              }
+                            });
+                        }
+
+                        // if the logged-in user is following the current user
+                        if (me && value !== me) {
+                          todo += 2;
+                          extra = {
+                            following_me: false,
+                            followed_by_me: false
+                          };
+
+                          $.ajax(Object.assign({}, requestOptions, {
+                            url: `${API_PREFIX}/user/following/${value}`
+                          }))
+                            .done(() => {
+                              extra.followed_by_me = true;
+                            })
+                            .always(() => {
+                              Object.assign(raw, extra);
+                              if (!--todo) {
+                                elem.tooltipster('content', getCardHTML(type, raw));
+                              }
+                            });
+                          // if the current user is following the logged-in user
+                          $.ajax(Object.assign({}, requestOptions, {
+                            url: `${API_PREFIX}/users/${value}/following/${me}`,
+                            dataType: 'json'
+                          }))
+                            .done(() => {
+                              extra.following_me = true;
+                            })
+                            .always(() => {
+                              Object.assign(raw, extra);
+                              if (!--todo) {
+                                elem.tooltipster('content', getCardHTML(type, raw));
+                              }
+                            });
+                        }
+                      }
 
                       return;
                     }
@@ -1685,7 +1781,8 @@ $(() => {
     }
 
     // disable original title tooltips
-    tipped.attr('title', '');
+    tipped.attr('title', null)
+      .closest('[data-hovercard-user-id]').attr('data-hovercard-user-id', null);
 
     // block original tooltips
     // see https://github.com/Justineo/github-hovercard/issues/30
