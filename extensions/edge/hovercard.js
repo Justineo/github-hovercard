@@ -53,7 +53,7 @@ document.addEventListener('DOMContentLoaded', () => {
     'pulls', 'issues', 'features', 'contact', 'security', 'join',
     'login', 'watching', 'new', 'integrations', 'pricing', 'topics',
     'personal', 'business', 'open-source', 'marketplace', 'collections',
-    'hovercards'
+    'hovercards', 'discover'
   ];
 
   const GH_RESERVED_REPO_NAMES = [
@@ -104,12 +104,15 @@ document.addEventListener('DOMContentLoaded', () => {
     '.user-mention': EXTRACTOR.TEXT_USER,
 
     /* Dashboard */
+    // [β] Discover repositories
+    '.team-left-column:last-child h4 ~ div a': EXTRACTOR.SLUG,
+
     // News feeds
-    '[data-hydro-click*="\\"action_target\\":\\"actor\\""]': EXTRACTOR.TEXT_USER,
     '[data-hydro-click*="\\"action_target\\":\\"issue\\""]': EXTRACTOR.URL,
     '[data-hydro-click*="\\"action_target\\":\\"followee\\""]': EXTRACTOR.URL,
     '[data-hydro-click*="\\"action_target\\":\\"repo\\""]': EXTRACTOR.SLUG,
     '[data-hydro-click*="\\"action_target\\":\\"repository\\""]': EXTRACTOR.SLUG,
+    '[data-hydro-click*="\\"type\\":\\"ForkEvent\\""]': EXTRACTOR.SLUG,
     '[data-hydro-click*="\\"action_target\\":\\"sha\\""]': EXTRACTOR.URL,
     '[data-hydro-click*="\\"target\\":\\"ISSUE\\""]': EXTRACTOR.URL,
     '[data-hydro-click*="\\"target\\":\\"PULL_REQUEST\\""]': EXTRACTOR.URL,
@@ -150,7 +153,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Repos
     '#user-repositories-list [itemprop$="owns"] h3 > a': EXTRACTOR.URL,
     '#user-repositories-list [itemprop$="owns"] h3 + span a': EXTRACTOR.SLUG,
-    
+
     // Stars
     '.user-profile-nav + div h3 > a': EXTRACTOR.REPO_LIST_SLUG,
 
@@ -201,7 +204,8 @@ document.addEventListener('DOMContentLoaded', () => {
     '.js-dependency button + a + span > a': EXTRACTOR.REPO_LIST_SLUG,
 
     /* New/import repo */
-    '.select-menu-item-gravatar img': EXTRACTOR.ALT_USER,
+    '.select-menu-item-gravatar img': EXTRACTOR.NEXT_TEXT_USER,
+    '.select-menu-item-gravatar + .select-menu-item-text .js-username': EXTRACTOR.TEXT_USER,
     '.select-menu-item-gravatar + .select-menu-item-text': EXTRACTOR.TEXT_USER,
     '.select-menu-button-gravatar + .js-select-button': EXTRACTOR.TEXT_USER,
 
