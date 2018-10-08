@@ -610,9 +610,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function fixRef(elem, base, branch) {
     ['href', 'src'].forEach(attr => {
-      let url = elem.attr(attr);
-      if (url && url.indexOf('//') === -1 && url.indexOf('mailto:') === -1) {
-        elem.attr(attr, `${base}/raw/${branch}/${url}`);
+      let src = elem.attr(attr);
+      if (src && src.indexOf('//') === -1 && src.indexOf('mailto:') === -1) {
+        if (src.endsWith('.svg')) {
+          src += '?sanitize=true';
+        }
+        elem.attr(attr, `${base}/raw/${branch}/${src}`);
       }
     });
   }
@@ -1786,7 +1789,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // disable original title tooltips
     tipped.attr('title', null)
-      .closest('[data-hovercard-user-id]').attr('data-hovercard-user-id', null);
+      .closest('[data-hovercard-url]').attr('data-hovercard-url', null);
 
     // block original tooltips
     // see https://github.com/Justineo/github-hovercard/issues/30

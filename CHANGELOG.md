@@ -1,5 +1,12 @@
 Changelog
 ---
+## 1.5.2
+* Fixed `src`s of SVG images in readme.
+* Disabled native contextual hovercards.
+
+## 1.5.1
+* Fixed extraction.
+
 ## 1.5.0
 * Merged contextual information provided by GitHub's own hovercards into our hovercards.
 * Fixed extraction to align with GitHub's continuou UI refactor.
