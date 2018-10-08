@@ -1,11 +1,11 @@
 'use strict';
 
-const ITEM_TPL = `{{#domains}}<li><input type="text" ui="wide" class="domain" value="{{.}}" placeholder="github.mydomain.com"><button type="button" class="remove">✕</button></li>{{/domains}}`;
+const ITEM_TPL = `{{#domains}}<li><input type="text" ui="wide" class="domain" value="{{.}}" placeholder="github.mydomain.com"><button type="button" class="ghost icon remove" aria-label="Remove"></button></li>{{/domains}}`;
 const GH_DOMAIN = 'github.com';
 
+let form = $('#form');
 let list = $('#domains');
 let saveBtn = $('#save');
-let cancelBtn = $('#cancel');
 let addBtn = $('#add');
 let msg = $('#message');
 let delayInput = $('#delay');
@@ -60,34 +60,30 @@ function save() {
 
     chrome.permissions.remove({
         origins: revoking
-    }, removed => {
-        let granting = domains.map(toOrigins).reduce(concat, []);
-        chrome.permissions.request({
-            origins: granting
-        }, granted => {
-            let options = { delay, readme, disableProjects, showSelf };
-            if (granted) {
-                Object.assign(options, { domains });
-                current = domains;
-            } else {
-                log('Domain permission denied.');
-            }
+    })
 
-            storage.set(options, () => {
-                chrome.runtime.sendMessage({ event: 'optionschange' }, response => {
-                    if (response.success) {
-                        window.close();
-                    } else {
-                        log('Something went wrong.');
-                    }
-                });
+    let granting = domains.map(toOrigins).reduce(concat, []);
+    chrome.permissions.request({
+        origins: granting
+    }, granted => {
+        let options = { delay, readme, disableProjects, showSelf };
+        if (granted) {
+            Object.assign(options, { domains });
+            current = domains;
+        } else {
+            log('Domain permission denied.', 3000);
+        }
+
+        storage.set(options, () => {
+            chrome.runtime.sendMessage({ event: 'optionschange' }, response => {
+                if (response.success) {
+                    log('Options saved.', 3000);
+                } else {
+                    log('Something went wrong.', 3000);
+                }
             });
         });
     });
-}
-
-function cancel() {
-    window.close();
 }
 
 function addRow() {
@@ -102,6 +98,7 @@ function addRow() {
 
 function removeRow() {
     $(this).parent().remove();
+    save()
 }
 
 let logTimer;
@@ -110,21 +107,22 @@ function log(message, duration) {
     msg.css({opacity: 1}).html(message);
     if (duration) {
         logTimer = setTimeout(() => {
-            msg.animate({ opacity: 0 }, 500, () => msg.empty());
+            msg.animate({ opacity: 0 }, 300, () => msg.empty());
         }, duration);
     }
 }
 
 $(() => {
-    saveBtn.on('click', save);
-    cancelBtn.on('click', cancel);
-    addBtn.on('click', addRow);
+  saveBtn.on('click', save);
+  addBtn.on('click', addRow);
     list.on('keypress', '.domain', e => {
         if (e.which === 13) {
             save();
         }
     });
     list.on('click', '.remove', removeRow);
+
+    form.on('change', 'input', save)
 
     restore();
 });

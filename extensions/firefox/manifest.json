@@ -2,7 +2,7 @@
   "manifest_version": 2,
   "name": "GitHub Hovercard",
   "description": "Neat hovercards for GitHub.",
-  "version": "1.5.1",
+  "version": "1.6.0",
   "icons": {
     "128": "icon.png"
   },
@@ -24,8 +24,7 @@
     "<all_urls>"
   ],
   "options_ui": {
-    "page": "options.html",
-    "chrome_style": true
+    "page": "options.html"
   },
   "applications": {
     "gecko": {

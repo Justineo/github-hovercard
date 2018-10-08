@@ -1,122 +1,236 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<title>GitHub Hovercard Options</title>
-<style>
-body {
-    padding-bottom: 36px;
+  <meta charset="UTF-8">
+  <title>GitHub Hovercard Options</title>
+  <style>
+    body {
+  padding: 8px;
+  font-size: 13px;
 }
 
 p {
-    line-height: normal;
+  margin: 0 0 1em;
+  line-height: normal;
 }
 
-input[ui~="wide"] {
-    width: 280px;
+button::-moz-focus-inner {
+  border-style: none;
+  padding: 0;
 }
 
-:-webkit-any(#form, #actions) button {
-    margin-left: 10px;
+button + button {
+  margin-left: 8px;
 }
 
-:-webkit-any(#form, #actions) button:first-child {
-    margin-left: 0;
+button,
+input,
+.checkbox span::before {
+  border-radius: 2px;
+  transition: all .2s;
+}
+
+button,
+label {
+  cursor: pointer;
+}
+
+button {
+  min-width: 132px;
+  height: 32px;
+  padding: 0 8px;
+  border: none;
+  background-color: rgba(12, 12, 13, 0.1);
+  color: #0c0c0d;
+  font-size: inherit;
+  font-weight: 400;
+  text-align: center;
+}
+
+button:hover {
+  background-color: rgba(12, 12, 13, 0.2);
+}
+
+button:active {
+  background-color: rgba(12, 12, 13, 0.3);
+}
+
+button:focus {
+  outline: none;
+  box-shadow: 0 0 0 1px #0a84ff inset, 0 0 0 1px #0a84ff, 0 0 0 4px rgba(10, 132, 255, 0.3);
+}
+
+button:disabled {
+  opacity: 0.4;
+}
+
+button.primary {
+  background-color: #0060df;
+  color: #fff;
+}
+
+button.primary:hover {
+  background-color: #003eaa;
+}
+
+button.primary:active {
+  background-color: #002275;
+}
+
+button.ghost {
+  background-color: transparent;
+  color: rgba(12, 12, 13, 0.8);
+}
+
+button.ghost:hover {
+  background-color: rgba(12, 12, 13, 0.1);
+}
+
+button.ghost:active {
+  background-color: rgba(12, 12, 13, 0.2);
+}
+
+button.icon {
+  width: 32px;
+  min-width: auto;
+}
+
+button.remove {
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-image: url(data:image/svg+xml;charset=utf-8;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNNS4yOTMgNi43MDdhMSAxIDAgMSAxIDEuNDE0LTEuNDE0TDEyIDEwLjU4Nmw1LjI5My01LjI5M2ExIDEgMCAxIDEgMS40MTQgMS40MTRMMTMuNDE0IDEybDUuMjkzIDUuMjkzYTEgMSAwIDAgMS0xLjQxNCAxLjQxNEwxMiAxMy40MTRsLTUuMjkzIDUuMjkzYTEgMSAwIDAgMS0xLjQxNC0xLjQxNEwxMC41ODYgMTIgNS4yOTMgNi43MDd6IiBmaWxsPSIjMEMwQzBEIiBmaWxsLW9wYWNpdHk9Ii44Ii8+PC9zdmc+);
+}
+
+input[type="text"],
+input[type="number"] {
+  height: 32px;
+  padding: 0 8px;
+  margin-right: 4px;
+  border: 1px solid rgba(12, 12, 13, 0.3);
+  color: #0c0c0d;
+  font-size: inherit;
+}
+
+input[type="text"]:hover,
+input[type="number"]:hover {
+  border: 1px solid rgba(12, 12, 13, 0.5);
+}
+
+input[type="text"]:active,
+input[type="number"]:active {
+  border: 1px solid rgba(12, 12, 13, 0.3);
+}
+
+input[type="text"]:focus,
+input[type="number"]:focus {
+  border: 1px solid #0a84ff;
+  outline: none;
+  box-shadow: 0 0 0 1px #0a84ff, 0 0 0 4px rgba(10, 132, 255, 0.3);
+}
+
+input[type="text"]::-moz-placeholder,
+input[type="number"]::-moz-placeholder {
+  color: rgba(12, 12, 13, 0.4);
+}
+
+.checkbox {
+  display: inline-block;
+}
+
+.checkbox span {
+  display: flex;
+  align-items: center;
+}
+
+.checkbox span::before {
+  content: "";
+  display: block;
+  width: 16px;
+  height: 16px;
+  margin-right: 4px;
+  background-color: rgba(12, 12, 13, 0.1);
+}
+
+.checkbox:hover span::before {
+  background-color: rgba(12, 12, 13, 0.2);
+}
+
+.checkbox:active span::before {
+  background-color: rgba(12, 12, 13, 0.3);
+}
+
+.checkbox :focus + span::before {
+  border: none;
+  box-shadow: 0 0 0 1px #0a84ff inset, 0 0 0 1px #0a84ff, 0 0 0 4px rgba(10, 132, 255, 0.3);
+}
+
+.checkbox :checked + span::before {
+  background: url(data:image/svg+xml;charset=utf-8;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNiIgaGVpZ2h0PSIxNiIgdmlld0JveD0iMCAwIDE2IDE2Ij4NCiAgPHBhdGggZD0iTTYuNTIsMTIuNWExLDEsMCwwLDEtLjcwNS0uMjkxbC0zLjUyLTMuNWExLDEsMCwxLDEsMS40MS0xLjQxOGwyLjgxMiwyLjgsNS43NzQtNS43OTNhMSwxLDAsMCwxLDEuNDE2LDEuNDEybC02LjQ3OSw2LjVBMSwxLDAsMCwxLDYuNTIsMTIuNVoiIGZpbGw9IiNmZmYiLz4NCjwvc3ZnPg==) #0060df no-repeat center center;
+}
+
+.checkbox:hover :checked + span::before {
+  background-color: #003eaa;
+}
+
+.checkbox:active :checked + span::before {
+  background-color: #002275;
+}
+
+.checkbox :checked:focus + span::before {
+  border: none;
+  box-shadow: 0 0 0 1px #0a84ff inset, 0 0 0 1px #0a84ff, 0 0 0 4px rgba(10, 132, 255, 0.3);
+}
+
+.checkbox input[type="checkbox"] {
+  position: absolute;
+  opacity: 0;
 }
 
 #domains {
-    padding: 0;
+  padding: 0;
 }
 
 #domains li {
-    margin-bottom: 5px;
-    list-style: none;
-}
-
-.fixed {
-    opacity: .5;
-}
-
-#form .remove {
-    display: inline-block;
-    padding: 0;
-    min-width: 28px;
-    min-height: 28px;
-    width: 28px;
-    height: 28px;
-    font-size: 22px;
-    background: none;
-    border: none;
-    box-shadow: none;
-    text-shadow: none;
-    transform-origin: 50% 50%;
-    transform: scale(0.5);
-    vertical-align: middle;
-    color: #727272;
-}
-
-#form .remove:hover {
-    background: #727272;
-    border: none;
-    border-radius: 50%;
-    box-shadow: none;
-    color: #fff;
-}
-
-#actions {
-    display: flex;
-    position: fixed;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    padding: 14px 17px;
-    background: #fff;
+  display: flex;
+  padding: 4px 0;
 }
 
 #message {
-    flex-grow: 1;
-    padding-left: 5px;
-    color: #666;
-    line-height: 24px;
-}
-
-.aux {
-    color: #999;
-}
-
-#save:not(:focus) {
-    border-color: rgba(0, 0, 0, 0.5);
+  margin-left: 4px;
+  color: #737373;
 }
 </style>
 </head>
+
 <body>
-<section id="form">
+  <section id="form">
     <h3>Delay</h3>
     <section>
-        <p><input type="number" id="delay" placeholder="Time in milliseconds..."> ms <span class="aux">(<code>200</code> by default)</span></p>
+      <p><input type="number" id="delay" placeholder="Time in milliseconds..."> ms <span class="aux">(<code>200</code>
+          by default)</span></p>
     </section>
     <h3>Optional Features</h3>
     <section>
-        <p><label><input type="checkbox" id="show-self"> Show user hovercards for myself</label></p>
-        <p><label><input type="checkbox" id="readme"> Show readme content for repos</label></p>
-        <p><label><input type="checkbox" id="projects"> Disable hovercards for projects</label></p>
+      <p><label class="checkbox"><input type="checkbox" id="show-self"><span>Show user hovercards for myself</span></label></p>
+      <p><label class="checkbox"><input type="checkbox" id="readme"><span>Show readme content for repos</span></label></p>
+      <p><label class="checkbox"><input type="checkbox" id="projects"><span>Disable hovercards for projects</span></label></p>
     </section>
     <h3>Applicable Domains</h3>
     <section>
-        <ul id="domains">
-            <li><input type="text" ui="wide" value="github.com (required)" readonly class="fixed"></li>
-        </ul>
+      <ul id="domains">
+        <li><input type="text" value="github.com (required)" readonly class="fixed"></li>
+      </ul>
     </section>
-</section>
-<section id="actions">
-    <button id="add">Add</button>
+  </section>
+  <section id="actions">
+    <button id="add">Add Domain</button>
+    <button class="primary" id="save">Save</button>
     <span id="message"></span>
-    <div>
-        <button id="cancel">Cancel</button><button id="save" class="default-button">Save</button>
-    </div>
-</section>
-<script src="jquery.js"></script>
-<script src="mustache.js"></script>
-<script src="options.js"></script>
+  </section>
+  <script src="jquery.js"></script>
+  <script src="mustache.js"></script>
+  <script src="options.js"></script>
 </body>
+
 </html>

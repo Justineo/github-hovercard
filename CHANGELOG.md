@@ -1,6 +1,7 @@
 Changelog
 ---
-## 1.5.2
+## 1.6.0
+* Refactored options page for Firefox.
 * Fixed `src`s of SVG images in readme.
 * Disabled native contextual hovercards.
 
