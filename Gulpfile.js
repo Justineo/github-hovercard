@@ -1,7 +1,6 @@
 var gulp = require('gulp');
 var fs = require('fs');
 var path = require('path');
-var run = require('run-sequence');
 var merge = require('merge-stream');
 var del = require('del');
 var exec = require('child_process').exec;
@@ -39,7 +38,7 @@ function getCommentHandler() {
   }
 }
 
-gulp.task('icons', function () {
+gulp.task('icons', function (cb) {
   var used = [
     'alert', 'arrow-right', 'code', 'diff', 'git-commit', 'git-pull-request',
     'info', 'issue-closed', 'issue-opened', 'link', 'location', 'organization',
@@ -62,6 +61,7 @@ gulp.task('icons', function () {
   }, {});
 
   fs.writeFileSync('./assets/octicons.json', JSON.stringify(data, null, '  '));
+  cb();
 });
 
 gulp.task('css:prepare', function () {
@@ -78,24 +78,16 @@ gulp.task('css:compile', function () {
     .pipe(gulp.dest('./src'));
 });
 
-gulp.task('css', ['css:prepare', 'css:compile']);
+gulp.task('css', gulp.series('css:prepare', 'css:compile'));
 
-gulp.task('resource:inline', ['icons'], function () {
+gulp.task('resource:inline', gulp.series('icons', function () {
   return gulp.src('./src/hovercard.js')
     .pipe(replace('\'__OCTICONS__\'', JSON.stringify(require('./assets/octicons.json'))))
     .pipe(replace('\'__EMOJI_DATA__\'', JSON.stringify(require('./assets/emoji.json'))))
     .pipe(gulp.dest('./tmp'));
-});
+}));
 
-// gulp.task('firefox:resource', function () {
-//   return gulp.src('./src/hovercard.js')
-//     .pipe(replace('\'__OCTICONS__\'', 'self.options.octicons'))
-//     .pipe(replace('\'__EMOJI_DATA__\'', 'self.options.emojiMap'))
-//     .pipe(rename('hovercard.firefox.js'))
-//     .pipe(gulp.dest('./tmp'));
-// });
-
-gulp.task('userscript:prepare', ['resource:inline'], function () {
+gulp.task('userscript:prepare', gulp.series('resource:inline', function () {
   var hovercard = gulp.src('./tmp/hovercard.js')
     .pipe(buble({
       transforms: {
@@ -108,9 +100,9 @@ gulp.task('userscript:prepare', ['resource:inline'], function () {
     .pipe(replace('{{version}}', version))
     .pipe(gulp.dest('./tmp'));
   return merge(hovercard, meta);
-});
+}));
 
-gulp.task('userscript:styles', ['css'], function () {
+gulp.task('userscript:styles', gulp.series('css', function () {
   return gulp.src([
       './tmp/tooltipster.css',
       './src/hovercard.css',
@@ -119,16 +111,15 @@ gulp.task('userscript:styles', ['css'], function () {
     .pipe(concat('userscript.css'))
     .pipe(cssnano({ zindex: false }))
     .pipe(gulp.dest('./tmp'));
-});
+}));
 
-gulp.task('userscript:inject-styles', ['userscript:styles'], function () {
+gulp.task('userscript:inject-styles', gulp.series('userscript:styles', function () {
   return gulp.src('./userscript/src/inject-styles.js')
     .pipe(replace('__USER_SCRIPT_STYLES__', fs.readFileSync('./tmp/userscript.css', { encoding: 'utf8' }).replace(/'/g, '\\\'')))
     .pipe(gulp.dest('./tmp'));
-});
+}));
 
-gulp.task('userscript', ['userscript:inject-styles', 'userscript:prepare'], function () {
-  var inMetaBlock = false;
+gulp.task('userscript', gulp.series('userscript:inject-styles', 'userscript:prepare', function () {
   return gulp.src([
       './tmp/metadata.js',
       './tmp/inject-styles.js',
@@ -143,9 +134,9 @@ gulp.task('userscript', ['userscript:inject-styles', 'userscript:prepare'], func
       preserveComments: getCommentHandler()
     }))
     .pipe(gulp.dest('./userscript/dist'));
-});
+}));
 
-gulp.task('chrome:cp', ['resource:inline', 'css', 'icons'], function () {
+gulp.task('chrome:cp', gulp.series('resource:inline', 'css', 'icons', function () {
   var manifestPath = './extensions/chrome/manifest.json';
   var manifest = JSON.parse(fs.readFileSync(manifestPath, { encoding: 'utf8' }));
   manifest.version = version;
@@ -157,9 +148,9 @@ gulp.task('chrome:cp', ['resource:inline', 'css', 'icons'], function () {
   ];
   return gulp.src(targets)
     .pipe(gulp.dest('./extensions/chrome'));
-});
+}));
 
-gulp.task('firefox:cp', ['resource:inline', 'css', 'icons'], function () {
+gulp.task('firefox:cp', gulp.series('resource:inline', 'css', 'icons', function () {
   var manifestPath = './extensions/firefox/manifest.json';
   var manifest = JSON.parse(fs.readFileSync(manifestPath, { encoding: 'utf8' }));
   manifest.version = version;
@@ -171,9 +162,9 @@ gulp.task('firefox:cp', ['resource:inline', 'css', 'icons'], function () {
   ];
   return gulp.src(targets)
     .pipe(gulp.dest('./extensions/firefox'));
-});
+}));
 
-gulp.task('safari:cp', ['resource:inline', 'css', 'icons'], function () {
+gulp.task('safari:cp', gulp.series('resource:inline', 'css', 'icons', function () {
   var infoPath = './extensions/github-hovercard.safariextension/Info.plist';
   var info = plist.parse(fs.readFileSync(infoPath, { encoding: 'utf8' }));
   info.CFBundleShortVersionString = version;
@@ -186,15 +177,15 @@ gulp.task('safari:cp', ['resource:inline', 'css', 'icons'], function () {
   ];
   return gulp.src(targets)
     .pipe(gulp.dest('./extensions/github-hovercard.safariextension'));
-});
+}));
 
-gulp.task('edge:hack', ['resource:inline'], function () {
+gulp.task('edge:hack', gulp.series('resource:inline', function () {
   return gulp.src(['./tmp/hovercard.js'])
     .pipe(replace('$(() => {', 'document.addEventListener(\'DOMContentLoaded\', () => {'))
     .pipe(gulp.dest('./extensions/edge'));
-});
+}));
 
-gulp.task('edge:cp', ['edge:hack', 'css', 'icons'], function () {
+gulp.task('edge:cp', gulp.series('edge:hack', 'css', 'icons', function () {
   var manifestPath = './extensions/edge/manifest.json';
   var manifest = JSON.parse(fs.readFileSync(manifestPath, { encoding: 'utf8' }));
   manifest.version = version;
@@ -206,35 +197,13 @@ gulp.task('edge:cp', ['edge:hack', 'css', 'icons'], function () {
   ];
   return gulp.src(targets)
     .pipe(gulp.dest('./extensions/edge'));
-});
+}));
 
-// gulp.task('firefox:cp', ['firefox:resource', 'css', 'icons'], function () {
-//   var fxPackPath = './extensions/firefox/package.json';
-//   var fxPack = JSON.parse(fs.readFileSync(fxPackPath, { encoding: 'utf8' }));
-//   fxPack.version = version;
-//   fs.writeFileSync(fxPackPath, JSON.stringify(fxPack, null, '  '));
-
-//   var targets = [
-//     './src/*', '!./src/hovercard.js', '!./src/*.styl',
-//     '!./src/tooltipster.css', './tmp/tooltipster.css'
-//   ];
-//   var main = gulp.src(['./tmp/hovercard.firefox.js'])
-//     .pipe(rename('hovercard.js'))
-//     .pipe(gulp.dest('./extensions/firefox/data'));
-//   var src = gulp.src(targets.concat([
-//       './assets/emoji.json', './assets/octicons.json'
-//     ]))
-//     .pipe(gulp.dest('./extensions/firefox/data'));
-//   var icon = gulp.src('./icon.png')
-//     .pipe(gulp.dest('./extensions/firefox'))
-//   return merge(main, src, icon);
-// });
-
-gulp.task('chrome:zip', ['chrome:cp'], function (cb) {
+gulp.task('chrome:zip', gulp.series('chrome:cp', function (cb) {
   exec(
     'find . -path \'*/.*\' -prune -o -type f -print | zip ../packed/github-hovercard.chrome.zip -@',
     { cwd: 'extensions/chrome' },
-    function (error, stdout, stderr) {
+    function (error) {
       if (error) {
         return cb(error);
       } else {
@@ -242,13 +211,13 @@ gulp.task('chrome:zip', ['chrome:cp'], function (cb) {
       }
     }
   );
-});
+}));
 
-gulp.task('firefox:zip', ['firefox:cp'], function (cb) {
+gulp.task('firefox:zip', gulp.series('firefox:cp', function (cb) {
   exec(
     'find . -path \'*/.*\' -prune -o -type f -print | zip ../packed/github-hovercard.firefox.zip -@',
     { cwd: 'extensions/firefox' },
-    function (error, stdout, stderr) {
+    function (error) {
       if (error) {
         return cb(error);
       } else {
@@ -256,13 +225,13 @@ gulp.task('firefox:zip', ['firefox:cp'], function (cb) {
       }
     }
   );
-});
+}));
 
-gulp.task('edge:zip', ['edge:cp'], function (cb) {
+gulp.task('edge:zip', gulp.series('edge:cp', function (cb) {
   exec(
     'find . -path \'*/.*\' -prune -o -type f -print | zip ../packed/github-hovercard.edge.zip -@',
     { cwd: 'extensions/edge' },
-    function (error, stdout, stderr) {
+    function (error) {
       if (error) {
         return cb(error);
       } else {
@@ -270,27 +239,15 @@ gulp.task('edge:zip', ['edge:cp'], function (cb) {
       }
     }
   );
-});
+}));
 
-// gulp.task('firefox:xpi', ['firefox:cp'], function (cb) {
-//   exec('jpm xpi', {
-//     cwd: 'extensions/firefox'
-//   }, function (error, stdout, stderr) {
-//     if (error) {
-//       return cb(error);
-//     }
-//     fs.renameSync('./extensions/firefox/github-hovercard.xpi', './extensions/packed/github-hovercard.xpi');
-//     cb();
-//   });
-// });
-
-gulp.task('opera:nex', ['chrome:zip'], function (cb) {
+gulp.task('opera:nex', gulp.series('chrome:zip', function (cb) {
   exec(''
     + '"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"'
     + ' --pack-extension=' + path.join(__dirname, 'extensions/chrome')
     + ' --pack-extension-key=' + path.join(process.env.HOME, '.ssh/chrome.pem')
     + ' --disable-gpu',
-    function (error, stdout, stderr) {
+    function (error) {
       if (error) {
         return cb(error);
       } else {
@@ -299,9 +256,9 @@ gulp.task('opera:nex', ['chrome:zip'], function (cb) {
       }
     }
   );
-});
+}));
 
-gulp.task('demo:prepare', ['resource:inline'], function () {
+gulp.task('demo:prepare', gulp.series('resource:inline', function () {
   var hovercard = gulp.src('./tmp/hovercard.js')
     .pipe(replace('location.host', '\'github.com\''))
     .pipe(buble({
@@ -321,7 +278,7 @@ gulp.task('demo:prepare', ['resource:inline'], function () {
     .pipe(gulp.dest('./tmp'));
 
   return merge(hovercard, demo);
-});
+}));
 
 gulp.task('demo:index', function () {
   var changelog = fs.readFileSync('./CHANGELOG.md', { encoding: 'utf8' });
@@ -333,7 +290,7 @@ gulp.task('demo:index', function () {
     .pipe(gulp.dest('.'));
 });
 
-gulp.task('demo', ['css', 'demo:prepare', 'demo:index'], function () {
+gulp.task('demo', gulp.series('css', 'demo:prepare', 'demo:index', function () {
   var jsSrc = gulp.src([
       './src/jquery.js',
       './src/mustache.js',
@@ -359,14 +316,12 @@ gulp.task('demo', ['css', 'demo:prepare', 'demo:index'], function () {
     .pipe(gulp.dest('./demo/dist'));
 
   return merge(jsSrc, cssSrc);
-});
+}));
 
-gulp.task('cleanup', function (cb) {
+gulp.task('cleanup', function () {
   return del(['./tmp']);
 });
 
-gulp.task('extensions', ['chrome:zip', 'firefox:zip', 'edge:zip', 'opera:nex', 'safari:cp']);
-gulp.task('build', ['extensions', 'demo', 'userscript']);
-gulp.task('default', function (cb) {
-  run('build', 'cleanup', cb);
-});
+gulp.task('extensions', gulp.series('chrome:zip', 'firefox:zip', 'edge:zip', 'opera:nex', 'safari:cp'));
+gulp.task('build', gulp.series('extensions', 'demo', 'userscript'));
+gulp.task('default', gulp.series('build', 'cleanup'));

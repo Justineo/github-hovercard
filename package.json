@@ -12,10 +12,10 @@
     "WebExtension"
   ],
   "devDependencies": {
-    "cheerio": "^0.20.0",
+    "cheerio": "^1.0.0-rc.2",
     "datauri": "^1.0.5",
     "del": "^2.2.2",
-    "gulp": "^3.8.9",
+    "gulp": "^4.0.0",
     "gulp-buble": "^0.8.0",
     "gulp-concat": "^2.6.1",
     "gulp-cssnano": "^2.1.2",
@@ -27,8 +27,7 @@
     "merge-stream": "^1.0.1",
     "octicons": "^5.0.1",
     "plist": "^2.1.0",
-    "rename": "^1.0.4",
-    "run-sequence": "^1.2.2"
+    "rename": "^1.0.4"
   },
   "author": "Justineo",
   "license": "MIT",
