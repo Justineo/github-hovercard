@@ -26,7 +26,8 @@ button + button {
 
 button,
 input,
-.checkbox span::before {
+.checkbox span::before,
+.radio span::before {
   border-radius: 2px;
   transition: all .2s;
 }
@@ -134,16 +135,24 @@ input[type="number"]::-moz-placeholder {
   color: rgba(12, 12, 13, 0.4);
 }
 
-.checkbox {
+.checkbox,
+.radio {
   display: inline-block;
+  cursor: pointer;
 }
 
-.checkbox span {
-  display: flex;
+.radio {
+  margin-right: 1em;
+}
+
+.checkbox span,
+.radio span {
+  display: inline-flex;
   align-items: center;
 }
 
-.checkbox span::before {
+.checkbox span::before,
+.radio span::before {
   content: "";
   display: block;
   width: 16px;
@@ -152,15 +161,22 @@ input[type="number"]::-moz-placeholder {
   background-color: rgba(12, 12, 13, 0.1);
 }
 
-.checkbox:hover span::before {
+.radio span::before {
+  border-radius: 50%;
+}
+
+.checkbox:hover span::before,
+.radio:hover span::before {
   background-color: rgba(12, 12, 13, 0.2);
 }
 
-.checkbox:active span::before {
+.checkbox:active span::before,
+.radio:active span::before {
   background-color: rgba(12, 12, 13, 0.3);
 }
 
-.checkbox :focus + span::before {
+.checkbox :focus + span::before,
+.radio :focus + span::before {
   border: none;
   box-shadow: 0 0 0 1px #0a84ff inset, 0 0 0 1px #0a84ff, 0 0 0 4px rgba(10, 132, 255, 0.3);
 }
@@ -169,20 +185,28 @@ input[type="number"]::-moz-placeholder {
   background: url(data:image/svg+xml;charset=utf-8;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNiIgaGVpZ2h0PSIxNiIgdmlld0JveD0iMCAwIDE2IDE2Ij4NCiAgPHBhdGggZD0iTTYuNTIsMTIuNWExLDEsMCwwLDEtLjcwNS0uMjkxbC0zLjUyLTMuNWExLDEsMCwxLDEsMS40MS0xLjQxOGwyLjgxMiwyLjgsNS43NzQtNS43OTNhMSwxLDAsMCwxLDEuNDE2LDEuNDEybC02LjQ3OSw2LjVBMSwxLDAsMCwxLDYuNTIsMTIuNVoiIGZpbGw9IiNmZmYiLz4NCjwvc3ZnPg==) #0060df no-repeat center center;
 }
 
-.checkbox:hover :checked + span::before {
+.radio :checked + span::before {
+  background: url(data:image/svg+xml;charset=utf-8;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNiIgaGVpZ2h0PSIxNiIgdmlld0JveD0iMCAwIDE2IDE2Ij4NCiAgPGNpcmNsZSBjeD0iOCIgY3k9IjgiIHI9IjQiIGZpbGw9IiNmZmYiLz4NCjwvc3ZnPg==) #0060df no-repeat center center;
+}
+
+.checkbox:hover :checked + span::before,
+.radio:hover :checked + span::before {
   background-color: #003eaa;
 }
 
-.checkbox:active :checked + span::before {
+.checkbox:active :checked + span::before,
+.radio:active :checked + span::before {
   background-color: #002275;
 }
 
-.checkbox :checked:focus + span::before {
+.checkbox :checked:focus + span::before,
+.radio :checked:focus + span::before {
   border: none;
   box-shadow: 0 0 0 1px #0a84ff inset, 0 0 0 1px #0a84ff, 0 0 0 4px rgba(10, 132, 255, 0.3);
 }
 
-.checkbox input[type="checkbox"] {
+.checkbox input[type="checkbox"],
+.radio input[type="radio"] {
   position: absolute;
   opacity: 0;
 }
@@ -209,6 +233,15 @@ input[type="number"]::-moz-placeholder {
     <section>
       <p><input type="number" id="delay" placeholder="Time in milliseconds..."> ms <span class="aux">(<code>200</code>
           by default)</span></p>
+    </section>
+    <h3>Placement</h3>
+    <section>
+        <p>
+            <label class="radio"><input type="radio" name="side" value="top"><span>Top</span></label>
+            <label class="radio"><input type="radio" name="side" value="right"><span>Right</span></label>
+            <label class="radio"><input type="radio" name="side" value="bottom"><span>Bottom</span></label>
+            <label class="radio"><input type="radio" name="side" value="left"><span>Left</span></label>
+        </p>
     </section>
     <h3>Optional Features</h3>
     <section>

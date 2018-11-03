@@ -12,6 +12,7 @@ let delayInput = $('#delay');
 let readmeInput = $('#readme');
 let projectsInput = $('#projects');
 let showSelfInput = $('#show-self');
+let sideInputs = $('[name="side"]');
 let current;
 let storage = chrome.storage.sync || chrome.storage.local;
 
@@ -29,7 +30,8 @@ function restore() {
         delay: 200,
         readme: true,
         disableProjects: false,
-        showSelf: false
+        showSelf: false,
+        side: 'top'
     }, item => {
         current = item.domains;
         list.append(Mustache.render(ITEM_TPL, { domains: current }));
@@ -37,6 +39,7 @@ function restore() {
         readmeInput.prop('checked', item.readme);
         projectsInput.prop('checked', item.disableProjects);
         showSelfInput.prop('checked', item.showSelf);
+        sideInputs.prop('checked', false).filter(`[value="${item.side}"]`).prop('checked', true);
     });
 }
 
@@ -45,6 +48,7 @@ function save() {
     let readme = readmeInput.prop('checked');
     let disableProjects = projectsInput.prop('checked');
     let showSelf = showSelfInput.prop('checked');
+    let side = sideInputs.filter(':checked').val();
 
     let domains = [];
     $('.domain').each(function () {
@@ -66,7 +70,7 @@ function save() {
     chrome.permissions.request({
         origins: granting
     }, granted => {
-        let options = { delay, readme, disableProjects, showSelf };
+        let options = { delay, readme, disableProjects, showSelf, side };
         if (granted) {
             Object.assign(options, { domains });
             current = domains;

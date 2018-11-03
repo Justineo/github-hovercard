@@ -1205,6 +1205,7 @@ $(() => {
       contentAsHTML: true,
       debug: false,
       delay: cardOptions.delay,
+      side: cardOptions.side || 'top',
       // trigger: 'click',
       zIndex: 2147483647,
       functionBefore(self, event) {
@@ -1815,19 +1816,20 @@ $(() => {
     delay: 200,
     readme: true,
     disableProjects: false,
-    showSelf: false
+    showSelf: false,
+    side: 'top'
   };
 
   let cardOptions = Object.assign({}, DEFAULT_OPTIONS);
 
   if (platform && platform.storage) {
     let storage = platform.storage.sync || platform.storage.local;
-    storage.get(Object.assign({}, DEFAULT_OPTIONS), ({ delay, readme, disableProjects, showSelf }) => {
+    storage.get(Object.assign({}, DEFAULT_OPTIONS), ({ delay, readme, disableProjects, showSelf, side }) => {
       delay = parseInt(delay, 10)
       delay = isNaN(delay) ? 200 : delay
 
       Object.assign(cardOptions, {
-        delay, readme, disableProjects, showSelf
+        delay, readme, disableProjects, showSelf, side
       });
 
       extract();

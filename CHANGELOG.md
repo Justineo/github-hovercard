@@ -1,5 +1,8 @@
 Changelog
 ---
+## 1.6.1
+* Added `placement` option to configure default location of hovercards.
+
 ## 1.6.0
 * Refactored options page for Firefox.
 * Fixed `src`s of SVG images in readme.
