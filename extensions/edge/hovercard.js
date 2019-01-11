@@ -10,7 +10,8 @@ document.addEventListener('DOMContentLoaded', () => {
     '.time',
     '.octotree_sidebar',
     'time-ago',
-    'relative-time'
+    'relative-time',
+    '.user-status-container'
   ].join(',');
 
   const DEFAULT_TARGET = document.body;
@@ -51,9 +52,9 @@ document.addEventListener('DOMContentLoaded', () => {
     'explore', 'styleguide', 'showcases', 'trending', 'stars',
     'dashboard', 'notifications', 'search', 'developer', 'account',
     'pulls', 'issues', 'features', 'contact', 'security', 'join',
-    'login', 'watching', 'new', 'integrations', 'pricing', 'topics',
+    'login', 'watching', 'new', 'integration', 'pricing', 'topics',
     'personal', 'business', 'open-source', 'marketplace', 'collections',
-    'hovercards', 'discover'
+    'hovercards', 'discover', 'case-studies'
   ];
 
   const GH_RESERVED_REPO_NAMES = [

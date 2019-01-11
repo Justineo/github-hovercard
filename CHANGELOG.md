@@ -1,5 +1,9 @@
 Changelog
 ---
+## 1.6.2
+* Excluded user status dialog to prevent browser from being freezed.
+* Fixed extraction.
+
 ## 1.6.1
 * Added `placement` option to configure default location of hovercards.
 
