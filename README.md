@@ -86,17 +86,17 @@ For browser extension versions, GitHub Hovercard provide following options:
 
 ## Screenshots
 
-<img src="screenshots/1-light.png" alt="Users in trending repo avatars" width="640" height="400">
+<img src="screenshots/1-light.jpg" alt="Users in trending repo avatars" width="640" height="400">
 
-<img src="screenshots/2-light.png" alt="Users in feeds" width="640" height="400">
+<img src="screenshots/2-light.jpg" alt="Users in feeds" width="640" height="400">
 
-<img src="screenshots/3-light.png" alt="Repos in feeds" width="640" height="400">
+<img src="screenshots/3-light.jpg" alt="Repos in feeds" width="640" height="400">
 
-<img src="screenshots/4-light.png" alt="Issues" width="640" height="400">
+<img src="screenshots/4-light.jpg" alt="Issues" width="640" height="400">
 
-<img src="screenshots/5-light.png" alt="Pull requests" width="640" height="400">
+<img src="screenshots/5-light.jpg" alt="Pull requests" width="640" height="400">
 
-<img src="screenshots/6-light.png" alt="Commits" width="640" height="400">
+<img src="screenshots/6-light.jpg" alt="Commits" width="640" height="400">
 
 ## Known issues
 
