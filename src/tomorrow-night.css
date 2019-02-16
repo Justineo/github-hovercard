@@ -1,293 +1,293 @@
 /* Tomorrow theme from GitHub-Dark (https://github.com/StylishThemes/GitHub-Dark) */
-.ghh .pl-c,
-.ghh .pl-c span {
+.ghh-theme-classic .ghh .pl-c,
+.ghh-theme-classic .ghh .pl-c span {
   color: #969896;
 }
-.ghh .pl-c1 {
+.ghh-theme-classic .ghh .pl-c1 {
   color: #de935f;
 }
-.ghh .pl-cce {
+.ghh-theme-classic .ghh .pl-cce {
   color: #de935f;
 }
-.ghh .pl-cn {
+.ghh-theme-classic .ghh .pl-cn {
   color: #de935f;
 }
-.ghh .pl-coc {
+.ghh-theme-classic .ghh .pl-coc {
   color: #de935f;
 }
-.ghh .pl-cos {
+.ghh-theme-classic .ghh .pl-cos {
   color: #b5bd68;
 }
-.ghh .pl-e {
+.ghh-theme-classic .ghh .pl-e {
   color: #f0c674;
 }
-.ghh .pl-ef {
+.ghh-theme-classic .ghh .pl-ef {
   color: #f0c674;
 }
-.ghh .pl-en {
+.ghh-theme-classic .ghh .pl-en {
   color: #f0c674;
 }
-.ghh .pl-enc {
+.ghh-theme-classic .ghh .pl-enc {
   color: #de935f;
 }
-.ghh .pl-enf {
+.ghh-theme-classic .ghh .pl-enf {
   color: #f0c674;
 }
-.ghh .pl-enm {
+.ghh-theme-classic .ghh .pl-enm {
   color: #f0c674;
 }
-.ghh .pl-ens {
+.ghh-theme-classic .ghh .pl-ens {
   color: #de935f;
 }
-.ghh .pl-ent {
+.ghh-theme-classic .ghh .pl-ent {
   color: #b294bb;
 }
-.ghh .pl-entc {
+.ghh-theme-classic .ghh .pl-entc {
   color: #f0c674;
 }
-.ghh .pl-enti {
+.ghh-theme-classic .ghh .pl-enti {
   color: #f0c674;
   font-weight: 700;
 }
-.ghh .pl-entm {
+.ghh-theme-classic .ghh .pl-entm {
   color: #c66;
 }
-.ghh .pl-eoa {
+.ghh-theme-classic .ghh .pl-eoa {
   color: #b294bb;
 }
-.ghh .pl-eoac {
+.ghh-theme-classic .ghh .pl-eoac {
   color: #c66;
 }
-.ghh .pl-eoac .pl-pde {
+.ghh-theme-classic .ghh .pl-eoac .pl-pde {
   color: #c66;
 }
-.ghh .pl-eoai {
+.ghh-theme-classic .ghh .pl-eoai {
   color: #b294bb;
 }
-.ghh .pl-eoai .pl-pde {
+.ghh-theme-classic .ghh .pl-eoai .pl-pde {
   color: #b294bb;
 }
-.ghh .pl-eoi {
+.ghh-theme-classic .ghh .pl-eoi {
   color: #f0c674;
 }
-.ghh .pl-k {
+.ghh-theme-classic .ghh .pl-k {
   color: #b294bb;
 }
-.ghh .pl-ko {
+.ghh-theme-classic .ghh .pl-ko {
   color: #b294bb;
 }
-.ghh .pl-kolp {
+.ghh-theme-classic .ghh .pl-kolp {
   color: #b294bb;
 }
-.ghh .pl-kos {
+.ghh-theme-classic .ghh .pl-kos {
   color: #de935f;
 }
-.ghh .pl-kou {
+.ghh-theme-classic .ghh .pl-kou {
   color: #de935f;
 }
-.ghh .pl-mai .pl-sf {
+.ghh-theme-classic .ghh .pl-mai .pl-sf {
   color: #c66;
 }
-.ghh .pl-mb {
+.ghh-theme-classic .ghh .pl-mb {
   color: #b5bd68;
   font-weight: 700;
 }
-.ghh .pl-mc {
+.ghh-theme-classic .ghh .pl-mc {
   color: #b294bb;
 }
-.ghh .pl-mh {
+.ghh-theme-classic .ghh .pl-mh {
   color: #8db4f5;
 }
-.ghh .pl-mh .pl-pdh {
+.ghh-theme-classic .ghh .pl-mh .pl-pdh {
   color: #de935f;
 }
-.ghh .pl-mi {
+.ghh-theme-classic .ghh .pl-mi {
   color: #b294bb;
 }
-.ghh .pl-ml {
+.ghh-theme-classic .ghh .pl-ml {
   color: #b5bd68;
 }
-.ghh .pl-mm {
+.ghh-theme-classic .ghh .pl-mm {
   color: #c66;
 }
-.ghh .pl-mp {
+.ghh-theme-classic .ghh .pl-mp {
   color: #81a2be;
 }
-.ghh .pl-mp1 .pl-sf {
+.ghh-theme-classic .ghh .pl-mp1 .pl-sf {
   color: #81a2be;
 }
-.ghh .pl-mq {
+.ghh-theme-classic .ghh .pl-mq {
   color: #de935f;
 }
-.ghh .pl-mr {
+.ghh-theme-classic .ghh .pl-mr {
   color: #b294bb;
 }
-.ghh .pl-ms {
+.ghh-theme-classic .ghh .pl-ms {
   color: #b294bb;
 }
-.ghh .pl-pdb {
+.ghh-theme-classic .ghh .pl-pdb {
   color: #b5bd68;
   font-weight: 700;
 }
-.ghh .pl-pdc {
+.ghh-theme-classic .ghh .pl-pdc {
   color: #969896;
 }
-.ghh .pl-pdc1 {
+.ghh-theme-classic .ghh .pl-pdc1 {
   color: #de935f;
 }
-.ghh .pl-pde {
+.ghh-theme-classic .ghh .pl-pde {
   color: #de935f;
 }
-.ghh .pl-pdi {
+.ghh-theme-classic .ghh .pl-pdi {
   color: #b294bb;
 }
-.ghh .pl-pds {
+.ghh-theme-classic .ghh .pl-pds {
   color: #b5bd68;
 }
-.ghh .pl-pdv {
+.ghh-theme-classic .ghh .pl-pdv {
   color: #c66;
 }
-.ghh .pl-pse {
+.ghh-theme-classic .ghh .pl-pse {
   color: #de935f;
 }
-.ghh .pl-pse .pl-s2 {
+.ghh-theme-classic .ghh .pl-pse .pl-s2 {
   color: #de935f;
 }
-.ghh .pl-s {
+.ghh-theme-classic .ghh .pl-s {
   color: #b294bb;
 }
-.ghh .pl-s1 {
+.ghh-theme-classic .ghh .pl-s1 {
   color: #b5bd68;
 }
-.ghh .pl-s2 {
+.ghh-theme-classic .ghh .pl-s2 {
   color: #c5c8c6;
 }
-.ghh .pl-mp .pl-s3 {
+.ghh-theme-classic .ghh .pl-mp .pl-s3 {
   color: #b294bb;
 }
-.ghh .pl-s3 {
+.ghh-theme-classic .ghh .pl-s3 {
   color: #81a2be;
 }
-.ghh .pl-sc {
+.ghh-theme-classic .ghh .pl-sc {
   color: #c5c8c6;
 }
-.ghh .pl-scp {
+.ghh-theme-classic .ghh .pl-scp {
   color: #de935f;
 }
-.ghh .pl-sf {
+.ghh-theme-classic .ghh .pl-sf {
   color: #dad085;
 }
-.ghh .pl-smc {
+.ghh-theme-classic .ghh .pl-smc {
   color: #f0c674;
 }
-.ghh .pl-smi {
+.ghh-theme-classic .ghh .pl-smi {
   color: #c5c8c6;
 }
-.ghh .pl-smp {
+.ghh-theme-classic .ghh .pl-smp {
   color: #c5c8c6;
 }
-.ghh .pl-sok {
+.ghh-theme-classic .ghh .pl-sok {
   color: #b294bb;
 }
-.ghh .pl-sol {
+.ghh-theme-classic .ghh .pl-sol {
   color: #b5bd68;
 }
-.ghh .pl-som {
+.ghh-theme-classic .ghh .pl-som {
   color: #c66;
 }
-.ghh .pl-sr {
+.ghh-theme-classic .ghh .pl-sr {
   color: #c66;
 }
-.ghh .pl-sra {
+.ghh-theme-classic .ghh .pl-sra {
   color: #b294bb;
 }
-.ghh .pl-src {
+.ghh-theme-classic .ghh .pl-src {
   color: #b294bb;
 }
-.ghh .pl-sre {
+.ghh-theme-classic .ghh .pl-sre {
   color: #b294bb;
 }
-.ghh .pl-st {
+.ghh-theme-classic .ghh .pl-st {
   color: #b294bb;
 }
-.ghh .pl-stj {
+.ghh-theme-classic .ghh .pl-stj {
   color: #c5c8c6;
 }
-.ghh .pl-stp {
+.ghh-theme-classic .ghh .pl-stp {
   color: #de935f;
 }
-.ghh .pl-sv {
+.ghh-theme-classic .ghh .pl-sv {
   color: #de935f;
 }
-.ghh .pl-v {
+.ghh-theme-classic .ghh .pl-v {
   color: #de935f;
 }
-.ghh .pl-vi {
+.ghh-theme-classic .ghh .pl-vi {
   color: #de935f;
 }
-.ghh .pl-vo {
+.ghh-theme-classic .ghh .pl-vo {
   color: #c66;
 }
-.ghh .pl-vpf {
+.ghh-theme-classic .ghh .pl-vpf {
   color: #de935f;
 }
-.ghh .pl-mi1 {
+.ghh-theme-classic .ghh .pl-mi1 {
   color: #8f9d6a;
   background: rgba(0,64,0,0.5);
 }
-.ghh .pl-mdht {
+.ghh-theme-classic .ghh .pl-mdht {
   color: #8f9d6a;
   background: rgba(0,64,0,0.5);
 }
-.ghh .pl-md {
+.ghh-theme-classic .ghh .pl-md {
   color: #c66;
   background: rgba(64,0,0,0.5);
 }
-.ghh .pl-mdhf {
+.ghh-theme-classic .ghh .pl-mdhf {
   color: #c66;
   background: rgba(64,0,0,0.5);
 }
-.ghh .pl-mdr {
+.ghh-theme-classic .ghh .pl-mdr {
   color: #de935f;
   font-weight: 400;
 }
-.ghh .pl-mdh {
+.ghh-theme-classic .ghh .pl-mdh {
   color: #c66;
   font-weight: 400;
 }
-.ghh .pl-mdi {
+.ghh-theme-classic .ghh .pl-mdi {
   color: #c66;
   font-weight: 400;
 }
-.ghh .pl-ib {
+.ghh-theme-classic .ghh .pl-ib {
   background-color: #c66;
 }
-.ghh .pl-id {
-  background-color: #c66;
-  color: #fff;
-}
-.ghh .pl-ii {
+.ghh-theme-classic .ghh .pl-id {
   background-color: #c66;
   color: #fff;
 }
-.ghh .pl-iu {
+.ghh-theme-classic .ghh .pl-ii {
+  background-color: #c66;
+  color: #fff;
+}
+.ghh-theme-classic .ghh .pl-iu {
   background-color: #c66;
 }
-.ghh .pl-mo {
+.ghh-theme-classic .ghh .pl-mo {
   color: #c5c8c6;
 }
-.ghh .pl-mri {
+.ghh-theme-classic .ghh .pl-mri {
   color: #de935f;
 }
-.ghh .pl-ms1 {
+.ghh-theme-classic .ghh .pl-ms1 {
   background-color: #c5c8c6;
 }
-.ghh .pl-va {
+.ghh-theme-classic .ghh .pl-va {
   color: #de935f;
 }
-.ghh .pl-vpu {
+.ghh-theme-classic .ghh .pl-vpu {
   color: #de935f;
 }
-.ghh .pl-entl {
+.ghh-theme-classic .ghh .pl-entl {
   color: #c5c8c6;
 }

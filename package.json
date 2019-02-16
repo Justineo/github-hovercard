@@ -1,6 +1,6 @@
 {
   "name": "github-hovercard",
-  "version": "1.6.2",
+  "version": "1.7.0",
   "description": "Neat hovercards for GitHub.",
   "repository": {
     "type": "git",
@@ -25,7 +25,7 @@
     "gulp-uglify": "^1.5.4",
     "marked": "^0.3.9",
     "merge-stream": "^1.0.1",
-    "octicons": "^5.0.1",
+    "octicons": "^8.4.1",
     "plist": "^2.1.0",
     "rename": "^1.0.4"
   },

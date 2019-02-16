@@ -1,5 +1,11 @@
 Changelog
 ---
+## 1.7.0
+
+* Added theme option and switched the default theme to “GitHub”.
+* Fixed emoji display.
+* Fixed extraction of sidebar users.
+
 ## 1.6.2
 * Excluded user status dialog to prevent browser from being freezed.
 * Fixed extraction.
@@ -17,7 +23,7 @@ Changelog
 
 ## 1.5.0
 * Merged contextual information provided by GitHub's own hovercards into our hovercards.
-* Fixed extraction to align with GitHub's continuou UI refactor.
+* Fixed extraction to align with GitHub's continuous UI refactor.
 * Added more `403` error handling.
 
 ## 1.4.5

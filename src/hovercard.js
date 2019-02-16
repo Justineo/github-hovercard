@@ -121,8 +121,8 @@ $(() => {
     'img[alt^="@"]': EXTRACTOR.ALT_USER,
 
     // Sidebar
-    '.dashboard-sidebar [data-hydro-click*="\\"target\\":\\"REPOSITORY\\""] [title]:first-child': EXTRACTOR.TEXT_USER,
-    '.dashboard-sidebar [data-hydro-click*="\\"target\\":\\"REPOSITORY\\""] [title]:last-child': EXTRACTOR.ANCESTOR_URL_REPO,
+    '.dashboard-sidebar [data-hydro-click*="\\"target\\":\\"REPOSITORY\\""] [title]:first-of-type': EXTRACTOR.TEXT_USER,
+    '.dashboard-sidebar [data-hydro-click*="\\"target\\":\\"REPOSITORY\\""] [title]:last-of-type': EXTRACTOR.ANCESTOR_URL_REPO,
 
     /* Explore */
     // Trending
@@ -324,7 +324,7 @@ $(() => {
           {{#language}}<p>{{{icons.code}}}{{.}}</p>{{/language}}
           {{#hasTopics}}<p>{{{icons.bookmark}}}{{#topics}}<a class="ghh-topic" href="https://github.com/search?q=topic%3A{{query}}&type=Repositories">{{name}}</a>{{/topics}}</p>{{/hasTopics}}
         </div>
-        {{#readme}}<div class="ghh-readme">{{{.}}}</div>{{/readme}}
+        {{#readme}}<hr class="ghh-markdown-separator"/><div class="ghh-readme">{{{.}}}</div>{{/readme}}
       </div>`,
     issue: `
       <div class="ghh">
@@ -344,7 +344,7 @@ $(() => {
           <p class="ghh-branch"><span class="commit-ref" title="{{headUser}}:{{headRef}}"><span class="user">{{headUser}}</span>:{{headRef}}</span><span>{{{icons.arrow}}}</span><span class="commit-ref" title="{{baseUser}}:{{baseRef}}"><span class="user">{{baseUser}}</span>:{{baseRef}}</span></p>
           {{^isMerged}}<ul class="ghh-reviews"><li title="{{mergeability.desc}}"><span class="ghh-state-icon ghh-state-icon-{{mergeability.type}}">{{{mergeability.icon}}}</span> {{mergeability.label}}</li>{{#hasReviews}}{{#reviews}}<li class="ghh-state-{{state.type}}" title="{{name}} {{state.desc}}">{{{state.icon}}} <a href="{{url}}">{{name}}</a></li>{{/reviews}}{{/hasReviews}}</ul>{{/isMerged}}
           </div>{{/isPullRequest}}
-        {{#body}}<div class="ghh-issue-body">{{{.}}}</div>{{/body}}
+        {{#body}}<hr class="ghh-markdown-separator"/><div class="ghh-issue-body">{{{.}}}</div>{{/body}}
       </div>`,
     comment: `
       <div class="ghh">
@@ -353,6 +353,7 @@ $(() => {
           <p><strong><a href="{{userUrl}}">{{loginName}}</a></strong></p>
           <p>Commented on {{{createTime}}}{{#updatedTime}} • {{{.}}}{{/updatedTime}}</p>
         </div>
+        <hr class="ghh-markdown-separator"/>
         <div class="ghh-issue-body">{{{body}}}</div>
       </div>`,
     commit: `
@@ -394,7 +395,7 @@ $(() => {
       </div>`
   };
 
-  const CREATE_TOKEN_PATH = `//${GH_DOMAIN}/settings/tokens/new`;
+  const CREATE_TOKEN_PATH = `//${GH_DOMAIN}/settings/tokens/new?scopes=repo,user:follow`;
   const EDIT_TOKEN_PATH = `//${GH_DOMAIN}/settings/tokens`;
   const IS_ENTERPRISE = GH_DOMAIN !== 'github.com';
   const API_PREFIX = IS_ENTERPRISE ? `//${GH_DOMAIN}/api/v3` : `//api.${GH_DOMAIN}`;
@@ -528,14 +529,18 @@ $(() => {
     return encodeHTML`<time datetime="${time}" title="${time}">${text || formatted}</time>`;
   }
 
+  function getEmoji(unicode) {
+    return String.fromCodePoint(parseInt(unicode, 16))
+  }
+
   function replaceEmoji(text) {
     return text.replace(/:([a-z0-9+\-_]+):/ig, (match, key) => {
       let url = EMOJI_MAP[key];
       if (!url) {
         return match;
       }
-      return `<img class="emoji" title="${match}" alt="${match}"
-        src="${url}" width="18" height="18">`;
+      let [, unicode] = url.match(/unicode\/([0-9a-z]+).png/) || []
+      return `<g-emoji class="g-emoji" alias="${key}" fallback-src="${url}">${getEmoji(unicode)}</g-emoji>`
     });
   }
 
@@ -737,7 +742,7 @@ $(() => {
             desc: 'left review comments'
           },
           CHANGES_REQUESTED: {
-            icon: getIcon('x', 0.75),
+            icon: getIcon('request-changes', 0.75),
             type: 'alert',
             desc: 'requested changes'
           },
@@ -908,8 +913,11 @@ $(() => {
     let selectors = Object.keys(STRATEGIES);
     selectors.forEach(selector => {
       let strategy = STRATEGIES[selector];
-      let elems = $(selector, context);
+      let elems = $(selector);
       elems.each(function () {
+        if (context && !context.contains(this)) {
+          return
+        }
         let elem = $(this);
         if (getExtracted(elem) || elem.is(BLACK_LIST_SELECTOR)) {
           // skip processed elements
@@ -1583,7 +1591,8 @@ $(() => {
                           let logged = reviews.reduce((acc, { user, state }) => {
                             let record = acc[user.login]
                             if (user.login !== raw.user.login // not self
-                              && (state !== 'COMMENTED' || (!record && state === 'COMMENTED'))) {
+                              && (state !== 'COMMENTED' && state !== 'DISMISSED' ||
+                                (!record && state === 'COMMENTED'))) {
                               acc[user.login] = {
                                 name: user.login,
                                 url: user.html_url,
@@ -1818,24 +1827,33 @@ $(() => {
     readme: true,
     disableProjects: false,
     showSelf: false,
-    side: 'top'
+    side: 'top',
+    theme: 'github'
   };
 
   let cardOptions = Object.assign({}, DEFAULT_OPTIONS);
 
   if (platform && platform.storage) {
     let storage = platform.storage.sync || platform.storage.local;
-    storage.get(Object.assign({}, DEFAULT_OPTIONS), ({ delay, readme, disableProjects, showSelf, side }) => {
+    storage.get(Object.assign({}, DEFAULT_OPTIONS), ({
+      delay, readme, disableProjects, showSelf, side, theme
+    }) => {
       delay = parseInt(delay, 10)
       delay = isNaN(delay) ? 200 : delay
 
       Object.assign(cardOptions, {
-        delay, readme, disableProjects, showSelf, side
+        delay, readme, disableProjects, showSelf, side, theme
       });
 
+      applyTheme(theme)
       extract();
     });
   } else {
+    applyTheme(theme)
     extract();
+  }
+
+  function applyTheme (theme) {
+    document.documentElement.classList.add(`ghh-theme-${theme}`)
   }
 });
