@@ -29,8 +29,8 @@ Neat hovercards for GitHub.
 
 * Why and how should I bind my access token and which scopes should I allow?
 
-    GitHub limits unauthenticated API requests to 60 per hour but after binding your access token you will be able to enjoy the rate limit of **5,000** requests per hour. 
-    
+    GitHub limits unauthenticated API requests to 60 per hour but after binding your access token you will be able to enjoy the rate limit of **5,000** requests per hour.
+
     **Triple click** on any hovercard and the access token form will pop out.
 
     You should at lease add permission for `public_repo` to enable star/unstar, and `user:follow` to enable follow/unfollow.
@@ -65,7 +65,7 @@ For browser extension versions, GitHub Hovercard provide following options:
     If you don't want the hovercards to pop up instantly, you may set a delay before they try to retrieve data and appear.
 
 * Readme
-    
+
     You may disable readme content for repo cards if you don't need it.
 
 * Show self
@@ -74,21 +74,17 @@ For browser extension versions, GitHub Hovercard provide following options:
 
 ## Screenshots
 
-<img src="screenshots/1.png" alt="Users in trending repo avatars" width="640" height="400">
+<img src="screenshots/1-light.png" alt="Users in trending repo avatars" width="640" height="400">
 
-<img src="screenshots/2.png" alt="Repos in activity feeds" width="640" height="400">
+<img src="screenshots/2-light.png" alt="Users in feeds" width="640" height="400">
 
-<img src="screenshots/3.png" alt="Users/organizations in repo titles" width="640" height="400">
+<img src="screenshots/3-light.png" alt="Repos in feeds" width="640" height="400">
 
-<img src="screenshots/4.png" alt="Forked repos" width="640" height="400">
+<img src="screenshots/4-light.png" alt="Issues" width="640" height="400">
 
-<img src="screenshots/5.png" alt="User/organization links anywhere" width="640" height="400">
+<img src="screenshots/5-light.png" alt="Pull requests" width="640" height="400">
 
-<img src="screenshots/6.png" alt="Issues" width="640" height="400">
-
-<img src="screenshots/7.png" alt="Pull requests" width="640" height="400">
-
-<img src="screenshots/8.png" alt="Commits" width="640" height="400">
+<img src="screenshots/6-light.png" alt="Commits" width="640" height="400">
 
 ## Known issues
 
