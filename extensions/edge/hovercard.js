@@ -1849,7 +1849,7 @@ document.addEventListener('DOMContentLoaded', () => {
       extract();
     });
   } else {
-    applyTheme(theme)
+    applyTheme(cardOptions.theme)
     extract();
   }
 

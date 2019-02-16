@@ -1849,7 +1849,7 @@ $(() => {
       extract();
     });
   } else {
-    applyTheme(theme)
+    applyTheme(cardOptions.theme)
     extract();
   }
 
