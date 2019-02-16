@@ -60,9 +60,21 @@ For browser extension versions, GitHub Hovercard provide following options:
 
     Use this option to set custom domains for your GitHub Enterprise service. Note that you don't need to set `github.com` because it's always included. You may be asked to grant additional permissions for those domains.
 
+* Theme
+
+    The theme of hovercards. Defaults to GitHub-style hovercards. You can set it back to the classic dark style in the options.
+
 * Delay
 
     If you don't want the hovercards to pop up instantly, you may set a delay before they try to retrieve data and appear.
+
+* Disable Projects
+
+    You can disable hovercards on project pages for less interference.
+
+* Placement
+
+    You can set the default placement of the hovercards.
 
 * Readme
 
