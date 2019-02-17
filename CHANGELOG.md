@@ -1,5 +1,9 @@
 Changelog
 ---
+## 1.7.1
+
+* Fixed rocket icon.
+
 ## 1.7.0
 
 * Added theme option and switched the default theme to “GitHub”.
