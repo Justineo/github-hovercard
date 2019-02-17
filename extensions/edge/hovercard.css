@@ -257,6 +257,7 @@
 .ghh-readme img,
 .ghh-issue-body img {
   max-width: 100%;
+  height: auto;
 }
 .ghh-readme code,
 .ghh-issue-body code,
