@@ -117,7 +117,7 @@ $(() => {
     '[data-hydro-click*="\\"action_target\\":\\"sha\\""]': EXTRACTOR.URL,
     '[data-hydro-click*="\\"target\\":\\"ISSUE\\""]': EXTRACTOR.URL,
     '[data-hydro-click*="\\"target\\":\\"PULL_REQUEST\\""]': EXTRACTOR.URL,
-    '.d-flex:has(.AvatarStack) + .d-flex a:first-child': EXTRACTOR.SLUG,
+    '.js-recent-activity-container [data-hovercard-type="repository"]': EXTRACTOR.SLUG,
     'img[alt^="@"]': EXTRACTOR.ALT_USER,
 
     // Sidebar
@@ -362,7 +362,7 @@ $(() => {
           <p><a href="{{commitUrl}}" title="{{title}}"><strong>{{title}}</strong></a></p>
         </div>
         {{#body}}<pre class="ghh-commit-body">{{.}}</pre>{{/body}}
-        <p class="ghh-commit-author">{{#verified}}<span class="state ghh-state-verified" title="This commit was signed with a verified signature.">{{{icons.verified}}}Verified</span> {{/verified}}{{#authorUrl}}<a href="{{.}}"><strong>{{author}}</strong></a>{{/authorUrl}}{{^authorUrl}}<strong title="{{authorEmail}}">{{author}}</strong>{{/authorUrl}} committed{{#isGitHub}} on <strong>GitHub</strong>{{/isGitHub}}{{^isGitHub}}{{#committer}} with {{#committerUrl}}<a href="{{.}}"><strong>{{committer}}</strong></a>{{/committerUrl}}{{^committerUrl}}<strong title="{{committerEmail}}">{{committer}}</strong>{{/committerUrl}}{{/committer}}{{/isGitHub}} on {{{authorTime}}}</p>
+        <p class="ghh-commit-author">{{#authorUrl}}<a href="{{.}}"><strong>{{author}}</strong></a>{{/authorUrl}}{{^authorUrl}}<strong title="{{authorEmail}}">{{author}}</strong>{{/authorUrl}} committed{{#isGitHub}} on <strong>GitHub</strong>{{/isGitHub}}{{^isGitHub}}{{#committer}} with {{#committerUrl}}<a href="{{.}}"><strong>{{committer}}</strong></a>{{/committerUrl}}{{^committerUrl}}<strong title="{{committerEmail}}">{{committer}}</strong>{{/committerUrl}}{{/committer}}{{/isGitHub}} on {{{authorTime}}}{{#verified}} <span class="state ghh-state-verified" title="This commit was signed with a verified signature.">{{{icons.verified}}}Verified</span>{{/verified}}</p>
         <div class="ghh-more">
           <p class="ghh-commit-sha">{{{icons.commit}}} <code>{{sha}}</code></p>
           {{#branch}}<p>{{{icons.branch}}} <a href="/{{fullRepo}}/tree/{{branch}}"><strong>{{branch}}</strong></a>{{#pull}} (<a href="/{{fullRepo}}/pull/{{.}}">#{{.}}</a>){{/pull}}</p>
@@ -832,7 +832,8 @@ $(() => {
           tag: getIcon('tag', 0.875),
           commit: getIcon('git-commit', 0.875),
           diff: getIcon('diff', 0.875),
-          verified: getIcon('verified', 0.875)
+          verified: `<svg class="octicon" width="16" height="16"
+          viewBox="0 0 18 18"><path d="${OCTICONS.verified.d}" /></svg>`
         }
       };
     }
@@ -1216,7 +1217,7 @@ $(() => {
       delay: cardOptions.delay,
       side: cardOptions.side || 'top',
       // trigger: 'click',
-      zIndex: 2147483647,
+      zIndex: 2147483646,
       functionBefore(self, event) {
         let elem = $(event.origin);
         elem.tooltipster('content', $('<span class="loading"></span>'));

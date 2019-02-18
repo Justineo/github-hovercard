@@ -1,11 +1,13 @@
 Changelog
 ---
-## 1.7.1
+## 1.7.2
+* Refined verified badge styles.
+* Fixed z-index of native hovercards over our hovercards.
 
+## 1.7.1
 * Fixed rocket icon.
 
 ## 1.7.0
-
 * Added theme option and switched the default theme to “GitHub”.
 * Fixed emoji display.
 * Fixed extraction of sidebar users.
