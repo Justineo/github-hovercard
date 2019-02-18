@@ -311,18 +311,6 @@
   background-color: #fff;
   border-radius: 2px;
 }
-.ghh-theme-github .ghh-readme a,
-.ghh-theme-github .ghh-issue-body a {
-  color: #0366d6;
-}
-.ghh-theme-github .ghh-readme a:hover,
-.ghh-theme-github .ghh-issue-body a:hover {
-  text-decoration: underline;
-}
-.ghh-theme-github .ghh-readme .user-mention,
-.ghh-theme-github .ghh-issue-body .user-mention {
-  color: #24292e;
-}
 .ghh-theme-github .ghh-readme h1,
 .ghh-theme-github .ghh-issue-body h1,
 .ghh-theme-github .ghh-readme h2,
@@ -344,6 +332,18 @@
 .ghh-theme-github .ghh-readme td,
 .ghh-theme-github .ghh-issue-body td {
   border: 1px solid #dfe2e5;
+}
+.ghh-theme-github .ghh .ghh-readme a,
+.ghh-theme-github .ghh .ghh-issue-body a {
+  color: #0366d6;
+}
+.ghh-theme-github .ghh .ghh-readme a:hover,
+.ghh-theme-github .ghh .ghh-issue-body a:hover {
+  text-decoration: underline;
+}
+.ghh-theme-github .ghh .ghh-readme .user-mention,
+.ghh-theme-github .ghh .ghh-issue-body .user-mention {
+  color: #24292e;
 }
 .ghh-theme-classic .ghh-readme hr,
 .ghh-theme-classic .ghh-issue-body hr {

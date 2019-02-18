@@ -255,15 +255,6 @@ $markdown-body
     border-radius 2px
 
   .ghh-theme-github &
-    a
-      color $gh-link-color
-
-      &:hover
-        text-decoration underline
-
-    .user-mention
-      color $gh-dark-text-color
-
     h1,
     h2
       border-bottom 1px solid #eaecef
@@ -279,6 +270,16 @@ $markdown-body
     th,
     td
       border 1px solid #dfe2e5
+
+  .ghh-theme-github .ghh &
+    a
+      color $gh-link-color
+
+      &:hover
+        text-decoration underline
+
+    .user-mention
+      color $gh-dark-text-color
 
   .ghh-theme-classic &
 
