@@ -567,6 +567,9 @@
 .ghh .ghh-state-merged {
   background-color: #6f42c1;
 }
+.ghh .ghh-state-draft {
+  background-color: #6a737d;
+}
 .ghh .ghh-state .octicon {
   margin-right: 4px;
   vertical-align: -3px;

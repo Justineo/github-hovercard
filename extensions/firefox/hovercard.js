@@ -62,7 +62,7 @@ $(() => {
   ];
 
   const GH_USER_NAME_PATTERN = /^[a-z0-9]+$|^[a-z0-9](?:[a-z0-9](?!--)|-(?!-))*[a-z0-9]$/i;
-  const GH_REPO_NAME_PATTERN = /^[a-z0-9\-_\.]+$/i;
+  const GH_REPO_NAME_PATTERN = /^[a-z0-9\-_.]+$/i;
 
   const TYPE_KEY = 'ghh-type';
   const VALUE_KEY = 'ghh-value';
@@ -98,7 +98,7 @@ $(() => {
   const URL_ISSUE_PATTERN = `^https?:\\/\\/${GH_DOMAIN_PATTERN}\\/([^/?#]+)\\/([^/?#]+)\\/(?:issues|pull)\\/(\\d+)(?:\\/?(?:[?#](?!issuecomment).*)?$)`;
   const URL_COMMENT_PATTERN = `^https?:\\/\\/${GH_DOMAIN_PATTERN}\\/([^/?#]+)\\/([^/?#]+)\\/(?:issues|pull)\\/(\\d+)#issuecomment-(\\d+)$`;
   const URL_COMMIT_PATTERN = `^https?:\\/\\/${GH_DOMAIN_PATTERN}\\/([^/?#]+)\\/([^/?#]+)\\/(?:pull\\/\\d+\\/commits|commit)\\/([0-9a-f]+)(?:\\/?[^/]*$)`;
-  const SLUG_PATTERN = /([^\/\s]+)\/([^#@\s]+)(?:#(\d+)|@([0-9a-f]+))?/;
+  const SLUG_PATTERN = /([^/\s]+)\/([^#@\s]+)(?:#(\d+)|@([0-9a-f]+))?/;
 
   const STRATEGIES = {
     // @ mentions
@@ -479,6 +479,7 @@ $(() => {
       let close = [];
       let position;
       let result;
+      /* eslint-disable no-cond-assign */
       while (result = marker.exec(content)) {
         position = marker.lastIndex - result[0].length;
         if (result[1] === 'BEGIN') {
@@ -491,6 +492,7 @@ $(() => {
           }
         }
       }
+      /* eslint-enable no-cond-assign */
 
       // <span>user/ -> <span><span>user</span>
       let begin = 0;
@@ -721,10 +723,9 @@ $(() => {
         issueUrl: raw.html_url,
         number: raw.number,
         isPullRequest: !!raw.pull_request,
-        isClosed: raw.state === 'closed',
         userUrl: raw.user.html_url,
         user: raw.user.login,
-        state: raw.state,
+        state: raw.state === 'closed' ? 'closed' : (raw.mergeable_state === 'draft' ? 'draft' : raw.state),
         avatar: raw.user.avatar_url,
         createTime: formatTime(raw.created_at),
         icons: {
@@ -767,10 +768,14 @@ $(() => {
           deletions: raw.deletions,
           changedFiles: raw.changed_files,
           mergeability: {
-            type: raw.mergeable ? 'success' : 'problem',
-            icon: raw.mergeable ? getIcon('check', 0.5) : getIcon('alert', 0.5),
-            label: raw.mergeable ? 'No conflicts' : 'Has conflicts',
-            desc: raw.mergeable ? 'This branch has no conflicts with the base branch' : 'This branch has conflicts that must be resolved'
+            type: (raw.mergeable && raw.mergeable_state !== 'draft') ? 'success' : 'problem',
+            icon: (raw.mergeable && raw.mergeable_state !== 'draft') ? getIcon('check', 0.5) : getIcon('alert', 0.5),
+            label: raw.mergeable_state === 'draft'
+              ? 'Work in progress'
+              : (raw.mergeable ? 'No conflicts' : 'Has conflicts'),
+            desc: raw.mergeable_state === 'draft'
+              ? 'This pull request is still a work in progress.'
+              : (raw.mergeable ? 'This branch has no conflicts with the base branch.' : 'This branch has conflicts that must be resolved.')
           },
           isMerged: raw.merged,
           isSingleCommit: raw.commits === 1,
@@ -936,21 +941,21 @@ $(() => {
         let fullCommit; // {{user}}/{{repo}}@{{commit}}
         switch (strategy) {
           case EXTRACTOR.TEXT_USER: {
-            username = trim(elem.text().replace(/[@\/]/g, ''));
+            username = trim(elem.text().replace(/[@/]/g, ''));
             target = $(`<span>${elem.text()}</span>`);
             elem.empty().append(target);
             break;
           }
           case EXTRACTOR.TITLE_USER: {
-            username = trim((elem.attr('title') || '').replace(/[@\/]/g, ''));
+            username = trim((elem.attr('title') || '').replace(/[@/]/g, ''));
             break;
           }
           case EXTRACTOR.ALT_USER: {
-            username = trim((elem.attr('alt') || '').split(/\s+/)[0].replace(/[@\/]/g, ''));
+            username = trim((elem.attr('alt') || '').split(/\s+/)[0].replace(/[@/]/g, ''));
             break;
           }
           case EXTRACTOR.HREF_USER: {
-            username = trim((elem.attr('href') || '').replace(/[@\/]/g, ''));
+            username = trim((elem.attr('href') || '').replace(/[@/]/g, ''));
             break;
           }
           case EXTRACTOR.TEXT_MY_REPO: {
@@ -1123,7 +1128,7 @@ $(() => {
           case EXTRACTOR.NEXT_LINK_TEXT_USER: {
             let link = elem.nextAll('a').eq(0);
             if (link) {
-              username = trim(link.text().replace(/[@\/]/g, ''));
+              username = trim(link.text().replace(/[@/]/g, ''));
             }
             break;
           }
@@ -1142,7 +1147,7 @@ $(() => {
           }
           case EXTRACTOR.NEXT_TEXT_USER: {
             let textNode = getNextTextNode(elem[0], elem[0].parentNode.parentNode);
-            username = textNode.nodeValue.replace(/[\s\\\/]+/g, '');
+            username = textNode.nodeValue.replace(/[\s\\/]+/g, '');
             break;
           }
           case EXTRACTOR.REPO_LIST_SLUG: {
@@ -1327,13 +1332,14 @@ $(() => {
                 }
                 break;
               }
-              default:
+              default: {
                 title = 'Error';
                 let response = xhr.responseJSON;
                 if (response) {
                   message = encodeHTML`${response.message}` || '';
                 }
                 break;
+              }
             }
 
             let error = {
@@ -1561,6 +1567,7 @@ $(() => {
                             deletions: pull.deletions,
                             changed_files: pull.changed_files,
                             mergeable: pull.mergeable,
+                            mergeable_state: pull.mergeable_state,
                             merged: pull.merged,
                             head: pull.head,
                             base: pull.base
@@ -1714,7 +1721,7 @@ $(() => {
       interactive: true
     });
 
-    function toggleButtonState(action, ...args) {
+    function toggleButtonState(action) {
       return ({
         follow: {
           type: 'user',
@@ -1774,7 +1781,7 @@ $(() => {
         this.disabled = true;
         $.ajax(options)
           .done(() => {
-            let state = toggleButtonState(action, args);
+            let state = toggleButtonState(action);
             this.innerHTML = state.content;
             this.dataset.action = state.action;
             this.className = state.className;
