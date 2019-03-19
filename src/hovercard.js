@@ -109,6 +109,8 @@ $(() => {
     '.team-left-column:last-child h4 ~ div a': EXTRACTOR.SLUG,
 
     // News feeds
+    'img[alt^="@"]': EXTRACTOR.ALT_USER,
+    '[data-hydro-click*="\\"action_target\\":\\"actor\\""]': EXTRACTOR.TEXT_USER,
     '[data-hydro-click*="\\"action_target\\":\\"issue\\""]': EXTRACTOR.URL,
     '[data-hydro-click*="\\"action_target\\":\\"followee\\""]': EXTRACTOR.URL,
     '[data-hydro-click*="\\"action_target\\":\\"repo\\""]': EXTRACTOR.SLUG,
@@ -118,7 +120,6 @@ $(() => {
     '[data-hydro-click*="\\"target\\":\\"ISSUE\\""]': EXTRACTOR.URL,
     '[data-hydro-click*="\\"target\\":\\"PULL_REQUEST\\""]': EXTRACTOR.URL,
     '.js-recent-activity-container [data-hovercard-type="repository"]': EXTRACTOR.SLUG,
-    'img[alt^="@"]': EXTRACTOR.ALT_USER,
 
     // Sidebar
     '.dashboard-sidebar [data-hydro-click*="\\"target\\":\\"REPOSITORY\\""] [title]:first-of-type': EXTRACTOR.TEXT_USER,
