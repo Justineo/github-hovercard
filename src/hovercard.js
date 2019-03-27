@@ -1,7 +1,7 @@
 $(() => {
-  'use strict';
+  'use strict'
 
-  const GH_DOMAIN = location.host;
+  const GH_DOMAIN = location.host
 
   const EXCLUDES = [
     '.tooltipster-base',
@@ -12,60 +12,89 @@ $(() => {
     'time-ago',
     'relative-time',
     '.user-status-container'
-  ].join(',');
+  ].join(',')
 
-  const DEFAULT_TARGET = document.body;
+  const DEFAULT_TARGET = document.body
 
-  function isExclude (target) {
-    return $(target).is(EXCLUDES)
-      || $(target).parents(EXCLUDES).length
-      || $(target).is(DEFAULT_TARGET)
+  function isExclude(target) {
+    return (
+      $(target).is(EXCLUDES) ||
+      $(target).parents(EXCLUDES).length ||
+      $(target).is(DEFAULT_TARGET)
+    )
   }
 
-  let isExtracting = false;
+  let isExtracting = false
   let observer = new MutationObserver(mutations => {
     if (isExtracting) {
-      return;
+      return
     }
     mutations.forEach(mutation => {
       if (mutation.type === 'childList') {
-        let target = mutation.target;
+        let target = mutation.target
         if (!isExclude(target)) {
-          extract(target);
+          extract(target)
         }
       }
-    });
-  });
+    })
+  })
   let observeConfig = {
     attributes: true,
     childList: true,
     characterData: true,
     subtree: true
-  };
-  observer.observe(DEFAULT_TARGET, observeConfig);
+  }
+  observer.observe(DEFAULT_TARGET, observeConfig)
 
-  let me = $('meta[name="user-login"]').attr('content');
+  let me = $('meta[name="user-login"]').attr('content')
 
   // based on octotree's config
   const GH_RESERVED_USER_NAMES = [
-    'settings', 'orgs', 'organizations', 'site', 'blog', 'about',
-    'explore', 'styleguide', 'showcases', 'trending', 'stars',
-    'dashboard', 'notifications', 'search', 'developer', 'account',
-    'pulls', 'issues', 'features', 'contact', 'security', 'join',
-    'login', 'watching', 'new', 'integration', 'pricing', 'topics',
-    'personal', 'business', 'open-source', 'marketplace', 'collections',
-    'hovercards', 'discover', 'case-studies'
-  ];
+    'settings',
+    'orgs',
+    'organizations',
+    'site',
+    'blog',
+    'about',
+    'explore',
+    'styleguide',
+    'showcases',
+    'trending',
+    'stars',
+    'dashboard',
+    'notifications',
+    'search',
+    'developer',
+    'account',
+    'pulls',
+    'issues',
+    'features',
+    'contact',
+    'security',
+    'join',
+    'login',
+    'watching',
+    'new',
+    'integration',
+    'pricing',
+    'topics',
+    'personal',
+    'business',
+    'open-source',
+    'marketplace',
+    'collections',
+    'hovercards',
+    'discover',
+    'case-studies'
+  ]
 
-  const GH_RESERVED_REPO_NAMES = [
-    'followers', 'following', 'repositories'
-  ];
+  const GH_RESERVED_REPO_NAMES = ['followers', 'following', 'repositories']
 
-  const GH_USER_NAME_PATTERN = /^[a-z0-9]+$|^[a-z0-9](?:[a-z0-9](?!--)|-(?!-))*[a-z0-9]$/i;
-  const GH_REPO_NAME_PATTERN = /^[a-z0-9\-_.]+$/i;
+  const GH_USER_NAME_PATTERN = /^[a-z0-9]+$|^[a-z0-9](?:[a-z0-9](?!--)|-(?!-))*[a-z0-9]$/i
+  const GH_REPO_NAME_PATTERN = /^[a-z0-9\-_.]+$/i
 
-  const TYPE_KEY = 'ghh-type';
-  const VALUE_KEY = 'ghh-value';
+  const TYPE_KEY = 'ghh-type'
+  const VALUE_KEY = 'ghh-value'
   const EXTRACT_TYPE = {
     USER: 'user',
     REPO: 'repo',
@@ -73,7 +102,7 @@ $(() => {
     COMMENT: 'comment',
     COMMIT: 'commit',
     SKIP: 'skip'
-  };
+  }
 
   const EXTRACTOR = {
     SLUG: 1, // {{user}}/{{repo}}#{{issue}}
@@ -89,16 +118,16 @@ $(() => {
     TEXT_NODE_USER: 11, // {{user}} <span>...</span>
     NEXT_TEXT_USER: 12, // <img alt> {{user}}
     REPO_LIST_SLUG: 13 // <span>{{user}} / </span>{{repo}}
-  };
+  }
 
-  const GH_DOMAIN_PATTERN = GH_DOMAIN.replace(/\./g, '\\.');
-  const URL_USER_PATTERN = `^https?:\\/\\/${GH_DOMAIN_PATTERN}\\/(?:([^/?#]+)(?:\\/$|[^/]*$)|orgs\\/[^/]+\\/people\\/([^/?#]+))`;
-  const URL_REPO_PATTERN = `^https?:\\/\\/${GH_DOMAIN_PATTERN}\\/([^/?#]+)\\/([^/?#]+)(?:\\/$|[^/]*$)`;
-  const URL_PROJECT_PATTERN = `^https?:\\/\\/${GH_DOMAIN_PATTERN}\\/([^/?#]+)\\/([^/?#]+)\\/projects\\/(\\d+)`;
-  const URL_ISSUE_PATTERN = `^https?:\\/\\/${GH_DOMAIN_PATTERN}\\/([^/?#]+)\\/([^/?#]+)\\/(?:issues|pull)\\/(\\d+)(?:\\/?(?:[?#](?!issuecomment).*)?$)`;
-  const URL_COMMENT_PATTERN = `^https?:\\/\\/${GH_DOMAIN_PATTERN}\\/([^/?#]+)\\/([^/?#]+)\\/(?:issues|pull)\\/(\\d+)#issuecomment-(\\d+)$`;
-  const URL_COMMIT_PATTERN = `^https?:\\/\\/${GH_DOMAIN_PATTERN}\\/([^/?#]+)\\/([^/?#]+)\\/(?:pull\\/\\d+\\/commits|commit)\\/([0-9a-f]+)(?:\\/?[^/]*$)`;
-  const SLUG_PATTERN = /([^/\s]+)\/([^#@\s]+)(?:#(\d+)|@([0-9a-f]+))?/;
+  const GH_DOMAIN_PATTERN = GH_DOMAIN.replace(/\./g, '\\.')
+  const URL_USER_PATTERN = `^https?:\\/\\/${GH_DOMAIN_PATTERN}\\/(?:([^/?#]+)(?:\\/$|[^/]*$)|orgs\\/[^/]+\\/people\\/([^/?#]+))`
+  const URL_REPO_PATTERN = `^https?:\\/\\/${GH_DOMAIN_PATTERN}\\/([^/?#]+)\\/([^/?#]+)(?:\\/$|[^/]*$)`
+  const URL_PROJECT_PATTERN = `^https?:\\/\\/${GH_DOMAIN_PATTERN}\\/([^/?#]+)\\/([^/?#]+)\\/projects\\/(\\d+)`
+  const URL_ISSUE_PATTERN = `^https?:\\/\\/${GH_DOMAIN_PATTERN}\\/([^/?#]+)\\/([^/?#]+)\\/(?:issues|pull)\\/(\\d+)(?:\\/?(?:[?#](?!issuecomment).*)?$)`
+  const URL_COMMENT_PATTERN = `^https?:\\/\\/${GH_DOMAIN_PATTERN}\\/([^/?#]+)\\/([^/?#]+)\\/(?:issues|pull)\\/(\\d+)#issuecomment-(\\d+)$`
+  const URL_COMMIT_PATTERN = `^https?:\\/\\/${GH_DOMAIN_PATTERN}\\/([^/?#]+)\\/([^/?#]+)\\/(?:pull\\/\\d+\\/commits|commit)\\/([0-9a-f]+)(?:\\/?[^/]*$)`
+  const SLUG_PATTERN = /([^/\s]+)\/([^#@\s]+)(?:#(\d+)|@([0-9a-f]+))?/
 
   const STRATEGIES = {
     // @ mentions
@@ -110,20 +139,25 @@ $(() => {
 
     // News feeds
     'img[alt^="@"]': EXTRACTOR.ALT_USER,
-    '[data-hydro-click*="\\"action_target\\":\\"actor\\""]': EXTRACTOR.TEXT_USER,
+    '[data-hydro-click*="\\"action_target\\":\\"actor\\""]':
+      EXTRACTOR.TEXT_USER,
     '[data-hydro-click*="\\"action_target\\":\\"issue\\""]': EXTRACTOR.URL,
     '[data-hydro-click*="\\"action_target\\":\\"followee\\""]': EXTRACTOR.URL,
     '[data-hydro-click*="\\"action_target\\":\\"repo\\""]': EXTRACTOR.SLUG,
-    '[data-hydro-click*="\\"action_target\\":\\"repository\\""]': EXTRACTOR.SLUG,
+    '[data-hydro-click*="\\"action_target\\":\\"repository\\""]':
+      EXTRACTOR.SLUG,
     '[data-hydro-click*="\\"type\\":\\"ForkEvent\\""]': EXTRACTOR.SLUG,
     '[data-hydro-click*="\\"action_target\\":\\"sha\\""]': EXTRACTOR.URL,
     '[data-hydro-click*="\\"target\\":\\"ISSUE\\""]': EXTRACTOR.URL,
     '[data-hydro-click*="\\"target\\":\\"PULL_REQUEST\\""]': EXTRACTOR.URL,
-    '.js-recent-activity-container [data-hovercard-type="repository"]': EXTRACTOR.SLUG,
+    '.js-recent-activity-container [data-hovercard-type="repository"]':
+      EXTRACTOR.SLUG,
 
     // Sidebar
-    '.dashboard-sidebar [data-hydro-click*="\\"target\\":\\"REPOSITORY\\""] [title]:first-of-type': EXTRACTOR.TEXT_USER,
-    '.dashboard-sidebar [data-hydro-click*="\\"target\\":\\"REPOSITORY\\""] [title]:last-of-type': EXTRACTOR.ANCESTOR_URL_REPO,
+    '.dashboard-sidebar [data-hydro-click*="\\"target\\":\\"REPOSITORY\\""] [title]:first-of-type':
+      EXTRACTOR.TEXT_USER,
+    '.dashboard-sidebar [data-hydro-click*="\\"target\\":\\"REPOSITORY\\""] [title]:last-of-type':
+      EXTRACTOR.ANCESTOR_URL_REPO,
 
     /* Explore */
     // Trending
@@ -140,15 +174,19 @@ $(() => {
     // Pinned repos
     '.pinned-repo-item-content .owner': EXTRACTOR.TEXT_USER,
     '.pinned-repo-item-content .repo': EXTRACTOR.ANCESTOR_URL_REPO,
-    '.pinned-repo-item-content .d-block + p:not(.pinned-repo-desc) a': EXTRACTOR.SLUG,
+    '.pinned-repo-item-content .d-block + p:not(.pinned-repo-desc) a':
+      EXTRACTOR.SLUG,
 
     // Customize pinned repos
-    '.pinned-repos-selection-list .pinned-repo-name span': EXTRACTOR.TEXT_MY_REPO,
+    '.pinned-repos-selection-list .pinned-repo-name span':
+      EXTRACTOR.TEXT_MY_REPO,
 
     // Contribution activities
-    '.profile-rollup-content > li > div:first-child a:first-child': EXTRACTOR.SLUG,
+    '.profile-rollup-content > li > div:first-child a:first-child':
+      EXTRACTOR.SLUG,
     '.profile-rollup-summarized button > span:first-child': EXTRACTOR.SLUG,
-    '.profile-rollup-content .profile-rollup-icon:has(.octicon-repo, .octicon-repo-forked) + a': EXTRACTOR.SLUG,
+    '.profile-rollup-content .profile-rollup-icon:has(.octicon-repo, .octicon-repo-forked) + a':
+      EXTRACTOR.SLUG,
 
     '.profile-timeline-card h3 a': EXTRACTOR.URL,
 
@@ -183,15 +221,16 @@ $(() => {
     // - Repositories details
     '.org-higher-access-member': EXTRACTOR.TEXT_NODE_USER,
 
-
     /* Repo */
     // Issues
     '.opened-by a': EXTRACTOR.TEXT_USER,
     'img.from-avatar:not([alt=""])': EXTRACTOR.ALT_USER,
     '.fork-flag a': EXTRACTOR.SLUG,
     '.merge-pr-more-commits a:last-child': EXTRACTOR.SLUG,
-    '.select-menu-list[data-filter="author"] .select-menu-item-text': EXTRACTOR.TEXT_NODE_USER,
-    '.select-menu-list[data-filter="assignee"] .select-menu-item-text': EXTRACTOR.TEXT_NODE_USER,
+    '.select-menu-list[data-filter="author"] .select-menu-item-text':
+      EXTRACTOR.TEXT_NODE_USER,
+    '.select-menu-list[data-filter="assignee"] .select-menu-item-text':
+      EXTRACTOR.TEXT_NODE_USER,
 
     // Insights
     // - Pulse
@@ -207,7 +246,8 @@ $(() => {
 
     /* New/import repo */
     '.select-menu-item-gravatar img': EXTRACTOR.NEXT_TEXT_USER,
-    '.select-menu-item-gravatar + .select-menu-item-text .js-username': EXTRACTOR.TEXT_USER,
+    '.select-menu-item-gravatar + .select-menu-item-text .js-username':
+      EXTRACTOR.TEXT_USER,
     '.select-menu-item-gravatar + .select-menu-item-text': EXTRACTOR.TEXT_USER,
     '.select-menu-button-gravatar + .js-select-button': EXTRACTOR.TEXT_USER,
 
@@ -235,8 +275,8 @@ $(() => {
     'img.gravatar:not([alt=""])': EXTRACTOR.ALT_USER,
 
     /* All links */
-    'a': EXTRACTOR.URL
-  };
+    a: EXTRACTOR.URL
+  }
 
   const BLACK_LIST_SELECTOR = [
     '.ghh a',
@@ -249,15 +289,16 @@ $(() => {
     '.issues-listing .float-right:last-child > a', // issue/pr list comment icon
     '.commit-links-cell > a:first-child', // commit list comment icon
     '.user-nav details .dropdown-item'
-  ].join(', ');
+  ].join(', ')
 
   // Octicons in SVG
-  const OCTICONS = '__OCTICONS__';
+  const OCTICONS = '__OCTICONS__'
 
   function getIcon(type, scale = 1) {
-    let icon = OCTICONS[type];
-    return `<svg class="octicon" width="${icon.width * scale}" height="${icon.height * scale}"
-      viewBox="0 0 ${icon.width} ${icon.height}"><path d="${icon.d}" /></svg>`;
+    let icon = OCTICONS[type]
+    return `<svg class="octicon" width="${icon.width *
+      scale}" height="${icon.height * scale}"
+      viewBox="0 0 ${icon.width} ${icon.height}"><path d="${icon.d}" /></svg>`
   }
 
   const CARD_TPL = {
@@ -269,9 +310,17 @@ $(() => {
             <span class="ghh-title{{^hasMeta}} no-meta{{/hasMeta}}"><strong><a href="{{userUrl}}">{{loginName}}</a></strong></span>
             {{#isAdmin}}<small class="ghh-meta">(Staff)</small>{{/isAdmin}}
             {{#isOrg}}<small class="ghh-meta">(Organization)</small>{{/isOrg}}
-            {{^isSelf}}{{#hasToken}}${me ? '{{^isOrg}}{{#followedByMe}}<button class="ghh-aux" data-action="unfollow" data-args="{{loginName}}">Unfollow{{/followedByMe}}{{^followedByMe}}<button class="ghh-primary" data-action="follow" data-args="{{loginName}}">Follow{{/followedByMe}}</button>{{/isOrg}}' : ''}{{/hasToken}}{{/isSelf}}
+            {{^isSelf}}{{#hasToken}}${
+              me
+                ? '{{^isOrg}}{{#followedByMe}}<button class="ghh-aux" data-action="unfollow" data-args="{{loginName}}">Unfollow{{/followedByMe}}{{^followedByMe}}<button class="ghh-primary" data-action="follow" data-args="{{loginName}}">Follow{{/followedByMe}}</button>{{/isOrg}}'
+                : ''
+            }{{/hasToken}}{{/isSelf}}
           </p>
-          {{#hasSubtitle}}<p>{{#realName}}{{realName}}{{/realName}}${me ? ' {{#followingMe}}<small>(Following you)</small>{{/followingMe}}' : ''}</p>{{/hasSubtitle}}
+          {{#hasSubtitle}}<p>{{#realName}}{{realName}}{{/realName}}${
+            me
+              ? ' {{#followingMe}}<small>(Following you)</small>{{/followingMe}}'
+              : ''
+          }</p>{{/hasSubtitle}}
         </div>
         <div class="ghh-more">
           {{^isOrg}}<div class="ghh-stats">
@@ -301,7 +350,11 @@ $(() => {
           {{{icons.repo}}}
           <p class="ghh-title-row">
             <span class="ghh-title"><a href="{{ownerUrl}}">{{owner}}</a> / <strong><a href="{{repoUrl}}">{{repo}}</a></strong></span>
-            {{#hasToken}}${me ? '{{#starredByMe}}<button class="ghh-aux" data-action="unstar" data-args="{{owner}}/{{repo}}">{{{icons.star}}} Unstar{{/starredByMe}}{{^starredByMe}}<button class="ghh-primary" data-action="star" data-args="{{owner}}/{{repo}}">{{{icons.star}}} Star{{/starredByMe}}</button>' : ''}{{/hasToken}}
+            {{#hasToken}}${
+              me
+                ? '{{#starredByMe}}<button class="ghh-aux" data-action="unstar" data-args="{{owner}}/{{repo}}">{{{icons.star}}} Unstar{{/starredByMe}}{{^starredByMe}}<button class="ghh-primary" data-action="star" data-args="{{owner}}/{{repo}}">{{{icons.star}}} Star{{/starredByMe}}</button>'
+                : ''
+            }{{/hasToken}}
           </p>
           {{#parent}}<p><span>forked from <a href="{{url}}">{{repo}}</a></span></p>{{/parent}}
         </div>
@@ -394,19 +447,21 @@ $(() => {
           </p>
         </form>
       </div>`
-  };
+  }
 
-  const CREATE_TOKEN_PATH = `//${GH_DOMAIN}/settings/tokens/new?scopes=repo,user:follow`;
-  const EDIT_TOKEN_PATH = `//${GH_DOMAIN}/settings/tokens`;
-  const IS_ENTERPRISE = GH_DOMAIN !== 'github.com';
-  const API_PREFIX = IS_ENTERPRISE ? `//${GH_DOMAIN}/api/v3` : `//api.${GH_DOMAIN}`;
-  const SITE_PREFIX = `//${GH_DOMAIN}/`;
+  const CREATE_TOKEN_PATH = `//${GH_DOMAIN}/settings/tokens/new?scopes=repo,user:follow`
+  const EDIT_TOKEN_PATH = `//${GH_DOMAIN}/settings/tokens`
+  const IS_ENTERPRISE = GH_DOMAIN !== 'github.com'
+  const API_PREFIX = IS_ENTERPRISE
+    ? `//${GH_DOMAIN}/api/v3`
+    : `//api.${GH_DOMAIN}`
+  const SITE_PREFIX = `//${GH_DOMAIN}/`
 
   function trim(str, isCollapse) {
     if (!str) {
-      return '';
+      return ''
     }
-    return str.replace(/^\s+|\s+$/g, isCollapse ? ' ' : '');
+    return str.replace(/^\s+|\s+$/g, isCollapse ? ' ' : '')
   }
 
   function markExtracted(elem, type, value) {
@@ -414,10 +469,10 @@ $(() => {
       elem
         .data(TYPE_KEY, type)
         .data(VALUE_KEY, value)
-        .addClass(getTypeClass(type));
+        .addClass(getTypeClass(type))
     }
     if (!type || !value) {
-      elem.data(TYPE_KEY, EXTRACT_TYPE.SKIP);
+      elem.data(TYPE_KEY, EXTRACT_TYPE.SKIP)
     }
   }
 
@@ -426,110 +481,146 @@ $(() => {
       .map(key => EXTRACT_TYPE[key])
       .map(getTypeClass)
       .map(className => `.${className}`)
-      .join(',');
-    return elem.data(VALUE_KEY) || elem.data(TYPE_KEY) === EXTRACT_TYPE.SKIP
-      || elem.find(extractedSelector).length;
+      .join(',')
+    return (
+      elem.data(VALUE_KEY) ||
+      elem.data(TYPE_KEY) === EXTRACT_TYPE.SKIP ||
+      elem.find(extractedSelector).length
+    )
   }
 
   function getTypeClass(type) {
-    return `ghh-${type}-x`;
+    return `ghh-${type}-x`
   }
 
   function getFullRepoFromAncestorLink(elem) {
-    let href = elem.closest('a').prop('href');
-    let fullRepo = null;
+    let href = elem.closest('a').prop('href')
+    let fullRepo = null
     if (href) {
-      let match = href.match(URL_REPO_PATTERN);
-      fullRepo = match && (match[1] + '/' + match[2]);
+      let match = href.match(URL_REPO_PATTERN)
+      fullRepo = match && match[1] + '/' + match[2]
     }
-    return fullRepo;
+    return fullRepo
   }
 
   function getNextTextNode(node, context) {
-    let filter = NodeFilter.SHOW_TEXT | NodeFilter.SHOW_ELEMENT;
-    let walker = document.createTreeWalker(context || document.body, filter);
+    let filter = NodeFilter.SHOW_TEXT | NodeFilter.SHOW_ELEMENT
+    let walker = document.createTreeWalker(context || document.body, filter)
     while (walker.nextNode()) {
       if (walker.currentNode === node) {
         while (walker.nextNode()) {
-          let current = walker.currentNode;
-          if (current.nodeType === Node.TEXT_NODE
-            && !(node.compareDocumentPosition(current) & Node.DOCUMENT_POSITION_CONTAINED_BY)
-            && trim(current.nodeValue)) {
-            return current;
+          let current = walker.currentNode
+          if (
+            current.nodeType === Node.TEXT_NODE &&
+            !(
+              node.compareDocumentPosition(current) &
+              Node.DOCUMENT_POSITION_CONTAINED_BY
+            ) &&
+            trim(current.nodeValue)
+          ) {
+            return current
           }
         }
       }
     }
-    return null;
+    return null
   }
 
   // '<span>ecomfe/</span><em>ecomfe</em>.github.io'
   function fixRepoSlug(html) {
-    let [, leading, content, ending] = html.replace(/\n/g, ' ').match(/^(\s*)(.+?)(\s*)$/);
+    let [, leading, content, ending] = html
+      .replace(/\n/g, ' ')
+      .match(/^(\s*)(.+?)(\s*)$/)
 
     let parts = content
       .replace(/<\//g, '${END}')
       .replace(/\//g, '${SLASH}')
       .replace(/</g, '${BEGIN}')
-      .split('${SLASH}');
+      .split('${SLASH}')
 
-    return leading + parts.map(part => {
-      let [, leading, content, ending] = part.match(/^(\s*)(.+?)(\s*)$/);
-      let marker = /\$\{(\w+)\}/g;
-      let open = [];
-      let close = [];
-      let position;
-      let result;
-      /* eslint-disable no-cond-assign */
-      while (result = marker.exec(content)) {
-        position = marker.lastIndex - result[0].length;
-        if (result[1] === 'BEGIN') {
-          open.push(position);
-        } else {
-          if (open.length) {
-            open.pop();
-          } else {
-            close.push(position);
+    return (
+      leading +
+      parts
+        .map(part => {
+          let [, leading, content, ending] = part.match(/^(\s*)(.+?)(\s*)$/)
+          let marker = /\$\{(\w+)\}/g
+          let open = []
+          let close = []
+          let position
+          let result
+          /* eslint-disable no-cond-assign */
+          while ((result = marker.exec(content))) {
+            position = marker.lastIndex - result[0].length
+            if (result[1] === 'BEGIN') {
+              open.push(position)
+            } else {
+              if (open.length) {
+                open.pop()
+              } else {
+                close.push(position)
+              }
+            }
           }
-        }
-      }
-      /* eslint-enable no-cond-assign */
+          /* eslint-enable no-cond-assign */
 
-      // <span>user/ -> <span><span>user</span>
-      let begin = 0;
-      let end = content.length;
-      if (open[0] === 0 || close[0] === 0) {
-        begin = content.indexOf('>') + 1;
-      } else if (open.length || close.length) {
-        begin = 0;
-        end = open[0] || close[0];
-      }
+          // <span>user/ -> <span><span>user</span>
+          let begin = 0
+          let end = content.length
+          if (open[0] === 0 || close[0] === 0) {
+            begin = content.indexOf('>') + 1
+          } else if (open.length || close.length) {
+            begin = 0
+            end = open[0] || close[0]
+          }
 
-      content = content.slice(0, end) + '</span>' + content.slice(end, content.length);
-      content = content.slice(0, begin) + '<span data-ghh>' + content.slice(begin, content.length);
-      content = content
-        .replace(/\$\{BEGIN\}/g, '<')
-        .replace(/\$\{END\}/g, '</');
+          content =
+            content.slice(0, end) +
+            '</span>' +
+            content.slice(end, content.length)
+          content =
+            content.slice(0, begin) +
+            '<span data-ghh>' +
+            content.slice(begin, content.length)
+          content = content
+            .replace(/\$\{BEGIN\}/g, '<')
+            .replace(/\$\{END\}/g, '</')
 
-      return `${leading}${content}${ending}`;
-    }).join('/') + ending;
+          return `${leading}${content}${ending}`
+        })
+        .join('/') +
+      ending
+    )
   }
 
   function formatNumber(num) {
     if (num >= 1000) {
-      return (num / 1000).toFixed(1) + 'k';
+      return (num / 1000).toFixed(1) + 'k'
     }
-    return num;
+    return num
   }
 
-  const MONTH_NAMES = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-             'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  const MONTH_NAMES = [
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec'
+  ]
 
   function formatTime(time, text) {
-    let t = new Date(time);
-    let formatted = MONTH_NAMES[t.getMonth()] + ' ' + t.getDate() + ', ' + t.getFullYear();
+    let t = new Date(time)
+    let formatted =
+      MONTH_NAMES[t.getMonth()] + ' ' + t.getDate() + ', ' + t.getFullYear()
 
-    return encodeHTML`<time datetime="${time}" title="${time}">${text || formatted}</time>`;
+    return encodeHTML`<time datetime="${time}" title="${time}">${text ||
+      formatted}</time>`
   }
 
   function getEmoji(unicode) {
@@ -537,46 +628,48 @@ $(() => {
   }
 
   function replaceEmoji(text) {
-    return text.replace(/:([a-z0-9+\-_]+):/ig, (match, key) => {
-      let url = EMOJI_MAP[key];
+    return text.replace(/:([a-z0-9+\-_]+):/gi, (match, key) => {
+      let url = EMOJI_MAP[key]
       if (!url) {
-        return match;
+        return match
       }
       let [, unicode] = url.match(/unicode\/([0-9a-z]+).png/) || []
-      return `<g-emoji class="g-emoji" alias="${key}" fallback-src="${url}">${getEmoji(unicode)}</g-emoji>`
-    });
+      return `<g-emoji class="g-emoji" alias="${key}" fallback-src="${url}">${getEmoji(
+        unicode
+      )}</g-emoji>`
+    })
   }
 
   function replaceLink(text) {
-    return text.replace(/\b(https?:\/\/[^\s]+)/ig, '<a href="$1">$1</a>');
+    return text.replace(/\b(https?:\/\/[^\s]+)/gi, '<a href="$1">$1</a>')
   }
 
   // Code via underscore's _.compose
   function compose(...fns) {
-    let start = fns.length - 1;
-    return function (...args) {
-      let i = start;
-      let result = fns[start].apply(this, args);
+    let start = fns.length - 1
+    return function(...args) {
+      let i = start
+      let result = fns[start].apply(this, args)
       while (i--) {
-        result = fns[i].call(this, result);
+        result = fns[i].call(this, result)
       }
-      return result;
-    };
+      return result
+    }
   }
 
   // Code via https://developers.google.com/web/updates/2015/01/ES6-Template-Strings
   // HTML Escape helper utility
-  let htmlUtil = (function () {
+  let htmlUtil = (function() {
     // Thanks to Andrea Giammarchi
-    let reEscape = /[&<>'"]/g;
-    let reUnescape = /&(?:amp|#38|lt|#60|gt|#62|apos|#39|quot|#34);/g;
+    let reEscape = /[&<>'"]/g
+    let reUnescape = /&(?:amp|#38|lt|#60|gt|#62|apos|#39|quot|#34);/g
     let oEscape = {
       '&': '&amp;',
       '<': '&lt;',
       '>': '&gt;',
       "'": '&#39;',
       '"': '&quot;'
-    };
+    }
     let oUnescape = {
       '&amp;': '&',
       '&#38;': '&',
@@ -588,57 +681,59 @@ $(() => {
       '&#39;': "'",
       '&quot;': '"',
       '&#34;': '"'
-    };
-    let fnEscape = function (m) {
-      return oEscape[m];
-    };
-    let fnUnescape = function (m) {
-      return oUnescape[m];
-    };
-    let replace = String.prototype.replace;
+    }
+    let fnEscape = function(m) {
+      return oEscape[m]
+    }
+    let fnUnescape = function(m) {
+      return oUnescape[m]
+    }
+    let replace = String.prototype.replace
 
     return (Object.freeze || Object)({
       escape: function escape(s) {
-        return replace.call(s, reEscape, fnEscape);
+        return replace.call(s, reEscape, fnEscape)
       },
       unescape: function unescape(s) {
-        return replace.call(s, reUnescape, fnUnescape);
+        return replace.call(s, reUnescape, fnUnescape)
       }
-    });
-  }());
+    })
+  })()
 
   // Tagged template function
   function encodeHTML(pieces, ...substitutions) {
-    let result = pieces[0];
+    let result = pieces[0]
     for (let i = 0; i < substitutions.length; ++i) {
-      result += htmlUtil.escape(substitutions[i]) + pieces[i + 1];
+      result += htmlUtil.escape(substitutions[i]) + pieces[i + 1]
     }
 
-    return result;
+    return result
   }
 
   function fixRef(elem, base, branch) {
     ['href', 'src'].forEach(attr => {
-      let src = elem.attr(attr);
+      let src = elem.attr(attr)
       if (src && src.indexOf('//') === -1 && src.indexOf('mailto:') === -1) {
         if (src.endsWith('.svg')) {
-          src += '?sanitize=true';
+          src += '?sanitize=true'
         }
-        elem.attr(attr, `${base}/raw/${branch}/${src}`);
+        elem.attr(attr, `${base}/raw/${branch}/${src}`)
       }
-    });
+    })
   }
 
   function getHovercardSubject() {
-    let [type, id] = ($('meta[name="hovercard-subject-tag"]').attr('content') || '').split(':');
+    let [type, id] = (
+      $('meta[name="hovercard-subject-tag"]').attr('content') || ''
+    ).split(':')
     if (!type || !id) {
-      return null;
+      return null
     }
-    return { type, id };
+    return { type, id }
   }
 
   function getCardHTML(type, raw) {
-    let data;
+    let data
     if (type === EXTRACT_TYPE.USER) {
       data = {
         avatar: raw.avatar_url,
@@ -672,7 +767,7 @@ $(() => {
             icon: getIcon(octicon, 0.875)
           }
         })
-      };
+      }
     } else if (type === EXTRACT_TYPE.REPO) {
       data = {
         owner: raw.owner.login,
@@ -680,14 +775,21 @@ $(() => {
         ownerUrl: raw.owner.html_url,
         repo: raw.name,
         repoUrl: raw.html_url,
-        desc: raw.description ? compose(replaceEmoji, replaceLink)(encodeHTML`${raw.description}`) : '',
+        desc: raw.description
+          ? compose(
+              replaceEmoji,
+              replaceLink
+            )(encodeHTML`${raw.description}`)
+          : '',
         language: raw.language,
         stars: formatNumber(raw.stargazers_count),
         forks: formatNumber(raw.forks_count),
         issues: formatNumber(raw.open_issues_count),
         hasIssues: raw.has_issues,
         homepage: raw.homepage
-          ? raw.homepage.match(/^https?:\/\//) ? raw.homepage : `http://${raw.homepage}`
+          ? raw.homepage.match(/^https?:\/\//)
+            ? raw.homepage
+            : `http://${raw.homepage}`
           : null,
         readme: raw.readme,
         topics: raw.topics.map(topic => {
@@ -710,12 +812,12 @@ $(() => {
           bookmark: getIcon('bookmark', 0.875),
           star: getIcon('star', 0.75)
         }
-      };
+      }
       if (raw.parent) {
         data.parent = {
           repo: raw.parent.full_name,
           url: raw.parent.html_url
-        };
+        }
       }
     } else if (type === EXTRACT_TYPE.ISSUE) {
       data = {
@@ -726,16 +828,28 @@ $(() => {
         isPullRequest: !!raw.pull_request,
         userUrl: raw.user.html_url,
         user: raw.user.login,
-        state: raw.state === 'closed' ? 'closed' : (raw.mergeable_state === 'draft' ? 'draft' : raw.state),
+        state:
+          raw.state === 'closed'
+            ? 'closed'
+            : raw.mergeable_state === 'draft'
+            ? 'draft'
+            : raw.state,
         avatar: raw.user.avatar_url,
         createTime: formatTime(raw.created_at),
         icons: {
-          state: getIcon(raw.pull_request ? 'git-pull-request' : (raw.state === 'closed' ? 'issue-closed' : 'issue-opened'), 0.875),
+          state: getIcon(
+            raw.pull_request
+              ? 'git-pull-request'
+              : raw.state === 'closed'
+              ? 'issue-closed'
+              : 'issue-opened',
+            0.875
+          ),
           commit: getIcon('git-commit', 0.875),
           arrow: getIcon('arrow-right', 0.875),
           diff: getIcon('diff', 0.875)
         }
-      };
+      }
       if (raw.pull_request) {
         const REVIEW_STATE_MAP = {
           COMMENTED: {
@@ -758,7 +872,7 @@ $(() => {
             type: 'warning',
             desc: 'was requested for review'
           }
-        };
+        }
         Object.assign(data, {
           headRef: raw.head.ref,
           headUser: raw.head.user.login,
@@ -769,14 +883,26 @@ $(() => {
           deletions: raw.deletions,
           changedFiles: raw.changed_files,
           mergeability: {
-            type: (raw.mergeable && raw.mergeable_state !== 'draft') ? 'success' : 'problem',
-            icon: (raw.mergeable && raw.mergeable_state !== 'draft') ? getIcon('check', 0.5) : getIcon('alert', 0.5),
-            label: raw.mergeable_state === 'draft'
-              ? 'Work in progress'
-              : (raw.mergeable ? 'No conflicts' : 'Has conflicts'),
-            desc: raw.mergeable_state === 'draft'
-              ? 'This pull request is still a work in progress.'
-              : (raw.mergeable ? 'This branch has no conflicts with the base branch.' : 'This branch has conflicts that must be resolved.')
+            type:
+              raw.mergeable && raw.mergeable_state !== 'draft'
+                ? 'success'
+                : 'problem',
+            icon:
+              raw.mergeable && raw.mergeable_state !== 'draft'
+                ? getIcon('check', 0.5)
+                : getIcon('alert', 0.5),
+            label:
+              raw.mergeable_state === 'draft'
+                ? 'Work in progress'
+                : raw.mergeable
+                ? 'No conflicts'
+                : 'Has conflicts',
+            desc:
+              raw.mergeable_state === 'draft'
+                ? 'This pull request is still a work in progress.'
+                : raw.mergeable
+                ? 'This branch has no conflicts with the base branch.'
+                : 'This branch has conflicts that must be resolved.'
           },
           isMerged: raw.merged,
           isSingleCommit: raw.commits === 1,
@@ -787,7 +913,7 @@ $(() => {
               state: REVIEW_STATE_MAP[review.state]
             })
           })
-        });
+        })
       }
     } else if (type === EXTRACT_TYPE.COMMENT) {
       data = {
@@ -795,19 +921,26 @@ $(() => {
         userUrl: raw.user.html_url,
         loginName: raw.user.login,
         createTime: formatTime(raw.created_at),
-        updatedTime: raw.created_at !== raw.updated_at ? formatTime(raw.updated_at, 'edited') : null,
+        updatedTime:
+          raw.created_at !== raw.updated_at
+            ? formatTime(raw.updated_at, 'edited')
+            : null,
         body: raw.bodyHTML
-      };
+      }
     } else if (type === EXTRACT_TYPE.COMMIT) {
-      let lines = raw.commit.message.split('\n\n');
-      let committer;
+      let lines = raw.commit.message.split('\n\n')
+      let committer
       if (raw.committer.login && raw.author.login) {
-        committer = raw.committer.login === raw.author.login ? null : raw.committer.login;
+        committer =
+          raw.committer.login === raw.author.login ? null : raw.committer.login
       } else if (!raw.committer.login && !raw.author.login) {
-        committer = (raw.committer.name === raw.author.name && raw.committer.email === raw.author.email)
-          ? null : raw.committer.name;
+        committer =
+          raw.committer.name === raw.author.name &&
+          raw.committer.email === raw.author.email
+            ? null
+            : raw.committer.name
       } else {
-        committer = raw.committer.login || raw.committer.name;
+        committer = raw.committer.login || raw.committer.name
       }
       data = {
         sha: raw.sha,
@@ -841,53 +974,56 @@ $(() => {
           verified: `<svg class="octicon" width="16" height="16"
           viewBox="0 0 18 18"><path d="${OCTICONS.verified.d}" /></svg>`
         }
-      };
+      }
     }
 
-    let html = Mustache.render(CARD_TPL[type], data);
-    return $(html);
+    let html = Mustache.render(CARD_TPL[type], data)
+    return $(html)
   }
 
   function getErrorHTML(error) {
-    let html = Mustache.render(CARD_TPL.error, error);
-    return $(html);
+    let html = Mustache.render(CARD_TPL.error, error)
+    return $(html)
   }
 
   // prepare token form
-  let tokenForm = $(CARD_TPL.form);
-  let tokenField = tokenForm.find('.ghh-token');
+  let tokenForm = $(CARD_TPL.form)
+  let tokenField = tokenForm.find('.ghh-token')
   tokenForm.find('.ghh-save').on('click', () => {
-    let newToken = tokenField.val().trim();
+    let newToken = tokenField.val().trim()
     if (newToken) {
-      localStorage.setItem(TOKEN_KEY, newToken);
-      token = newToken;
+      localStorage.setItem(TOKEN_KEY, newToken)
+      token = newToken
     }
-    tokenForm.detach();
-    return false;
-  });
+    tokenForm.detach()
+    return false
+  })
   tokenForm.find('.ghh-cancel').on('click', () => {
-    tokenForm.detach();
-    return false;
-  });
+    tokenForm.detach()
+    return false
+  })
 
-  function showTokenForm () {
-    tokenForm.appendTo($('body'));
-    tokenField.val(token).select();
+  function showTokenForm() {
+    tokenForm.appendTo($('body'))
+    tokenField.val(token).select()
   }
 
   $('body')
     .on('click', '.ghh-token-link', showTokenForm)
     .on('tripleclick', '.ghh', showTokenForm)
-    .on('wheel', '.ghh-readme, .ghh-issue-body, .ghh-commit-body', function (e) {
-      if (this.scrollTop + e.originalEvent.deltaY + this.clientHeight >= this.scrollHeight) {
-        e.preventDefault();
+    .on('wheel', '.ghh-readme, .ghh-issue-body, .ghh-commit-body', function(e) {
+      if (
+        this.scrollTop + e.originalEvent.deltaY + this.clientHeight >=
+        this.scrollHeight
+      ) {
+        e.preventDefault()
         this.scrollTop = this.scrollHeight
       }
       if (this.scrollTop + e.originalEvent.deltaY <= 0) {
-        e.preventDefault();
+        e.preventDefault()
         this.scrollTop = 0
       }
-    });
+    })
 
   // prepare cache objects
   let cache = {
@@ -897,325 +1033,404 @@ $(() => {
     comment: {},
     commit: {},
     hovercard: {}
-  };
+  }
 
   function extract(context) {
-    if (cardOptions.disableProjects && location.href.match(URL_PROJECT_PATTERN)) {
-      return;
+    if (
+      cardOptions.disableProjects &&
+      location.href.match(URL_PROJECT_PATTERN)
+    ) {
+      return
     }
 
-    isExtracting = true;
+    isExtracting = true
 
     // if on user profile page, we should not show user
     // hovercard for the said user
-    let current = location.href.match(URL_USER_PATTERN);
+    let current = location.href.match(URL_USER_PATTERN)
     if (current) {
-      current = current[1] || current[2];
-      if (GH_RESERVED_USER_NAMES.indexOf(current) !== -1
-        || !GH_USER_NAME_PATTERN.test(current)) {
-        current = null;
+      current = current[1] || current[2]
+      if (
+        GH_RESERVED_USER_NAMES.indexOf(current) !== -1 ||
+        !GH_USER_NAME_PATTERN.test(current)
+      ) {
+        current = null
       }
     }
 
-    let selectors = Object.keys(STRATEGIES);
+    let selectors = Object.keys(STRATEGIES)
     selectors.forEach(selector => {
-      let strategy = STRATEGIES[selector];
-      let elems = $(selector);
-      elems.each(function () {
+      let strategy = STRATEGIES[selector]
+      let elems = $(selector)
+      elems.each(function() {
         if (context && !context.contains(this)) {
           return
         }
-        let elem = $(this);
+        let elem = $(this)
         if (getExtracted(elem) || elem.is(BLACK_LIST_SELECTOR)) {
           // skip processed elements
-          return;
+          return
         }
-        let target;
-        let username; // {{user}}
-        let repo; // {{repo}}
-        let fullRepo; // {{user}}/{{repo}}
-        let issue; // {{issue}}
-        let fullIssue; // {{user}}/{{repo}}#{{issue}}
-        let comment; // {{comment}}
-        let fullComment; // {{user}}/{{repo}}:{{issue}}
-        let commit; // {{commit}}
-        let fullCommit; // {{user}}/{{repo}}@{{commit}}
+        let target
+        let username // {{user}}
+        let repo // {{repo}}
+        let fullRepo // {{user}}/{{repo}}
+        let issue // {{issue}}
+        let fullIssue // {{user}}/{{repo}}#{{issue}}
+        let comment // {{comment}}
+        let fullComment // {{user}}/{{repo}}:{{issue}}
+        let commit // {{commit}}
+        let fullCommit // {{user}}/{{repo}}@{{commit}}
         switch (strategy) {
           case EXTRACTOR.TEXT_USER: {
-            username = trim(elem.text().replace(/[@/]/g, ''));
-            target = $(`<span>${elem.text()}</span>`);
-            elem.empty().append(target);
-            break;
+            username = trim(elem.text().replace(/[@/]/g, ''))
+            target = $(`<span>${elem.text()}</span>`)
+            elem.empty().append(target)
+            break
           }
           case EXTRACTOR.TITLE_USER: {
-            username = trim((elem.attr('title') || '').replace(/[@/]/g, ''));
-            break;
+            username = trim((elem.attr('title') || '').replace(/[@/]/g, ''))
+            break
           }
           case EXTRACTOR.ALT_USER: {
-            username = trim((elem.attr('alt') || '').split(/\s+/)[0].replace(/[@/]/g, ''));
-            break;
+            username = trim(
+              (elem.attr('alt') || '').split(/\s+/)[0].replace(/[@/]/g, '')
+            )
+            break
           }
           case EXTRACTOR.HREF_USER: {
-            username = trim((elem.attr('href') || '').replace(/[@/]/g, ''));
-            break;
+            username = trim((elem.attr('href') || '').replace(/[@/]/g, ''))
+            break
           }
           case EXTRACTOR.TEXT_MY_REPO: {
-            let repo = trim(elem.text());
+            let repo = trim(elem.text())
             if (me && repo.indexOf('/') === -1) {
-              fullRepo = `${me}/${repo}`;
-              break;
+              fullRepo = `${me}/${repo}`
+              break
             }
           }
           case EXTRACTOR.SLUG: {
-            let slug = elem.text();
-            let match = slug.match(SLUG_PATTERN);
-            username = trim(match && match[1]);
-            repo = trim(match && match[2]);
-            issue = trim(match && match[3]);
-            commit = trim(match && match[4]);
+            let slug = elem.text()
+            let match = slug.match(SLUG_PATTERN)
+            username = trim(match && match[1])
+            repo = trim(match && match[2])
+            issue = trim(match && match[3])
+            commit = trim(match && match[4])
             if (username && repo) {
-              fullRepo = username + '/' + repo;
+              fullRepo = username + '/' + repo
 
               // special case for code search highlight
               // save contents before replacing
               let contents = elem.find('em').length
-                ? elem.contents().map(function (i) {
-                  let text = i === 0 ? (this.textContent.split('/')[1] || '') : this.textContent;
-                  // whitelisting <em>s for safety
-                  return this.nodeName.toLowerCase() === 'em'
-                    ? `<em>${text}</em>`
-                    : text;
-                }).toArray().join('')
-                : null;
+                ? elem
+                    .contents()
+                    .map(function(i) {
+                      let text =
+                        i === 0
+                          ? this.textContent.split('/')[1] || ''
+                          : this.textContent
+                      // whitelisting <em>s for safety
+                      return this.nodeName.toLowerCase() === 'em'
+                        ? `<em>${text}</em>`
+                        : text
+                    })
+                    .toArray()
+                    .join('')
+                : null
 
               if (issue) {
-                elem.html(slug.replace('#' + issue, encodeHTML`#<span>${issue}</span>`));
-                slug = elem.html();
+                elem.html(
+                  slug.replace('#' + issue, encodeHTML`#<span>${issue}</span>`)
+                )
+                slug = elem.html()
               }
               if (commit) {
-                elem.html(slug.replace('@' + commit, encodeHTML`@<span>${commit}</span>`));
-                slug = elem.html();
+                elem.html(
+                  slug.replace(
+                    '@' + commit,
+                    encodeHTML`@<span>${commit}</span>`
+                  )
+                )
+                slug = elem.html()
               }
 
-              let repoContents = contents || repo; // safe HTML or plain text
-              if ((username === me || username === current) && !cardOptions.showSelf) {
-                elem.html(slug.replace(fullRepo, encodeHTML`${username}/<span>` + repoContents + '</span>'));
-                markExtracted(elem.children().first(), EXTRACT_TYPE.REPO, fullRepo);
+              let repoContents = contents || repo // safe HTML or plain text
+              if (
+                (username === me || username === current) &&
+                !cardOptions.showSelf
+              ) {
+                elem.html(
+                  slug.replace(
+                    fullRepo,
+                    encodeHTML`${username}/<span>` + repoContents + '</span>'
+                  )
+                )
+                markExtracted(
+                  elem.children().first(),
+                  EXTRACT_TYPE.REPO,
+                  fullRepo
+                )
               } else {
-                elem.html(slug.replace(fullRepo, encodeHTML`<span>${username}</span>/<span>` + repoContents + '</span>'));
-                markExtracted(elem.children().first(), EXTRACT_TYPE.USER, username);
-                markExtracted(elem.children().first().next(), EXTRACT_TYPE.REPO, fullRepo);
+                elem.html(
+                  slug.replace(
+                    fullRepo,
+                    encodeHTML`<span>${username}</span>/<span>` +
+                      repoContents +
+                      '</span>'
+                  )
+                )
+                markExtracted(
+                  elem.children().first(),
+                  EXTRACT_TYPE.USER,
+                  username
+                )
+                markExtracted(
+                  elem
+                    .children()
+                    .first()
+                    .next(),
+                  EXTRACT_TYPE.REPO,
+                  fullRepo
+                )
               }
               if (issue) {
-                markExtracted(elem.children().last(), EXTRACT_TYPE.ISSUE, fullRepo + '#' + issue);
+                markExtracted(
+                  elem.children().last(),
+                  EXTRACT_TYPE.ISSUE,
+                  fullRepo + '#' + issue
+                )
               }
               if (commit) {
-                markExtracted(elem.children().last(), EXTRACT_TYPE.COMMIT, fullRepo + '@' + commit);
+                markExtracted(
+                  elem.children().last(),
+                  EXTRACT_TYPE.COMMIT,
+                  fullRepo + '@' + commit
+                )
               }
 
               // if not marked earlier, mark as nothing extracted
               if (!getExtracted(elem)) {
-                markExtracted(elem);
+                markExtracted(elem)
               }
-              elem = null;
+              elem = null
             }
-            break;
+            break
           }
           case EXTRACTOR.TEXT_NODE_URL: {
-            let nodes = [...elem[0].childNodes];
-            let textNode = nodes.find(node => trim(node.nodeValue));
-            target = $(encodeHTML` <span>${textNode.nodeValue}</span>`);
-            textNode.parentNode.replaceChild(target[0], textNode);
-            markExtracted(elem);
+            let nodes = [...elem[0].childNodes]
+            let textNode = nodes.find(node => trim(node.nodeValue))
+            target = $(encodeHTML` <span>${textNode.nodeValue}</span>`)
+            textNode.parentNode.replaceChild(target[0], textNode)
+            markExtracted(elem)
           }
           case EXTRACTOR.URL: {
-            target = elem;
-            elem = elem.closest('a');
+            target = elem
+            elem = elem.closest('a')
 
-            let href = elem.prop('href'); // absolute path via prop
+            let href = elem.prop('href') // absolute path via prop
             if (href) {
-              href = href.baseVal || href; // support SVG elements
+              href = href.baseVal || href // support SVG elements
 
               try {
-                let url = new URL(href);
+                let url = new URL(href)
                 // skip local anchors
-                if (`${url.host}${url.pathname}` === `${location.host}${location.pathname}`
-                  && !url.hash.match(/#issuecomment-/)) {
-                  return;
+                if (
+                  `${url.host}${url.pathname}` ===
+                    `${location.host}${location.pathname}` &&
+                  !url.hash.match(/#issuecomment-/)
+                ) {
+                  return
                 }
               } catch (e) {
-                return;
+                return
               }
 
-              let match = href.match(URL_USER_PATTERN);
-              username = trim(match && (match[1] || match[2]));
+              let match = href.match(URL_USER_PATTERN)
+              username = trim(match && (match[1] || match[2]))
               if (!username) {
-                match = href.match(URL_REPO_PATTERN);
-                username = trim(match && match[1]);
-                repo = trim(match && match[2]);
+                match = href.match(URL_REPO_PATTERN)
+                username = trim(match && match[1])
+                repo = trim(match && match[2])
               }
               if (!username) {
-                match = href.match(URL_ISSUE_PATTERN);
-                username = trim(match && match[1]);
-                repo = trim(match && match[2]);
-                issue = trim(match && match[3]);
+                match = href.match(URL_ISSUE_PATTERN)
+                username = trim(match && match[1])
+                repo = trim(match && match[2])
+                issue = trim(match && match[3])
               }
               if (!username) {
-                match = href.match(URL_COMMENT_PATTERN);
-                username = trim(match && match[1]);
-                repo = trim(match && match[2]);
-                issue = trim(match && match[3]);
-                comment = trim(match && match[4]);
+                match = href.match(URL_COMMENT_PATTERN)
+                username = trim(match && match[1])
+                repo = trim(match && match[2])
+                issue = trim(match && match[3])
+                comment = trim(match && match[4])
               }
               if (!username) {
-                match = href.match(URL_COMMIT_PATTERN);
-                username = trim(match && match[1]);
-                repo = trim(match && match[2]);
-                commit = trim(match && match[3]);
+                match = href.match(URL_COMMIT_PATTERN)
+                username = trim(match && match[1])
+                repo = trim(match && match[2])
+                commit = trim(match && match[3])
               }
               if (username) {
-                if (GH_RESERVED_USER_NAMES.indexOf(username) !== -1
-                  || !GH_USER_NAME_PATTERN.test(username)) {
-                  username = null;
-                  repo = null;
-                  issue = null;
+                if (
+                  GH_RESERVED_USER_NAMES.indexOf(username) !== -1 ||
+                  !GH_USER_NAME_PATTERN.test(username)
+                ) {
+                  username = null
+                  repo = null
+                  issue = null
                 }
               }
               if (repo) {
-                repo = repo.replace(/\.git$/i, '');
-                fullRepo = `${username}/${repo}`;
-                if (GH_RESERVED_REPO_NAMES.indexOf(repo) !== -1
-                  || !GH_REPO_NAME_PATTERN.test(repo)) {
-                  fullRepo = null;
-                  username = null;
-                  issue = null;
+                repo = repo.replace(/\.git$/i, '')
+                fullRepo = `${username}/${repo}`
+                if (
+                  GH_RESERVED_REPO_NAMES.indexOf(repo) !== -1 ||
+                  !GH_REPO_NAME_PATTERN.test(repo)
+                ) {
+                  fullRepo = null
+                  username = null
+                  issue = null
                 }
               }
               if (issue) {
-                fullIssue = `${username}/${repo}#${issue}`;
+                fullIssue = `${username}/${repo}#${issue}`
               }
               if (comment) {
-                fullComment = `${username}/${repo}:${comment}`;
+                fullComment = `${username}/${repo}:${comment}`
               }
               if (commit) {
-                fullCommit = `${username}/${repo}@${commit}`;
+                fullCommit = `${username}/${repo}@${commit}`
               }
               // skip hovercard on myself or current profile page owner
-              if ((username === me || username === current) && !cardOptions.showSelf && !repo) {
-                username = null;
+              if (
+                (username === me || username === current) &&
+                !cardOptions.showSelf &&
+                !repo
+              ) {
+                username = null
               }
             }
-            break;
+            break
           }
           case EXTRACTOR.NEXT_TEXT_REPO: {
-            fullRepo = getFullRepoFromAncestorLink(elem);
-            repo = fullRepo.split('/')[1];
-            let textNode = getNextTextNode(elem[0], elem[0].parentNode.parentNode);
-            target = $(`<span>${repo}</span>`);
+            fullRepo = getFullRepoFromAncestorLink(elem)
+            repo = fullRepo.split('/')[1]
+            let textNode = getNextTextNode(
+              elem[0],
+              elem[0].parentNode.parentNode
+            )
+            target = $(`<span>${repo}</span>`)
             if (fullRepo && textNode) {
-              let parent = textNode.parentNode;
-              parent.replaceChild(target[0], textNode);
-              parent.insertBefore(document.createTextNode(' '), target[0]);
-              markExtracted(elem);
+              let parent = textNode.parentNode
+              parent.replaceChild(target[0], textNode)
+              parent.insertBefore(document.createTextNode(' '), target[0])
+              markExtracted(elem)
             } else {
-              elem = null;
+              elem = null
             }
-            break;
+            break
           }
           case EXTRACTOR.ANCESTOR_URL_REPO: {
-            fullRepo = getFullRepoFromAncestorLink(elem);
-            break;
+            fullRepo = getFullRepoFromAncestorLink(elem)
+            break
           }
           case EXTRACTOR.NEXT_LINK_TEXT_USER: {
-            let link = elem.nextAll('a').eq(0);
+            let link = elem.nextAll('a').eq(0)
             if (link) {
-              username = trim(link.text().replace(/[@/]/g, ''));
+              username = trim(link.text().replace(/[@/]/g, ''))
             }
-            break;
+            break
           }
           case EXTRACTOR.TEXT_NODE_USER: {
-            let nodes = [...elem[0].childNodes];
-            let textNode = nodes.find(node => trim(node.nodeValue));
+            let nodes = [...elem[0].childNodes]
+            let textNode = nodes.find(node => trim(node.nodeValue))
 
             if (textNode) {
-              username = trim(textNode.nodeValue);
-              let userElem = $(`<span>${textNode.nodeValue}</span>`);
-              textNode.parentNode.replaceChild(userElem[0], textNode);
-              markExtracted(elem);
-              target = userElem;
+              username = trim(textNode.nodeValue)
+              let userElem = $(`<span>${textNode.nodeValue}</span>`)
+              textNode.parentNode.replaceChild(userElem[0], textNode)
+              markExtracted(elem)
+              target = userElem
             }
-            break;
+            break
           }
           case EXTRACTOR.NEXT_TEXT_USER: {
-            let textNode = getNextTextNode(elem[0], elem[0].parentNode.parentNode);
-            username = textNode.nodeValue.replace(/[\s\\/]+/g, '');
-            break;
+            let textNode = getNextTextNode(
+              elem[0],
+              elem[0].parentNode.parentNode
+            )
+            username = textNode.nodeValue.replace(/[\s\\/]+/g, '')
+            break
           }
           case EXTRACTOR.REPO_LIST_SLUG: {
             elem.find('.octicon-repo').insertBefore(elem.closest('a'))
-            let slug = elem.text().replace(/\s+/g, '');
-            let match = slug.match(SLUG_PATTERN);
-            username = trim(match && match[1]);
-            repo = trim(match && match[2]);
+            let slug = elem.text().replace(/\s+/g, '')
+            let match = slug.match(SLUG_PATTERN)
+            username = trim(match && match[1])
+            repo = trim(match && match[2])
             if (username && repo) {
-              fullRepo = username + '/' + repo;
+              fullRepo = username + '/' + repo
 
-              elem.html(fixRepoSlug(elem.html()));
-              let targets = elem.find('[data-ghh]');
-              markExtracted(targets.eq(0), EXTRACT_TYPE.USER, username);
-              markExtracted(targets.eq(1), EXTRACT_TYPE.REPO, fullRepo);
-              targets.removeAttr('data-ghh');
+              elem.html(fixRepoSlug(elem.html()))
+              let targets = elem.find('[data-ghh]')
+              markExtracted(targets.eq(0), EXTRACT_TYPE.USER, username)
+              markExtracted(targets.eq(1), EXTRACT_TYPE.REPO, fullRepo)
+              targets.removeAttr('data-ghh')
 
               // if not marked earlier, mark as nothing extracted
               if (!getExtracted(elem)) {
-                markExtracted(elem);
+                markExtracted(elem)
               }
-              elem = null;
+              elem = null
             }
-            break;
+            break
           }
           default:
-            break;
+            break
         }
 
         // elem === null means already marked in extractors
         if (!elem) {
-          return;
+          return
         }
 
-        target = target || elem;
+        target = target || elem
         if (fullCommit) {
-          markExtracted(target, EXTRACT_TYPE.COMMIT, fullCommit);
+          markExtracted(target, EXTRACT_TYPE.COMMIT, fullCommit)
         } else if (fullComment) {
-          markExtracted(target, EXTRACT_TYPE.COMMENT, fullComment);
+          markExtracted(target, EXTRACT_TYPE.COMMENT, fullComment)
         } else if (fullIssue) {
-          markExtracted(target, EXTRACT_TYPE.ISSUE, fullIssue);
+          markExtracted(target, EXTRACT_TYPE.ISSUE, fullIssue)
         } else if (fullRepo) {
-          markExtracted(target, EXTRACT_TYPE.REPO, fullRepo);
+          markExtracted(target, EXTRACT_TYPE.REPO, fullRepo)
         } else if (username) {
-          if (username !== me && username !== current || cardOptions.showSelf) {
-            markExtracted(target, EXTRACT_TYPE.USER, username);
+          if (
+            (username !== me && username !== current) ||
+            cardOptions.showSelf
+          ) {
+            markExtracted(target, EXTRACT_TYPE.USER, username)
           } else {
-            markExtracted(target);
+            markExtracted(target)
           }
         }
         if (!username && !fullRepo && !fullIssue) {
-          markExtracted(elem);
+          markExtracted(elem)
         }
-      });
-    });
+      })
+    })
 
     setTimeout(() => {
-      isExtracting = false;
-    }, 0);
+      isExtracting = false
+    }, 0)
 
     let tipSelector = Object.keys(EXTRACT_TYPE)
       .map(key => EXTRACT_TYPE[key])
       .map(getTypeClass)
       .map(className => `.${className}`)
-      .join(',');
+      .join(',')
 
-    let tipped = $(tipSelector);
+    let tipped = $(tipSelector)
     tipped.tooltipster({
       updateAnimation: false,
       contentAsHTML: true,
@@ -1225,121 +1440,135 @@ $(() => {
       // trigger: 'click',
       zIndex: 2147483646,
       functionBefore(self, event) {
-        let elem = $(event.origin);
-        elem.tooltipster('content', $('<span class="loading"></span>'));
-        let type = elem.data(TYPE_KEY);
-        let value = elem.data(VALUE_KEY);
+        let elem = $(event.origin)
+        elem.tooltipster('content', $('<span class="loading"></span>'))
+        let type = elem.data(TYPE_KEY)
+        let value = elem.data(VALUE_KEY)
 
-        let raw = cache[type][value];
+        let raw = cache[type][value]
         if (raw && type !== EXTRACT_TYPE.USER) {
-          elem.tooltipster('content', getCardHTML(type, raw));
+          elem.tooltipster('content', getCardHTML(type, raw))
         } else {
           if (raw && type === EXTRACT_TYPE.USER) {
-            let subject = getHovercardSubject() || {};
+            let subject = getHovercardSubject() || {}
             // '@' for contextless
-            let subjectSlug = subject ? `${subject.type}:${subject.id}` : '@';
+            let subjectSlug = subject ? `${subject.type}:${subject.id}` : '@'
             if (cache.hovercard[value] && cache.hovercard[value][subjectSlug]) {
               Object.assign(raw, {
                 hovercard: cache.hovercard[value][subjectSlug]
-              });
-              elem.tooltipster('content', getCardHTML(type, raw));
-              return;
+              })
+              elem.tooltipster('content', getCardHTML(type, raw))
+              return
             }
           }
 
-          let apiPath;
+          let apiPath
           switch (type) {
             case EXTRACT_TYPE.USER:
-              apiPath = `users/${value}`;
-              break;
+              apiPath = `users/${value}`
+              break
             case EXTRACT_TYPE.REPO:
-              apiPath = `repos/${value}`;
-              break;
+              apiPath = `repos/${value}`
+              break
             case EXTRACT_TYPE.ISSUE: {
-              let [fullRepo, issue] = value.split('#');
-              apiPath = `repos/${fullRepo}/issues/${issue}`;
-              break;
+              let [fullRepo, issue] = value.split('#')
+              apiPath = `repos/${fullRepo}/issues/${issue}`
+              break
             }
             case EXTRACT_TYPE.COMMENT: {
-              let [fullRepo, comment] = value.split(':');
-              apiPath = `repos/${fullRepo}/issues/comments/${comment}`;
-              break;
+              let [fullRepo, comment] = value.split(':')
+              apiPath = `repos/${fullRepo}/issues/comments/${comment}`
+              break
             }
             case EXTRACT_TYPE.COMMIT: {
-              let values = value.split('@');
-              let fullRepo = values[0];
-              let commit = values[1];
-              apiPath = `repos/${fullRepo}/commits/${commit}`;
-              break;
+              let values = value.split('@')
+              let fullRepo = values[0]
+              let commit = values[1]
+              apiPath = `repos/${fullRepo}/commits/${commit}`
+              break
             }
           }
 
           let baseOptions = {
             url: `${API_PREFIX}/${apiPath}`,
             dataType: 'json'
-          };
+          }
 
-          let isRetry = false;
-          let handleError = function (xhr) {
-            let {status} = xhr;
-            let title = '';
-            let message = '';
+          let isRetry = false
+          let handleError = function(xhr) {
+            let { status } = xhr
+            let title = ''
+            let message = ''
 
             switch (status) {
               case 0:
                 if (isRetry) {
-                  title = 'Connection error';
-                  message = 'Please try again later.';
+                  title = 'Connection error'
+                  message = 'Please try again later.'
                 } else {
                   // next request should be retry
-                  isRetry = true;
-                  request();
-                  return;
+                  isRetry = true
+                  request()
+                  return
                 }
-                break;
+                break
               case 401:
-                title = 'Invalid token';
-                message = encodeHTML`<a href="${CREATE_TOKEN_PATH}" class="ghh-token-link" target="_blank">Create a new access token</a>, <a href="#" class="ghh-token-link">paste it back here</a> and try again.`;
-                break;
+                title = 'Invalid token'
+                message = encodeHTML`<a href="${CREATE_TOKEN_PATH}" class="ghh-token-link" target="_blank">Create a new access token</a>, <a href="#" class="ghh-token-link">paste it back here</a> and try again.`
+                break
               case 403: {
-                let response = xhr.responseJSON;
-                if (xhr.getAllResponseHeaders().indexOf('X-RateLimit-Remaining: 0') !== -1) {
-                  title = 'API rate limit exceeded';
+                let response = xhr.responseJSON
+                if (
+                  xhr
+                    .getAllResponseHeaders()
+                    .indexOf('X-RateLimit-Remaining: 0') !== -1
+                ) {
+                  title = 'API rate limit exceeded'
                   if (!localStorage.getItem(TOKEN_KEY)) {
-                    message = encodeHTML`API rate limit exceeded for current IP. <a href="${CREATE_TOKEN_PATH}" class="ghh-token-link" target="_blank">Create a new access token</a> and <a href="#" class="ghh-token-link">paste it back here</a> to get a higher rate limit.`;
+                    message = encodeHTML`API rate limit exceeded for current IP. <a href="${CREATE_TOKEN_PATH}" class="ghh-token-link" target="_blank">Create a new access token</a> and <a href="#" class="ghh-token-link">paste it back here</a> to get a higher rate limit.`
                   }
-                } else if (type === EXTRACT_TYPE.REPO && response.block && response.block.reason === 'tos') {
-                  title = 'Access blocked';
-                  message = encodeHTML`Access to this repository has been disabled by GitHub staff.`;
+                } else if (
+                  type === EXTRACT_TYPE.REPO &&
+                  response.block &&
+                  response.block.reason === 'tos'
+                ) {
+                  title = 'Access blocked'
+                  message = encodeHTML`Access to this repository has been disabled by GitHub staff.`
                 } else {
-                  title = 'Forbidden';
-                  message = encodeHTML`You are not allowed to access GitHub API. <a href="${CREATE_TOKEN_PATH}" class="ghh-token-link" target="_blank">Create a new access token</a>, <a href="#" class="ghh-token-link">paste it back here</a> and try again.`;
+                  title = 'Forbidden'
+                  message = encodeHTML`You are not allowed to access GitHub API. <a href="${CREATE_TOKEN_PATH}" class="ghh-token-link" target="_blank">Create a new access token</a>, <a href="#" class="ghh-token-link">paste it back here</a> and try again.`
                 }
-                break;
+                break
               }
               case 404:
-                title = 'Not found';
+                title = 'Not found'
                 if (type === EXTRACT_TYPE.REPO || type === EXTRACT_TYPE.ISSUE) {
-                  message = encodeHTML`The repository doesn't exist or is private. <a href="${CREATE_TOKEN_PATH}" class="ghh-token-link" target="_blank">Create a new access token</a>, <a href="#" class="ghh-token-link">paste it back here</a> and try again.`;
+                  message = encodeHTML`The repository doesn't exist or is private. <a href="${CREATE_TOKEN_PATH}" class="ghh-token-link" target="_blank">Create a new access token</a>, <a href="#" class="ghh-token-link">paste it back here</a> and try again.`
                 } else if (type === EXTRACT_TYPE.USER) {
-                  message = 'The user doesn\'t exist.';
+                  message = "The user doesn't exist."
                 }
-                break;
+                break
               case 451: {
-                let response = xhr.responseJSON;
-                if (type === EXTRACT_TYPE.REPO && response.block && response.block.reason === 'dmca') {
-                  title = 'Access blocked';
-                  message = encodeHTML`Repository access blocked due to DMCA takedown. See the <a href="${response.block.html_url}" target="_blank">takedown notice</a>.`;
+                let response = xhr.responseJSON
+                if (
+                  type === EXTRACT_TYPE.REPO &&
+                  response.block &&
+                  response.block.reason === 'dmca'
+                ) {
+                  title = 'Access blocked'
+                  message = encodeHTML`Repository access blocked due to DMCA takedown. See the <a href="${
+                    response.block.html_url
+                  }" target="_blank">takedown notice</a>.`
                 }
-                break;
+                break
               }
               default: {
-                title = 'Error';
-                let response = xhr.responseJSON;
+                title = 'Error'
+                let response = xhr.responseJSON
                 if (response) {
-                  message = encodeHTML`${response.message}` || '';
+                  message = encodeHTML`${response.message}` || ''
                 }
-                break;
+                break
               }
             }
 
@@ -1349,22 +1578,22 @@ $(() => {
               icons: {
                 alert: getIcon('alert')
               }
-            };
-            elem.tooltipster('content', getErrorHTML(error));
-          };
+            }
+            elem.tooltipster('content', getErrorHTML(error))
+          }
 
-          let request = function () {
-            let headers = {};
+          let request = function() {
+            let headers = {}
             if (token && !isRetry) {
-              headers.Authorization = `token ${token}`;
+              headers.Authorization = `token ${token}`
             }
             if (type === EXTRACT_TYPE.COMMIT) {
-              headers.Accept = 'application/vnd.github.cryptographer-preview';
+              headers.Accept = 'application/vnd.github.cryptographer-preview'
             } else if (type === EXTRACT_TYPE.REPO) {
               headers.Accept = 'application/vnd.github.mercy-preview+json'
             }
 
-            let requestOptions = Object.assign({}, baseOptions, {headers});
+            let requestOptions = Object.assign({}, baseOptions, { headers })
 
             function renderMarkdown(content, context) {
               let options = {
@@ -1377,42 +1606,44 @@ $(() => {
                   mode: 'gfm',
                   context: context
                 })
-              };
-              return $.ajax(Object.assign({}, requestOptions, options));
+              }
+              return $.ajax(Object.assign({}, requestOptions, options))
             }
 
             $.ajax(requestOptions)
               .done(raw => {
-                cache[type][value] = raw;
+                cache[type][value] = raw
 
                 // further requests if necessary
                 switch (type) {
                   case EXTRACT_TYPE.USER: {
                     if (raw.type !== 'Organization') {
-                      let todo = 0;
-                      let extra = {};
+                      let todo = 0
+                      let extra = {}
 
                       if (value) {
                         if (!cache.hovercard[value]) {
-                          cache.hovercard[value] = {};
+                          cache.hovercard[value] = {}
                         }
 
-                        let subject = getHovercardSubject() || {};
+                        let subject = getHovercardSubject() || {}
                         // '@' for contextless
-                        let subjectSlug = subject ? `${subject.type}:${subject.id}` : '@';
+                        let subjectSlug = subject
+                          ? `${subject.type}:${subject.id}`
+                          : '@'
                         if (cache.hovercard[value][subjectSlug]) {
-                          extra.hovercard = cache.hovercard[value][subjectSlug];
+                          extra.hovercard = cache.hovercard[value][subjectSlug]
                         } else if (token) {
                           // get hovercard contexts
-                          todo++;
+                          todo++
 
                           let headers = {
                             Accept: 'application/vnd.github.hagar-preview+json'
-                          };
+                          }
                           if (token) {
                             Object.assign(headers, {
                               Authorization: `token ${token}`
-                            });
+                            })
                           }
                           let options = {
                             url: `${API_PREFIX}/users/${value}/hovercard`,
@@ -1423,143 +1654,163 @@ $(() => {
                               subject_type: subject.type,
                               subject_id: subject.id
                             }
-                          };
+                          }
                           $.ajax(Object.assign({}, baseOptions, options))
                             .done(hovercard => {
-                              extra.hovercard = cache.hovercard[value][subjectSlug] = hovercard.contexts;
-                              Object.assign(raw, extra);
+                              extra.hovercard = cache.hovercard[value][
+                                subjectSlug
+                              ] = hovercard.contexts
+                              Object.assign(raw, extra)
                             })
                             .always(() => {
                               if (!--todo) {
-                                elem.tooltipster('content', getCardHTML(type, raw));
+                                elem.tooltipster(
+                                  'content',
+                                  getCardHTML(type, raw)
+                                )
                               }
-                            });
+                            })
                         }
 
                         // if the logged-in user is following the current user
                         if (me && value !== me) {
-                          todo += 2;
+                          todo += 2
                           extra = {
                             following_me: false,
                             followed_by_me: false
-                          };
+                          }
 
-                          $.ajax(Object.assign({}, requestOptions, {
-                            url: `${API_PREFIX}/user/following/${value}`
-                          }))
+                          $.ajax(
+                            Object.assign({}, requestOptions, {
+                              url: `${API_PREFIX}/user/following/${value}`
+                            })
+                          )
                             .done(() => {
-                              extra.followed_by_me = true;
+                              extra.followed_by_me = true
                             })
                             .always(() => {
-                              Object.assign(raw, extra);
+                              Object.assign(raw, extra)
                               if (!--todo) {
-                                elem.tooltipster('content', getCardHTML(type, raw));
+                                elem.tooltipster(
+                                  'content',
+                                  getCardHTML(type, raw)
+                                )
                               }
-                            });
+                            })
                           // if the current user is following the logged-in user
-                          $.ajax(Object.assign({}, requestOptions, {
-                            url: `${API_PREFIX}/users/${value}/following/${me}`,
-                            dataType: 'json'
-                          }))
+                          $.ajax(
+                            Object.assign({}, requestOptions, {
+                              url: `${API_PREFIX}/users/${value}/following/${me}`,
+                              dataType: 'json'
+                            })
+                          )
                             .done(() => {
-                              extra.following_me = true;
+                              extra.following_me = true
                             })
                             .always(() => {
-                              Object.assign(raw, extra);
+                              Object.assign(raw, extra)
                               if (!--todo) {
-                                elem.tooltipster('content', getCardHTML(type, raw));
+                                elem.tooltipster(
+                                  'content',
+                                  getCardHTML(type, raw)
+                                )
                               }
-                            });
+                            })
                         }
                       }
 
-                      return;
+                      return
                     }
-                    break;
+                    break
                   }
                   case EXTRACT_TYPE.REPO: {
                     let headers = {
                       Accept: 'application/vnd.github.v3.html'
-                    };
+                    }
                     if (token) {
                       Object.assign(headers, {
                         Authorization: `token ${token}`
-                      });
+                      })
                     }
 
-                    let todo = 0;
+                    let todo = 0
 
                     if (cardOptions.readme) {
-                      todo++;
+                      todo++
                       let options = {
                         url: `${API_PREFIX}/${apiPath}/readme`,
                         method: 'GET',
                         dataType: 'html',
                         headers
-                      };
+                      }
                       $.ajax(Object.assign({}, baseOptions, options))
                         .done(html => {
-                          let content = $(html).find('.entry-content');
-                          $('.anchor', content).remove();
-                          let base = raw.html_url;
-                          $('[href], [src]', content).each(function () {
-                            fixRef($(this), base, raw.default_branch);
-                          });
-                          raw.readme = content.html();
+                          let content = $(html).find('.entry-content')
+                          $('.anchor', content).remove()
+                          let base = raw.html_url
+                          $('[href], [src]', content).each(function() {
+                            fixRef($(this), base, raw.default_branch)
+                          })
+                          raw.readme = content.html()
                         })
                         .always(() => {
                           if (!--todo) {
-                            elem.tooltipster('content', getCardHTML(type, raw));
+                            elem.tooltipster('content', getCardHTML(type, raw))
                           }
-                        });
+                        })
                     }
 
                     if (me) {
-                      todo++;
+                      todo++
                       let extra = {
                         starred_by_me: false
-                      };
-                      $.ajax(Object.assign({}, requestOptions, {
-                        url: `${API_PREFIX}/user/starred/${value}`
-                      }))
+                      }
+                      $.ajax(
+                        Object.assign({}, requestOptions, {
+                          url: `${API_PREFIX}/user/starred/${value}`
+                        })
+                      )
                         .done(() => {
-                          extra.starred_by_me = true;
+                          extra.starred_by_me = true
                         })
                         .always(() => {
-                          Object.assign(raw, extra);
+                          Object.assign(raw, extra)
                           if (!--todo) {
-                            elem.tooltipster('content', getCardHTML(type, raw));
+                            elem.tooltipster('content', getCardHTML(type, raw))
                           }
-                        });
+                        })
                     }
 
                     if (!todo) {
-                      break;
+                      break
                     }
 
-                    return;
+                    return
                   }
                   case EXTRACT_TYPE.ISSUE: {
-                    let todo = 0;
+                    let todo = 0
                     if (raw.body) {
-                      todo++;
+                      todo++
                       renderMarkdown(raw.body, value.split('#')[0])
                         .done(html => {
-                          raw.bodyHTML = html;
+                          raw.bodyHTML = html
                           if (!--todo) {
-                            elem.tooltipster('content', getCardHTML(type, raw));
+                            elem.tooltipster('content', getCardHTML(type, raw))
                           }
                         })
-                        .fail(handleError);
+                        .fail(handleError)
                     }
                     if (raw.pull_request) {
                       // load PR
-                      todo++;
-                      let prPath = apiPath.replace(/\/issues\/(\d+)$/, '/pulls/$1');
+                      todo++
+                      let prPath = apiPath.replace(
+                        /\/issues\/(\d+)$/,
+                        '/pulls/$1'
+                      )
                       let prOptions = {
                         url: `${API_PREFIX}/${prPath}`,
                         dataType: 'json'
-                      };
+                      }
                       $.ajax(Object.assign({}, requestOptions, prOptions))
                         .done(pull => {
                           let extra = {
@@ -1572,158 +1823,201 @@ $(() => {
                             merged: pull.merged,
                             head: pull.head,
                             base: pull.base
-                          };
-                          if (pull.merged) {
-                            extra.state = 'merged';
                           }
-                          Object.assign(raw, extra);
-                          Object.assign(cache[type][value], extra);
+                          if (pull.merged) {
+                            extra.state = 'merged'
+                          }
+                          Object.assign(raw, extra)
+                          Object.assign(cache[type][value], extra)
                           if (!--todo) {
-                            elem.tooltipster('content', getCardHTML(type, raw));
+                            elem.tooltipster('content', getCardHTML(type, raw))
                           }
                         })
-                        .fail(handleError);
+                        .fail(handleError)
 
                       let allReviews = []
-                      Object.assign(raw, { reviews: allReviews });
-                      Object.assign(cache[type][value], { reviews: allReviews });
+                      Object.assign(raw, { reviews: allReviews })
+                      Object.assign(cache[type][value], { reviews: allReviews })
 
                       // load reviews
-                      todo++;
-                      let reviewPath = `${prPath}/reviews`;
+                      todo++
+                      let reviewPath = `${prPath}/reviews`
                       let reviewOptions = {
                         url: `${API_PREFIX}/${reviewPath}`,
                         dataType: 'json'
-                      };
+                      }
                       $.ajax(Object.assign({}, requestOptions, reviewOptions))
                         .done(reviews => {
-                          let logged = reviews.reduce((acc, { user, state }) => {
-                            let record = acc[user.login]
-                            if (user.login !== raw.user.login // not self
-                              && (state !== 'COMMENTED' && state !== 'DISMISSED' ||
-                                (!record && state === 'COMMENTED'))) {
-                              acc[user.login] = {
-                                name: user.login,
-                                url: user.html_url,
-                                avatar: user.avatar_url,
-                                state: state
+                          let logged = reviews.reduce(
+                            (acc, { user, state }) => {
+                              let record = acc[user.login]
+                              if (
+                                user.login !== raw.user.login && // not self
+                                ((state !== 'COMMENTED' &&
+                                  state !== 'DISMISSED') ||
+                                  (!record && state === 'COMMENTED'))
+                              ) {
+                                acc[user.login] = {
+                                  name: user.login,
+                                  url: user.html_url,
+                                  avatar: user.avatar_url,
+                                  state: state
+                                }
                               }
-                            }
-                            return acc
-                          }, {})
-                          let results = Object.keys(logged).map(login => logged[login])
-                          allReviews.unshift(...results);
+                              return acc
+                            },
+                            {}
+                          )
+                          let results = Object.keys(logged).map(
+                            login => logged[login]
+                          )
+                          allReviews.unshift(...results)
                           if (!--todo) {
-                            elem.tooltipster('content', getCardHTML(type, raw));
+                            elem.tooltipster('content', getCardHTML(type, raw))
                           }
                         })
-                        .fail(handleError);
+                        .fail(handleError)
 
-                        // load reviews
-                        todo++;
-                        let reviewReqPath = `${prPath}/requested_reviewers`;
-                        let reviewReqOptions = {
-                          url: `${API_PREFIX}/${reviewReqPath}`,
-                          dataType: 'json'
-                        };
-                        let opts = Object.assign({}, requestOptions, reviewReqOptions);
-                        opts.headers.Accept = 'application/vnd.github.thor-preview+json';
-                          $.ajax(opts)
-                          .done(reqs => {
-                            let [owner] = value.split('/');
-                            let users = reqs.users || reqs
-                            let reviewers = users.map(user => {
-                              return {
-                                name: user.login,
-                                url: user.html_url,
-                                avatar: user.avatar_url,
-                                state: 'PENDING'
-                              }
-                            });
-                            if (reqs.teams) {
-                              reviewers.push(...reqs.teams.map(team => {
+                      // load reviews
+                      todo++
+                      let reviewReqPath = `${prPath}/requested_reviewers`
+                      let reviewReqOptions = {
+                        url: `${API_PREFIX}/${reviewReqPath}`,
+                        dataType: 'json'
+                      }
+                      let opts = Object.assign(
+                        {},
+                        requestOptions,
+                        reviewReqOptions
+                      )
+                      opts.headers.Accept =
+                        'application/vnd.github.thor-preview+json'
+                      $.ajax(opts)
+                        .done(reqs => {
+                          let [owner] = value.split('/')
+                          let users = reqs.users || reqs
+                          let reviewers = users.map(user => {
+                            return {
+                              name: user.login,
+                              url: user.html_url,
+                              avatar: user.avatar_url,
+                              state: 'PENDING'
+                            }
+                          })
+                          if (reqs.teams) {
+                            reviewers.push(
+                              ...reqs.teams.map(team => {
                                 return {
                                   name: team.name,
-                                  url: `${SITE_PREFIX}orgs/${owner}/teams/${team.slug}`,
+                                  url: `${SITE_PREFIX}orgs/${owner}/teams/${
+                                    team.slug
+                                  }`,
                                   avatar: '',
                                   state: 'PENDING'
                                 }
-                              }));
-                            }
+                              })
+                            )
+                          }
 
-                            allReviews.push(...reviewers);
-                            if (!--todo) {
-                              elem.tooltipster('content', getCardHTML(type, raw));
-                            }
-                          })
-                          .fail(handleError);
+                          allReviews.push(...reviewers)
+                          if (!--todo) {
+                            elem.tooltipster('content', getCardHTML(type, raw))
+                          }
+                        })
+                        .fail(handleError)
                     }
                     if (!todo) {
-                      break;
+                      break
                     }
-                    return;
+                    return
                   }
                   case EXTRACT_TYPE.COMMENT: {
                     renderMarkdown(raw.body, value.split(':')[0])
                       .done(html => {
-                        raw.bodyHTML = html;
-                        elem.tooltipster('content', getCardHTML(type, raw));
+                        raw.bodyHTML = html
+                        elem.tooltipster('content', getCardHTML(type, raw))
                       })
-                      .fail(handleError);
+                      .fail(handleError)
 
-                    return;
+                    return
                   }
                   case EXTRACT_TYPE.COMMIT: {
-                    let [fullRepo, commit] = value.split('@');
-                    let commitPagePath = `${fullRepo}/branch_commits/${commit}`;
-                    raw.fullRepo = fullRepo;
-                    raw.author = raw.author || raw.commit.author;
-                    raw.committer = raw.committer || raw.commit.committer;
+                    let [fullRepo, commit] = value.split('@')
+                    let commitPagePath = `${fullRepo}/branch_commits/${commit}`
+                    raw.fullRepo = fullRepo
+                    raw.author = raw.author || raw.commit.author
+                    raw.committer = raw.committer || raw.commit.committer
                     let options = {
                       url: `${SITE_PREFIX}${commitPagePath}`,
                       headers: {
                         'X-PJAX': 'true'
                       },
                       dataType: 'html'
-                    };
-                    $.ajax(Object.assign(options))
-                      .done(html => {
-                        let branches = $(`<div>${html}</div>`);
-                        raw.branch = branches.find('.branch a').text();
-                        raw.pull = branches.find('.pull-request a').text().substring(1);
-                        let tags = branches.find('.branches-tag-list a').map(function () {
-                          return this.textContent;
-                        }).get();
+                    }
+                    $.ajax(Object.assign(options)).done(html => {
+                      let branches = $(`<div>${html}</div>`)
+                      raw.branch = branches.find('.branch a').text()
+                      raw.pull = branches
+                        .find('.pull-request a')
+                        .text()
+                        .substring(1)
+                      let tags = branches
+                        .find('.branches-tag-list a')
+                        .map(function() {
+                          return this.textContent
+                        })
+                        .get()
 
-                        let maxTags = 10;
-                        if (tags.length) {
-                          if (tags.length > maxTags) {
-                            raw.truncatedTagNumber = tags.length - maxTags;
-                            tags.splice(maxTags);
-                          }
-                          raw.mainTag = tags[0];
-                          raw.otherTags = tags.slice(1);
+                      let maxTags = 10
+                      if (tags.length) {
+                        if (tags.length > maxTags) {
+                          raw.truncatedTagNumber = tags.length - maxTags
+                          tags.splice(maxTags)
                         }
+                        raw.mainTag = tags[0]
+                        raw.otherTags = tags.slice(1)
+                      }
 
-                        elem.tooltipster('content', getCardHTML(type, raw));
-                      });
+                      elem.tooltipster('content', getCardHTML(type, raw))
+                    })
 
-                    return;
+                    return
                   }
                 }
 
-                elem.tooltipster('content', getCardHTML(type, raw));
+                elem.tooltipster('content', getCardHTML(type, raw))
               })
-              .fail(handleError);
-          };
-          request();
+              .fail(handleError)
+          }
+          request()
         }
       },
       interactive: true
-    });
+    })
+
+    $('body').on('keydown', e => {
+      if (e.key.toLowerCase() !== 'h') {
+        return
+      }
+
+      let tippedTarget
+      let target = $(e.target)
+      if (target.is(tipSelector)) {
+        tippedTarget = target
+      } else {
+        tippedTarget = target.find(tipSelector).eq(0)
+      }
+      if (tippedTarget) {
+        tippedTarget.tooltipster('show')
+
+        target.one('blur', () => {
+          tippedTarget.tooltipster('hide')
+        })
+      }
+    })
 
     function toggleButtonState(action) {
-      return ({
+      return {
         follow: {
           type: 'user',
           field: 'followed_by_me',
@@ -1756,38 +2050,38 @@ $(() => {
           action: 'star',
           content: `${getIcon('star', 0.75)} Star`
         }
-      })[action];
+      }[action]
     }
 
     if (me) {
-      $('body').on('click', '[data-action]', function () {
-        let {action, args} = this.dataset;
-        let options;
+      $('body').on('click', '[data-action]', function() {
+        let { action, args } = this.dataset
+        let options
         if (action === 'follow' || action === 'unfollow') {
           options = {
             url: `${API_PREFIX}/user/following/${args}`,
             method: action === 'follow' ? 'PUT' : 'DELETE'
-          };
+          }
         } else if (action === 'star' || action === 'unstar') {
           options = {
             url: `${API_PREFIX}/user/starred/${args}`,
             method: action === 'star' ? 'PUT' : 'DELETE'
-          };
+          }
         }
 
         options.headers = {
           Authorization: `token ${token}`
-        };
+        }
 
-        this.disabled = true;
+        this.disabled = true
         $.ajax(options)
           .done(() => {
-            let state = toggleButtonState(action);
-            this.innerHTML = state.content;
-            this.dataset.action = state.action;
-            this.className = state.className;
-            this.disabled = false;
-            cache[state.type][args][state.field] = state.value;
+            let state = toggleButtonState(action)
+            this.innerHTML = state.content
+            this.dataset.action = state.action
+            this.className = state.className
+            this.disabled = false
+            cache[state.type][args][state.field] = state.value
           })
           .fail(() => {
             let error = {
@@ -1796,40 +2090,49 @@ $(() => {
               icons: {
                 alert: getIcon('alert')
               }
-            };
-            $(this).closest('.tooltipster-content').html(getErrorHTML(error));
-          });
-      });
+            }
+            $(this)
+              .closest('.tooltipster-content')
+              .html(getErrorHTML(error))
+          })
+      })
     }
 
     if ('webkitTransform' in document.body.style) {
       // why? see https://github.com/iamceege/tooltipster/issues/491
       // use box-shadow instead to prevent weirder problem...
-      tipped.css('box-shadow', '0 0 transparent');
+      tipped.css('box-shadow', '0 0 transparent')
     }
 
     // disable original title tooltips
-    tipped.attr('title', null)
-      .closest('[data-hovercard-url]').attr('data-hovercard-url', null);
+    tipped
+      .attr('title', null)
+      .closest('[data-hovercard-url]')
+      .attr('data-hovercard-url', null)
 
     // block original tooltips
     // see https://github.com/Justineo/github-hovercard/issues/30
-    const ORGANIC_TOOLTIP_CLASS = 'tooltipped';
-    tipped.filter(`.${ORGANIC_TOOLTIP_CLASS}`).removeClass(ORGANIC_TOOLTIP_CLASS);
-    tipped.parents(`.${ORGANIC_TOOLTIP_CLASS}`).removeClass(ORGANIC_TOOLTIP_CLASS);
+    const ORGANIC_TOOLTIP_CLASS = 'tooltipped'
+    tipped
+      .filter(`.${ORGANIC_TOOLTIP_CLASS}`)
+      .removeClass(ORGANIC_TOOLTIP_CLASS)
+    tipped
+      .parents(`.${ORGANIC_TOOLTIP_CLASS}`)
+      .removeClass(ORGANIC_TOOLTIP_CLASS)
 
     // Listen for future mutations but not ones happens
     // in current extraction process
     setTimeout(() => {
-      isExtracting = false;
-    }, 0);
+      isExtracting = false
+    }, 0)
   }
 
-  const EMOJI_MAP = '__EMOJI_DATA__';
+  const EMOJI_MAP = '__EMOJI_DATA__'
 
-  const TOKEN_KEY = 'hovercard-token';
-  let token = localStorage.getItem(TOKEN_KEY);
-  let platform = (typeof browser !== 'undefined' ? browser : window.chrome) || null;
+  const TOKEN_KEY = 'hovercard-token'
+  let token = localStorage.getItem(TOKEN_KEY)
+  let platform =
+    (typeof browser !== 'undefined' ? browser : window.chrome) || null
 
   const DEFAULT_OPTIONS = {
     delay: 200,
@@ -1838,31 +2141,37 @@ $(() => {
     showSelf: false,
     side: 'top',
     theme: 'github'
-  };
+  }
 
-  let cardOptions = Object.assign({}, DEFAULT_OPTIONS);
+  let cardOptions = Object.assign({}, DEFAULT_OPTIONS)
 
   if (platform && platform.storage) {
-    let storage = platform.storage.sync || platform.storage.local;
-    storage.get(Object.assign({}, DEFAULT_OPTIONS), ({
-      delay, readme, disableProjects, showSelf, side, theme
-    }) => {
-      delay = parseInt(delay, 10)
-      delay = isNaN(delay) ? 200 : delay
+    let storage = platform.storage.sync || platform.storage.local
+    storage.get(
+      Object.assign({}, DEFAULT_OPTIONS),
+      ({ delay, readme, disableProjects, showSelf, side, theme }) => {
+        delay = parseInt(delay, 10)
+        delay = isNaN(delay) ? 200 : delay
 
-      Object.assign(cardOptions, {
-        delay, readme, disableProjects, showSelf, side, theme
-      });
+        Object.assign(cardOptions, {
+          delay,
+          readme,
+          disableProjects,
+          showSelf,
+          side,
+          theme
+        })
 
-      applyTheme(theme)
-      extract();
-    });
+        applyTheme(theme)
+        extract()
+      }
+    )
   } else {
     applyTheme(cardOptions.theme)
-    extract();
+    extract()
   }
 
-  function applyTheme (theme) {
+  function applyTheme(theme) {
     document.documentElement.classList.add(`ghh-theme-${theme}`)
   }
-});
+})
