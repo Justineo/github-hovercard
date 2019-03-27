@@ -1,5 +1,9 @@
 ## Changelog
 
+## 1.8.0
+
+- Supported opening hovercards when pressing <kbd>H</kbd> on focused elements (when possible).
+
 ## 1.7.3
 
 - Added draft status for pull requests.
