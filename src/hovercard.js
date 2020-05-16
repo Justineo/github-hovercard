@@ -25,18 +25,13 @@ $(() => {
   }
 
   let isExtracting = false
-  let observer = new MutationObserver(mutations => {
+  let observer = new MutationObserver(([{target}]) => {
     if (isExtracting) {
       return
     }
-    mutations.forEach(mutation => {
-      if (mutation.type === 'childList') {
-        let target = mutation.target
-        if (!isExclude(target)) {
-          extract(target)
-        }
-      }
-    })
+    if (!isExclude(target)) {
+      extract(target)
+    }
   })
   let observeConfig = {
     attributes: true,
