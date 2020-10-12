@@ -11,7 +11,8 @@ $(() => {
     '.octotree_sidebar',
     'time-ago',
     'relative-time',
-    '.user-status-container'
+    '.user-status-container',
+    '#files_bucket'
   ].join(',')
 
   const DEFAULT_TARGET = document.body
@@ -24,29 +25,70 @@ $(() => {
     )
   }
 
+  let taskQueue = []
   let isExtracting = false
+
+  function queueTask (fn) {
+    if (!taskQueue.length) {
+      scheduleRunTaskQueue()
+    }
+
+    taskQueue.push(fn)
+  }
+
+  function runTaskQueue (deadline) {
+    while ((deadline.timeRemaining() > 0 || deadline.didTimeout) && taskQueue.length) {
+      let fn = taskQueue.shift()
+      fn()
+    }
+
+    if (taskQueue.length) {
+      scheduleRunTaskQueue()
+    } else {
+      lockExtracting(tooltipster)
+    }
+  }
+
+  function scheduleRunTaskQueue () {
+    requestIdleCallback(runTaskQueue, { timeout: 2048 })
+  }
+
+  function nextTick (fn) {
+    let p = Promise.resolve()
+    p.then(fn)
+  }
+
+  function lockExtracting(fn) {
+    isExtracting = true
+    fn()
+
+    // nextTick will run **after** MutationObserver callbacks
+    nextTick(() => {
+      isExtracting = false
+    })
+  }
+
   let observer = new MutationObserver(mutations => {
     if (isExtracting) {
       return
     }
     mutations.forEach(mutation => {
-      if (mutation.type === 'childList') {
-        let target = mutation.target
-        if (!isExclude(target)) {
-          extract(target)
-        }
+      let target = mutation.target
+      if (!isExclude(target)) {
+        extract(target)
       }
     })
   })
   let observeConfig = {
-    attributes: true,
+    attributes: false,
     childList: true,
-    characterData: true,
+    characterData: false,
     subtree: true
   }
-  observer.observe(DEFAULT_TARGET, observeConfig)
 
-  let me = $('meta[name="user-login"]').attr('content')
+  queueTask(() => {
+    observer.observe(DEFAULT_TARGET, observeConfig)
+  })
 
   // based on octotree's config
   const GH_RESERVED_USER_NAMES = [
@@ -85,7 +127,8 @@ $(() => {
     'collections',
     'hovercards',
     'discover',
-    'case-studies'
+    'case-studies',
+    'sponsors'
   ]
 
   const GH_RESERVED_REPO_NAMES = ['followers', 'following', 'repositories']
@@ -291,6 +334,20 @@ $(() => {
     '.user-nav details .dropdown-item'
   ].join(', ')
 
+  let me = $('meta[name="user-login"]').attr('content')
+  // if on user profile page, we should not show user
+  // hovercard for the said user
+  let current = location.href.match(URL_USER_PATTERN)
+  if (current) {
+    current = current[1] || current[2]
+    if (
+      GH_RESERVED_USER_NAMES.indexOf(current) !== -1 ||
+      !GH_USER_NAME_PATTERN.test(current)
+    ) {
+      current = null
+    }
+  }
+
   // Octicons in SVG
   const OCTICONS = '__OCTICONS__'
 
@@ -298,7 +355,7 @@ $(() => {
     let icon = OCTICONS[type]
     return `<svg class="octicon" width="${icon.width *
       scale}" height="${icon.height * scale}"
-      viewBox="0 0 ${icon.width} ${icon.height}"><path d="${icon.d}" /></svg>`
+      viewBox="0 0 ${icon.width} ${icon.height}">${icon.path}</svg>`
   }
 
   const CARD_TPL = {
@@ -858,7 +915,7 @@ $(() => {
             desc: 'left review comments'
           },
           CHANGES_REQUESTED: {
-            icon: getIcon('request-changes', 0.75),
+            icon: getIcon('diff', 0.75),
             type: 'alert',
             desc: 'requested changes'
           },
@@ -868,7 +925,7 @@ $(() => {
             desc: 'approved these changes'
           },
           PENDING: {
-            icon: getIcon('primitive-dot', 0.75),
+            icon: getIcon('dot-fill', 0.75),
             type: 'warning',
             desc: 'was requested for review'
           }
@@ -971,8 +1028,7 @@ $(() => {
           tag: getIcon('tag', 0.875),
           commit: getIcon('git-commit', 0.875),
           diff: getIcon('diff', 0.875),
-          verified: `<svg class="octicon" width="16" height="16"
-          viewBox="0 0 18 18"><path d="${OCTICONS.verified.d}" /></svg>`
+          verified: `<svg class="octicon" width="16" height="16" viewBox="0 0 18 18">${OCTICONS.verified.path}</svg>`
         }
       }
     }
@@ -1043,394 +1099,28 @@ $(() => {
       return
     }
 
-    isExtracting = true
-
-    // if on user profile page, we should not show user
-    // hovercard for the said user
-    let current = location.href.match(URL_USER_PATTERN)
-    if (current) {
-      current = current[1] || current[2]
-      if (
-        GH_RESERVED_USER_NAMES.indexOf(current) !== -1 ||
-        !GH_USER_NAME_PATTERN.test(current)
-      ) {
-        current = null
-      }
-    }
-
     let selectors = Object.keys(STRATEGIES)
     selectors.forEach(selector => {
       let strategy = STRATEGIES[selector]
       let elems = $(selector)
-      elems.each(function() {
-        if (context && !context.contains(this)) {
-          return
-        }
-        let elem = $(this)
-        if (getExtracted(elem) || elem.is(BLACK_LIST_SELECTOR)) {
-          // skip processed elements
-          return
-        }
-        let target
-        let username // {{user}}
-        let repo // {{repo}}
-        let fullRepo // {{user}}/{{repo}}
-        let issue // {{issue}}
-        let fullIssue // {{user}}/{{repo}}#{{issue}}
-        let comment // {{comment}}
-        let fullComment // {{user}}/{{repo}}:{{issue}}
-        let commit // {{commit}}
-        let fullCommit // {{user}}/{{repo}}@{{commit}}
-        switch (strategy) {
-          case EXTRACTOR.TEXT_USER: {
-            username = trim(elem.text().replace(/[@/]/g, ''))
-            target = $(`<span>${elem.text()}</span>`)
-            elem.empty().append(target)
-            break
-          }
-          case EXTRACTOR.TITLE_USER: {
-            username = trim((elem.attr('title') || '').replace(/[@/]/g, ''))
-            break
-          }
-          case EXTRACTOR.ALT_USER: {
-            username = trim(
-              (elem.attr('alt') || '').split(/\s+/)[0].replace(/[@/]/g, '')
-            )
-            break
-          }
-          case EXTRACTOR.HREF_USER: {
-            username = trim((elem.attr('href') || '').replace(/[@/]/g, ''))
-            break
-          }
-          case EXTRACTOR.TEXT_MY_REPO: {
-            let repo = trim(elem.text())
-            if (me && repo.indexOf('/') === -1) {
-              fullRepo = `${me}/${repo}`
-              break
-            }
-          }
-          case EXTRACTOR.SLUG: {
-            let slug = elem.text()
-            let match = slug.match(SLUG_PATTERN)
-            username = trim(match && match[1])
-            repo = trim(match && match[2])
-            issue = trim(match && match[3])
-            commit = trim(match && match[4])
-            if (username && repo) {
-              fullRepo = username + '/' + repo
-
-              // special case for code search highlight
-              // save contents before replacing
-              let contents = elem.find('em').length
-                ? elem
-                    .contents()
-                    .map(function(i) {
-                      let text =
-                        i === 0
-                          ? this.textContent.split('/')[1] || ''
-                          : this.textContent
-                      // whitelisting <em>s for safety
-                      return this.nodeName.toLowerCase() === 'em'
-                        ? `<em>${text}</em>`
-                        : text
-                    })
-                    .toArray()
-                    .join('')
-                : null
-
-              if (issue) {
-                elem.html(
-                  slug.replace('#' + issue, encodeHTML`#<span>${issue}</span>`)
-                )
-                slug = elem.html()
-              }
-              if (commit) {
-                elem.html(
-                  slug.replace(
-                    '@' + commit,
-                    encodeHTML`@<span>${commit}</span>`
-                  )
-                )
-                slug = elem.html()
-              }
-
-              let repoContents = contents || repo // safe HTML or plain text
-              if (
-                (username === me || username === current) &&
-                !cardOptions.showSelf
-              ) {
-                elem.html(
-                  slug.replace(
-                    fullRepo,
-                    encodeHTML`${username}/<span>` + repoContents + '</span>'
-                  )
-                )
-                markExtracted(
-                  elem.children().first(),
-                  EXTRACT_TYPE.REPO,
-                  fullRepo
-                )
-              } else {
-                elem.html(
-                  slug.replace(
-                    fullRepo,
-                    encodeHTML`<span>${username}</span>/<span>` +
-                      repoContents +
-                      '</span>'
-                  )
-                )
-                markExtracted(
-                  elem.children().first(),
-                  EXTRACT_TYPE.USER,
-                  username
-                )
-                markExtracted(
-                  elem
-                    .children()
-                    .first()
-                    .next(),
-                  EXTRACT_TYPE.REPO,
-                  fullRepo
-                )
-              }
-              if (issue) {
-                markExtracted(
-                  elem.children().last(),
-                  EXTRACT_TYPE.ISSUE,
-                  fullRepo + '#' + issue
-                )
-              }
-              if (commit) {
-                markExtracted(
-                  elem.children().last(),
-                  EXTRACT_TYPE.COMMIT,
-                  fullRepo + '@' + commit
-                )
-              }
-
-              // if not marked earlier, mark as nothing extracted
-              if (!getExtracted(elem)) {
-                markExtracted(elem)
-              }
-              elem = null
-            }
-            break
-          }
-          case EXTRACTOR.TEXT_NODE_URL: {
-            let nodes = [...elem[0].childNodes]
-            let textNode = nodes.find(node => trim(node.nodeValue))
-            target = $(encodeHTML` <span>${textNode.nodeValue}</span>`)
-            textNode.parentNode.replaceChild(target[0], textNode)
-            markExtracted(elem)
-          }
-          case EXTRACTOR.URL: {
-            target = elem
-            elem = elem.closest('a')
-
-            let href = elem.prop('href') // absolute path via prop
-            if (href) {
-              href = href.baseVal || href // support SVG elements
-
-              try {
-                let url = new URL(href)
-                // skip local anchors
-                if (
-                  `${url.host}${url.pathname}` ===
-                    `${location.host}${location.pathname}` &&
-                  !url.hash.match(/#issuecomment-/)
-                ) {
-                  return
-                }
-              } catch (e) {
-                return
-              }
-
-              let match = href.match(URL_USER_PATTERN)
-              username = trim(match && (match[1] || match[2]))
-              if (!username) {
-                match = href.match(URL_REPO_PATTERN)
-                username = trim(match && match[1])
-                repo = trim(match && match[2])
-              }
-              if (!username) {
-                match = href.match(URL_ISSUE_PATTERN)
-                username = trim(match && match[1])
-                repo = trim(match && match[2])
-                issue = trim(match && match[3])
-              }
-              if (!username) {
-                match = href.match(URL_COMMENT_PATTERN)
-                username = trim(match && match[1])
-                repo = trim(match && match[2])
-                issue = trim(match && match[3])
-                comment = trim(match && match[4])
-              }
-              if (!username) {
-                match = href.match(URL_COMMIT_PATTERN)
-                username = trim(match && match[1])
-                repo = trim(match && match[2])
-                commit = trim(match && match[3])
-              }
-              if (username) {
-                if (
-                  GH_RESERVED_USER_NAMES.indexOf(username) !== -1 ||
-                  !GH_USER_NAME_PATTERN.test(username)
-                ) {
-                  username = null
-                  repo = null
-                  issue = null
-                }
-              }
-              if (repo) {
-                repo = repo.replace(/\.git$/i, '')
-                fullRepo = `${username}/${repo}`
-                if (
-                  GH_RESERVED_REPO_NAMES.indexOf(repo) !== -1 ||
-                  !GH_REPO_NAME_PATTERN.test(repo)
-                ) {
-                  fullRepo = null
-                  username = null
-                  issue = null
-                }
-              }
-              if (issue) {
-                fullIssue = `${username}/${repo}#${issue}`
-              }
-              if (comment) {
-                fullComment = `${username}/${repo}:${comment}`
-              }
-              if (commit) {
-                fullCommit = `${username}/${repo}@${commit}`
-              }
-              // skip hovercard on myself or current profile page owner
-              if (
-                (username === me || username === current) &&
-                !cardOptions.showSelf &&
-                !repo
-              ) {
-                username = null
-              }
-            }
-            break
-          }
-          case EXTRACTOR.NEXT_TEXT_REPO: {
-            fullRepo = getFullRepoFromAncestorLink(elem)
-            repo = fullRepo.split('/')[1]
-            let textNode = getNextTextNode(
-              elem[0],
-              elem[0].parentNode.parentNode
-            )
-            target = $(`<span>${repo}</span>`)
-            if (fullRepo && textNode) {
-              let parent = textNode.parentNode
-              parent.replaceChild(target[0], textNode)
-              parent.insertBefore(document.createTextNode(' '), target[0])
-              markExtracted(elem)
-            } else {
-              elem = null
-            }
-            break
-          }
-          case EXTRACTOR.ANCESTOR_URL_REPO: {
-            fullRepo = getFullRepoFromAncestorLink(elem)
-            break
-          }
-          case EXTRACTOR.NEXT_LINK_TEXT_USER: {
-            let link = elem.nextAll('a').eq(0)
-            if (link) {
-              username = trim(link.text().replace(/[@/]/g, ''))
-            }
-            break
-          }
-          case EXTRACTOR.TEXT_NODE_USER: {
-            let nodes = [...elem[0].childNodes]
-            let textNode = nodes.find(node => trim(node.nodeValue))
-
-            if (textNode) {
-              username = trim(textNode.nodeValue)
-              let userElem = $(`<span>${textNode.nodeValue}</span>`)
-              textNode.parentNode.replaceChild(userElem[0], textNode)
-              markExtracted(elem)
-              target = userElem
-            }
-            break
-          }
-          case EXTRACTOR.NEXT_TEXT_USER: {
-            let textNode = getNextTextNode(
-              elem[0],
-              elem[0].parentNode.parentNode
-            )
-            username = textNode.nodeValue.replace(/[\s\\/]+/g, '')
-            break
-          }
-          case EXTRACTOR.REPO_LIST_SLUG: {
-            elem.find('.octicon-repo').insertBefore(elem.closest('a'))
-            let slug = elem.text().replace(/\s+/g, '')
-            let match = slug.match(SLUG_PATTERN)
-            username = trim(match && match[1])
-            repo = trim(match && match[2])
-            if (username && repo) {
-              fullRepo = username + '/' + repo
-
-              elem.html(fixRepoSlug(elem.html()))
-              let targets = elem.find('[data-ghh]')
-              markExtracted(targets.eq(0), EXTRACT_TYPE.USER, username)
-              markExtracted(targets.eq(1), EXTRACT_TYPE.REPO, fullRepo)
-              targets.removeAttr('data-ghh')
-
-              // if not marked earlier, mark as nothing extracted
-              if (!getExtracted(elem)) {
-                markExtracted(elem)
-              }
-              elem = null
-            }
-            break
-          }
-          default:
-            break
-        }
-
-        // elem === null means already marked in extractors
-        if (!elem) {
-          return
-        }
-
-        target = target || elem
-        if (fullCommit) {
-          markExtracted(target, EXTRACT_TYPE.COMMIT, fullCommit)
-        } else if (fullComment) {
-          markExtracted(target, EXTRACT_TYPE.COMMENT, fullComment)
-        } else if (fullIssue) {
-          markExtracted(target, EXTRACT_TYPE.ISSUE, fullIssue)
-        } else if (fullRepo) {
-          markExtracted(target, EXTRACT_TYPE.REPO, fullRepo)
-        } else if (username) {
-          if (
-            (username !== me && username !== current) ||
-            cardOptions.showSelf
-          ) {
-            markExtracted(target, EXTRACT_TYPE.USER, username)
-          } else {
-            markExtracted(target)
-          }
-        }
-        if (!username && !fullRepo && !fullIssue) {
-          markExtracted(elem)
-        }
+      elems.each(function () {
+        queueTask(() => {
+          lockExtracting(() => {
+            extractElem(context, this, strategy)
+          })
+        })
       })
     })
+  }
 
-    setTimeout(() => {
-      isExtracting = false
-    }, 0)
+  const TIP_SELECTOR = Object.keys(EXTRACT_TYPE)
+  .map(key => EXTRACT_TYPE[key])
+  .map(getTypeClass)
+  .map(className => `.${className}`)
+  .join(',')
 
-    let tipSelector = Object.keys(EXTRACT_TYPE)
-      .map(key => EXTRACT_TYPE[key])
-      .map(getTypeClass)
-      .map(className => `.${className}`)
-      .join(',')
-
-    let tipped = $(tipSelector)
+  function tooltipster () {
+    let tipped = $(TIP_SELECTOR)
     tipped.tooltipster({
       updateAnimation: false,
       contentAsHTML: true,
@@ -1995,109 +1685,6 @@ $(() => {
       interactive: true
     })
 
-    $('body').on('keydown', e => {
-      if (e.key.toLowerCase() !== 'h') {
-        return
-      }
-
-      let tippedTarget
-      let target = $(e.target)
-      if (target.is(tipSelector)) {
-        tippedTarget = target
-      } else {
-        tippedTarget = target.find(tipSelector).eq(0)
-      }
-      if (tippedTarget) {
-        tippedTarget.tooltipster('show')
-
-        target.one('blur', () => {
-          tippedTarget.tooltipster('hide')
-        })
-      }
-    })
-
-    function toggleButtonState(action) {
-      return {
-        follow: {
-          type: 'user',
-          field: 'followed_by_me',
-          value: true,
-          className: 'ghh-aux',
-          action: 'unfollow',
-          content: `Unfollow`
-        },
-        unfollow: {
-          type: 'user',
-          field: 'followed_by_me',
-          value: false,
-          className: 'ghh-primary',
-          action: 'follow',
-          content: `Follow`
-        },
-        star: {
-          type: 'repo',
-          field: 'starred_by_me',
-          value: true,
-          className: 'ghh-aux',
-          action: 'unstar',
-          content: `${getIcon('star', 0.75)} Unstar`
-        },
-        unstar: {
-          type: 'repo',
-          field: 'starred_by_me',
-          value: false,
-          className: 'ghh-primary',
-          action: 'star',
-          content: `${getIcon('star', 0.75)} Star`
-        }
-      }[action]
-    }
-
-    if (me) {
-      $('body').on('click', '[data-action]', function() {
-        let { action, args } = this.dataset
-        let options
-        if (action === 'follow' || action === 'unfollow') {
-          options = {
-            url: `${API_PREFIX}/user/following/${args}`,
-            method: action === 'follow' ? 'PUT' : 'DELETE'
-          }
-        } else if (action === 'star' || action === 'unstar') {
-          options = {
-            url: `${API_PREFIX}/user/starred/${args}`,
-            method: action === 'star' ? 'PUT' : 'DELETE'
-          }
-        }
-
-        options.headers = {
-          Authorization: `token ${token}`
-        }
-
-        this.disabled = true
-        $.ajax(options)
-          .done(() => {
-            let state = toggleButtonState(action)
-            this.innerHTML = state.content
-            this.dataset.action = state.action
-            this.className = state.className
-            this.disabled = false
-            cache[state.type][args][state.field] = state.value
-          })
-          .fail(() => {
-            let error = {
-              title: 'Forbidden',
-              message: encodeHTML`Please ensure your access token contains these scopes: </p><ul><li><code>public_repo</code></li><li><code>user:follow</code></li></ul><p><a href="${EDIT_TOKEN_PATH}" target="_blank">Edit token scopes</a> and try again.`,
-              icons: {
-                alert: getIcon('alert')
-              }
-            }
-            $(this)
-              .closest('.tooltipster-content')
-              .html(getErrorHTML(error))
-          })
-      })
-    }
-
     if ('webkitTransform' in document.body.style) {
       // why? see https://github.com/iamceege/tooltipster/issues/491
       // use box-shadow instead to prevent weirder problem...
@@ -2119,12 +1706,109 @@ $(() => {
     tipped
       .parents(`.${ORGANIC_TOOLTIP_CLASS}`)
       .removeClass(ORGANIC_TOOLTIP_CLASS)
+  }
 
-    // Listen for future mutations but not ones happens
-    // in current extraction process
-    setTimeout(() => {
-      isExtracting = false
-    }, 0)
+  $('body').on('keydown', e => {
+    if (e.key.toLowerCase() !== 'h') {
+      return
+    }
+
+    let tippedTarget
+    let target = $(e.target)
+    if (target.is(TIP_SELECTOR)) {
+      tippedTarget = target
+    } else {
+      tippedTarget = target.find(TIP_SELECTOR).eq(0)
+    }
+    if (tippedTarget) {
+      tippedTarget.tooltipster('show')
+
+      target.one('blur', () => {
+        tippedTarget.tooltipster('hide')
+      })
+    }
+  })
+
+  function toggleButtonState(action) {
+    return {
+      follow: {
+        type: 'user',
+        field: 'followed_by_me',
+        value: true,
+        className: 'ghh-aux',
+        action: 'unfollow',
+        content: `Unfollow`
+      },
+      unfollow: {
+        type: 'user',
+        field: 'followed_by_me',
+        value: false,
+        className: 'ghh-primary',
+        action: 'follow',
+        content: `Follow`
+      },
+      star: {
+        type: 'repo',
+        field: 'starred_by_me',
+        value: true,
+        className: 'ghh-aux',
+        action: 'unstar',
+        content: `${getIcon('star', 0.75)} Unstar`
+      },
+      unstar: {
+        type: 'repo',
+        field: 'starred_by_me',
+        value: false,
+        className: 'ghh-primary',
+        action: 'star',
+        content: `${getIcon('star', 0.75)} Star`
+      }
+    }[action]
+  }
+
+  if (me) {
+    $('body').on('click', '[data-action]', function() {
+      let { action, args } = this.dataset
+      let options
+      if (action === 'follow' || action === 'unfollow') {
+        options = {
+          url: `${API_PREFIX}/user/following/${args}`,
+          method: action === 'follow' ? 'PUT' : 'DELETE'
+        }
+      } else if (action === 'star' || action === 'unstar') {
+        options = {
+          url: `${API_PREFIX}/user/starred/${args}`,
+          method: action === 'star' ? 'PUT' : 'DELETE'
+        }
+      }
+
+      options.headers = {
+        Authorization: `token ${token}`
+      }
+
+      this.disabled = true
+      $.ajax(options)
+        .done(() => {
+          let state = toggleButtonState(action)
+          this.innerHTML = state.content
+          this.dataset.action = state.action
+          this.className = state.className
+          this.disabled = false
+          cache[state.type][args][state.field] = state.value
+        })
+        .fail(() => {
+          let error = {
+            title: 'Forbidden',
+            message: encodeHTML`Please ensure your access token contains these scopes: </p><ul><li><code>public_repo</code></li><li><code>user:follow</code></li></ul><p><a href="${EDIT_TOKEN_PATH}" target="_blank">Edit token scopes</a> and try again.`,
+            icons: {
+              alert: getIcon('alert')
+            }
+          }
+          $(this)
+            .closest('.tooltipster-content')
+            .html(getErrorHTML(error))
+        })
+    })
   }
 
   const EMOJI_MAP = '__EMOJI_DATA__'
@@ -2173,5 +1857,362 @@ $(() => {
 
   function applyTheme(theme) {
     document.documentElement.classList.add(`ghh-theme-${theme}`)
+  }
+
+  function extractElem (context, el, strategy) {
+    if (context && !context.contains(el)) {
+      return
+    }
+    let elem = $(el)
+    if (getExtracted(elem) || elem.is(BLACK_LIST_SELECTOR)) {
+      // skip processed elements
+      return
+    }
+    let target
+    let username // {{user}}
+    let repo // {{repo}}
+    let fullRepo // {{user}}/{{repo}}
+    let issue // {{issue}}
+    let fullIssue // {{user}}/{{repo}}#{{issue}}
+    let comment // {{comment}}
+    let fullComment // {{user}}/{{repo}}:{{issue}}
+    let commit // {{commit}}
+    let fullCommit // {{user}}/{{repo}}@{{commit}}
+    switch (strategy) {
+      case EXTRACTOR.TEXT_USER: {
+        username = trim(elem.text().replace(/[@/]/g, ''))
+        target = $(`<span>${elem.text()}</span>`)
+        elem.empty().append(target)
+        break
+      }
+      case EXTRACTOR.TITLE_USER: {
+        username = trim((elem.attr('title') || '').replace(/[@/]/g, ''))
+        break
+      }
+      case EXTRACTOR.ALT_USER: {
+        username = trim(
+          (elem.attr('alt') || '').split(/\s+/)[0].replace(/[@/]/g, '')
+        )
+        break
+      }
+      case EXTRACTOR.HREF_USER: {
+        username = trim((elem.attr('href') || '').replace(/[@/]/g, ''))
+        break
+      }
+      case EXTRACTOR.TEXT_MY_REPO: {
+        let repo = trim(elem.text())
+        if (me && repo.indexOf('/') === -1) {
+          fullRepo = `${me}/${repo}`
+          break
+        }
+      }
+      case EXTRACTOR.SLUG: {
+        let slug = elem.text()
+        let match = slug.match(SLUG_PATTERN)
+        username = trim(match && match[1])
+        repo = trim(match && match[2])
+        issue = trim(match && match[3])
+        commit = trim(match && match[4])
+        if (username && repo) {
+          fullRepo = username + '/' + repo
+
+          // special case for code search highlight
+          // save contents before replacing
+          let contents = elem.find('em').length
+            ? elem
+                .contents()
+                .map(function(i) {
+                  let text =
+                    i === 0
+                      ? this.textContent.split('/')[1] || ''
+                      : this.textContent
+                  // whitelisting <em>s for safety
+                  return this.nodeName.toLowerCase() === 'em'
+                    ? `<em>${text}</em>`
+                    : text
+                })
+                .toArray()
+                .join('')
+            : null
+
+          if (issue) {
+            elem.html(
+              slug.replace('#' + issue, encodeHTML`#<span>${issue}</span>`)
+            )
+            slug = elem.html()
+          }
+          if (commit) {
+            elem.html(
+              slug.replace(
+                '@' + commit,
+                encodeHTML`@<span>${commit}</span>`
+              )
+            )
+            slug = elem.html()
+          }
+
+          let repoContents = contents || repo // safe HTML or plain text
+          if (
+            (username === me || username === current) &&
+            !cardOptions.showSelf
+          ) {
+            elem.html(
+              slug.replace(
+                fullRepo,
+                encodeHTML`${username}/<span>` + repoContents + '</span>'
+              )
+            )
+            markExtracted(
+              elem.children().first(),
+              EXTRACT_TYPE.REPO,
+              fullRepo
+            )
+          } else {
+            elem.html(
+              slug.replace(
+                fullRepo,
+                encodeHTML`<span>${username}</span>/<span>` +
+                  repoContents +
+                  '</span>'
+              )
+            )
+            markExtracted(
+              elem.children().first(),
+              EXTRACT_TYPE.USER,
+              username
+            )
+            markExtracted(
+              elem
+                .children()
+                .first()
+                .next(),
+              EXTRACT_TYPE.REPO,
+              fullRepo
+            )
+          }
+          if (issue) {
+            markExtracted(
+              elem.children().last(),
+              EXTRACT_TYPE.ISSUE,
+              fullRepo + '#' + issue
+            )
+          }
+          if (commit) {
+            markExtracted(
+              elem.children().last(),
+              EXTRACT_TYPE.COMMIT,
+              fullRepo + '@' + commit
+            )
+          }
+
+          // if not marked earlier, mark as nothing extracted
+          if (!getExtracted(elem)) {
+            markExtracted(elem)
+          }
+          elem = null
+        }
+        break
+      }
+      case EXTRACTOR.TEXT_NODE_URL: {
+        let nodes = [...elem[0].childNodes]
+        let textNode = nodes.find(node => trim(node.nodeValue))
+        target = $(encodeHTML` <span>${textNode.nodeValue}</span>`)
+        textNode.parentNode.replaceChild(target[0], textNode)
+        markExtracted(elem)
+      }
+      case EXTRACTOR.URL: {
+        target = elem
+        elem = elem.closest('a')
+
+        let href = elem.prop('href') // absolute path via prop
+        if (href) {
+          href = href.baseVal || href // support SVG elements
+
+          try {
+            let url = new URL(href)
+            // skip local anchors
+            if (
+              `${url.host}${url.pathname}` ===
+                `${location.host}${location.pathname}` &&
+              !url.hash.match(/#issuecomment-/)
+            ) {
+              return
+            }
+          } catch (e) {
+            return
+          }
+
+          let match = href.match(URL_USER_PATTERN)
+          username = trim(match && (match[1] || match[2]))
+          if (!username) {
+            match = href.match(URL_REPO_PATTERN)
+            username = trim(match && match[1])
+            repo = trim(match && match[2])
+          }
+          if (!username) {
+            match = href.match(URL_ISSUE_PATTERN)
+            username = trim(match && match[1])
+            repo = trim(match && match[2])
+            issue = trim(match && match[3])
+          }
+          if (!username) {
+            match = href.match(URL_COMMENT_PATTERN)
+            username = trim(match && match[1])
+            repo = trim(match && match[2])
+            issue = trim(match && match[3])
+            comment = trim(match && match[4])
+          }
+          if (!username) {
+            match = href.match(URL_COMMIT_PATTERN)
+            username = trim(match && match[1])
+            repo = trim(match && match[2])
+            commit = trim(match && match[3])
+          }
+          if (username) {
+            if (
+              GH_RESERVED_USER_NAMES.indexOf(username) !== -1 ||
+              !GH_USER_NAME_PATTERN.test(username)
+            ) {
+              username = null
+              repo = null
+              issue = null
+            }
+          }
+          if (repo) {
+            repo = repo.replace(/\.git$/i, '')
+            fullRepo = `${username}/${repo}`
+            if (
+              GH_RESERVED_REPO_NAMES.indexOf(repo) !== -1 ||
+              !GH_REPO_NAME_PATTERN.test(repo)
+            ) {
+              fullRepo = null
+              username = null
+              issue = null
+            }
+          }
+          if (issue) {
+            fullIssue = `${username}/${repo}#${issue}`
+          }
+          if (comment) {
+            fullComment = `${username}/${repo}:${comment}`
+          }
+          if (commit) {
+            fullCommit = `${username}/${repo}@${commit}`
+          }
+          // skip hovercard on myself or current profile page owner
+          if (
+            (username === me || username === current) &&
+            !cardOptions.showSelf &&
+            !repo
+          ) {
+            username = null
+          }
+        }
+        break
+      }
+      case EXTRACTOR.NEXT_TEXT_REPO: {
+        fullRepo = getFullRepoFromAncestorLink(elem)
+        repo = fullRepo.split('/')[1]
+        let textNode = getNextTextNode(
+          elem[0],
+          elem[0].parentNode.parentNode
+        )
+        target = $(`<span>${repo}</span>`)
+        if (fullRepo && textNode) {
+          let parent = textNode.parentNode
+          parent.replaceChild(target[0], textNode)
+          parent.insertBefore(document.createTextNode(' '), target[0])
+          markExtracted(elem)
+        } else {
+          elem = null
+        }
+        break
+      }
+      case EXTRACTOR.ANCESTOR_URL_REPO: {
+        fullRepo = getFullRepoFromAncestorLink(elem)
+        break
+      }
+      case EXTRACTOR.NEXT_LINK_TEXT_USER: {
+        let link = elem.nextAll('a').eq(0)
+        if (link) {
+          username = trim(link.text().replace(/[@/]/g, ''))
+        }
+        break
+      }
+      case EXTRACTOR.TEXT_NODE_USER: {
+        let nodes = [...elem[0].childNodes]
+        let textNode = nodes.find(node => trim(node.nodeValue))
+
+        if (textNode) {
+          username = trim(textNode.nodeValue)
+          let userElem = $(`<span>${textNode.nodeValue}</span>`)
+          textNode.parentNode.replaceChild(userElem[0], textNode)
+          markExtracted(elem)
+          target = userElem
+        }
+        break
+      }
+      case EXTRACTOR.NEXT_TEXT_USER: {
+        let textNode = getNextTextNode(
+          elem[0],
+          elem[0].parentNode.parentNode
+        )
+        username = textNode.nodeValue.replace(/[\s\\/]+/g, '')
+        break
+      }
+      case EXTRACTOR.REPO_LIST_SLUG: {
+        elem.find('.octicon-repo').insertBefore(elem.closest('a'))
+        let slug = elem.text().replace(/\s+/g, '')
+        let match = slug.match(SLUG_PATTERN)
+        username = trim(match && match[1])
+        repo = trim(match && match[2])
+        if (username && repo) {
+          fullRepo = username + '/' + repo
+
+          elem.html(fixRepoSlug(elem.html()))
+          let targets = elem.find('[data-ghh]')
+          markExtracted(targets.eq(0), EXTRACT_TYPE.USER, username)
+          markExtracted(targets.eq(1), EXTRACT_TYPE.REPO, fullRepo)
+          targets.removeAttr('data-ghh')
+
+          // if not marked earlier, mark as nothing extracted
+          if (!getExtracted(elem)) {
+            markExtracted(elem)
+          }
+          elem = null
+        }
+        break
+      }
+      default:
+        break
+    }
+
+    // elem === null means already marked in extractors
+    if (!elem) {
+      return
+    }
+
+    target = target || elem
+    if (fullCommit) {
+      markExtracted(target, EXTRACT_TYPE.COMMIT, fullCommit)
+    } else if (fullComment) {
+      markExtracted(target, EXTRACT_TYPE.COMMENT, fullComment)
+    } else if (fullIssue) {
+      markExtracted(target, EXTRACT_TYPE.ISSUE, fullIssue)
+    } else if (fullRepo) {
+      markExtracted(target, EXTRACT_TYPE.REPO, fullRepo)
+    } else if (username) {
+      if (
+        (username !== me && username !== current) ||
+        cardOptions.showSelf
+      ) {
+        markExtracted(target, EXTRACT_TYPE.USER, username)
+      } else {
+        markExtracted(target)
+      }
+    }
+    if (!username && !fullRepo && !fullIssue) {
+      markExtracted(elem)
+    }
   }
 })

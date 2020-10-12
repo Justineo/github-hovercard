@@ -1,5 +1,10 @@
 ## Changelog
 
+## 1.9.0
+
+- Refactored extraction process to use task queue with `requestIdleCallback` to lessen the performance overhead for large pages.
+- Updated Octicons to latest version.
+
 ## 1.8.0
 
 - Supported opening hovercards when pressing <kbd>H</kbd> on focused elements (when possible).

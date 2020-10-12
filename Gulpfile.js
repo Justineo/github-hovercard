@@ -16,7 +16,7 @@ var marked = require('marked');
 var cheerio = require('cheerio');
 var plist = require('plist');
 var pack = require('./package.json');
-var octicons = require('octicons');
+var octicons = require('@primer/octicons');
 var version = pack.version;
 
 function getCommentHandler() {
@@ -43,17 +43,18 @@ gulp.task('icons', function (cb) {
     'alert', 'arrow-right', 'code', 'diff', 'git-commit', 'git-pull-request',
     'info', 'issue-closed', 'issue-opened', 'link', 'location', 'organization',
     'person', 'repo-forked', 'repo', 'git-branch', 'tag', 'bookmark', 'star',
-    'verified', 'key', 'check', 'primitive-dot', 'comment', 'comment-discussion',
-    'clock', 'jersey', 'request-changes', 'rocket'
+    'verified', 'key', 'check', 'dot-fill', 'comment', 'comment-discussion',
+    'clock', 'rocket'
   ];
 
   var data = used.map(function (name) {
     var icon = octicons[name];
+    var instance = icon.heights['16']
     var data = {};
     data[name] = {
-      width: parseFloat(icon.width),
-      height: parseFloat(icon.height),
-      d: icon.path.match(/\bd="([^"]+)"/)[1]
+      width: instance.width,
+      height: 16,
+      path: instance.path
     };
     return data;
   }).reduce(function (acc, val) {
