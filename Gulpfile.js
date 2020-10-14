@@ -44,7 +44,7 @@ gulp.task('icons', function (cb) {
     'info', 'issue-closed', 'issue-opened', 'link', 'location', 'organization',
     'person', 'repo-forked', 'repo', 'git-branch', 'tag', 'bookmark', 'star',
     'verified', 'key', 'check', 'dot-fill', 'comment', 'comment-discussion',
-    'clock', 'rocket'
+    'clock', 'rocket', 'star-fill', 'people'
   ];
 
   var data = used.map(function (name) {
@@ -76,7 +76,7 @@ gulp.task('css:prepare', function () {
 gulp.task('css:compile', function () {
   return gulp.src('./src/*.styl')
     .pipe(stylus())
-    .pipe(gulp.dest('./src'));
+    .pipe(gulp.dest('./tmp'));
 });
 
 gulp.task('css', gulp.series('css:prepare', 'css:compile'));
@@ -106,8 +106,8 @@ gulp.task('userscript:prepare', gulp.series('resource:inline', function () {
 gulp.task('userscript:styles', gulp.series('css', function () {
   return gulp.src([
       './tmp/tooltipster.css',
-      './src/hovercard.css',
-      './src/tomorrow-night.css'
+      './tmp/hovercard.css',
+      './tmp/tomorrow-night.css'
     ])
     .pipe(concat('userscript.css'))
     .pipe(cssnano({ zindex: false }))
@@ -120,22 +120,31 @@ gulp.task('userscript:inject-styles', gulp.series('userscript:styles', function 
     .pipe(gulp.dest('./tmp'));
 }));
 
-gulp.task('userscript', gulp.series('userscript:inject-styles', 'userscript:prepare', function () {
+gulp.task('userscript:combine', gulp.series('userscript:inject-styles', 'userscript:prepare', function () {
   return gulp.src([
-      './tmp/metadata.js',
       './tmp/inject-styles.js',
-      './src/jquery.js',
       './src/mustache.js',
       './src/tooltipster.js',
       './src/tripleclick.js',
       './tmp/hovercard.userscript.js'
     ])
+    .pipe(concat('hovercard-combined.user.js'))
+    .pipe(gulp.dest('./tmp'));
+}));
+
+gulp.task('userscript', gulp.series('userscript:combine', function () {
+  return gulp.src([
+    './tmp/metadata.js',
+    './userscript/src/wrapper.js'
+  ])
     .pipe(concat('github-hovercard.user.js'))
+    .pipe(replace('\'__USER_SCRIPT_JQUERY__\'', fs.readFileSync('./src/jquery.js', { encoding: 'utf8' })))
+    .pipe(replace('\'__USER_SCRIPT_SCRIPTS__\'', fs.readFileSync('./tmp/hovercard-combined.user.js', { encoding: 'utf8' })))
     .pipe(uglify({
       preserveComments: getCommentHandler()
     }))
-    .pipe(gulp.dest('./userscript/dist'));
-}));
+    .pipe(gulp.dest('./userscript/dist'))
+}))
 
 gulp.task('chrome:cp', gulp.series('resource:inline', 'css', 'icons', function () {
   var manifestPath = './extensions/chrome/manifest.json';
@@ -145,7 +154,7 @@ gulp.task('chrome:cp', gulp.series('resource:inline', 'css', 'icons', function (
 
   var targets = [
     './src/*', '!./src/hovercard.js', './tmp/hovercard.js', '!./src/*.styl',
-    '!./src/tooltipster.css', './tmp/tooltipster.css', './icon.png'
+    './tmp/hovercard.css', './tmp/tomorrow-night.css', './tmp/tooltipster.css', './icon.png'
   ];
   return gulp.src(targets)
     .pipe(gulp.dest('./extensions/chrome'));
@@ -159,7 +168,7 @@ gulp.task('firefox:cp', gulp.series('resource:inline', 'css', 'icons', function 
 
   var targets = [
     './src/*', '!./src/hovercard.js', './tmp/hovercard.js', '!./src/*.styl',
-    '!./src/tooltipster.css', './tmp/tooltipster.css', './icon.png'
+    './tmp/hovercard.css', './tmp/tomorrow-night.css', './tmp/tooltipster.css', './icon.png'
   ];
   return gulp.src(targets)
     .pipe(gulp.dest('./extensions/firefox'));
@@ -174,7 +183,7 @@ gulp.task('safari:cp', gulp.series('resource:inline', 'css', 'icons', function (
 
   var targets = [
     './src/*', '!./src/hovercard.js', './tmp/hovercard.js', '!./src/*.styl',
-    '!./src/tooltipster.css', './tmp/tooltipster.css', './icon.png'
+    './tmp/hovercard.css', './tmp/tomorrow-night.css', './tmp/tooltipster.css', './icon.png'
   ];
   return gulp.src(targets)
     .pipe(gulp.dest('./extensions/github-hovercard.safariextension'));
@@ -194,7 +203,7 @@ gulp.task('edge:cp', gulp.series('edge:hack', 'css', 'icons', function () {
 
   var targets = [
     './src/*', '!./src/hovercard.js', '!./src/jquery.js', '!./src/*.styl',
-    '!./src/tooltipster.css', './tmp/tooltipster.css', './icon.png'
+    './tmp/hovercard.css', './tmp/tomorrow-night.css', './tmp/tooltipster.css', './icon.png'
   ];
   return gulp.src(targets)
     .pipe(gulp.dest('./extensions/edge'));
@@ -231,7 +240,7 @@ gulp.task('firefox:zip', gulp.series('firefox:cp', function (cb) {
 gulp.task('edge:zip', gulp.series('edge:cp', function (cb) {
   exec(
     'find . -path \'*/.*\' -prune -o -type f -print | zip ../packed/github-hovercard.edge.zip -@',
-    { cwd: 'extensions/edge' },
+    { cwd: 'extensions/chrome' },
     function (error) {
       if (error) {
         return cb(error);
@@ -308,8 +317,8 @@ gulp.task('demo', gulp.series('css', 'demo:prepare', 'demo:index', function () {
 
   var cssSrc = gulp.src([
       './tmp/tooltipster.css',
-      './src/hovercard.css',
-      './src/tomorrow-night.css',
+      './tmp/hovercard.css',
+      './tmp/tomorrow-night.css',
       './demo/src/demo.css'
     ])
     .pipe(concat('demo.css'))

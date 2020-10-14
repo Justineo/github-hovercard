@@ -79,15 +79,11 @@ $(() => {
       }
     })
   })
-  let observeConfig = {
-    attributes: false,
-    childList: true,
-    characterData: false,
-    subtree: true
-  }
 
   queueTask(() => {
-    observer.observe(DEFAULT_TARGET, observeConfig)
+    observer.observe(DEFAULT_TARGET, {
+      childList: true
+    })
   })
 
   // based on octotree's config
@@ -201,6 +197,7 @@ $(() => {
       EXTRACTOR.TEXT_USER,
     '.dashboard-sidebar [data-hydro-click*="\\"target\\":\\"REPOSITORY\\""] [title]:last-of-type':
       EXTRACTOR.ANCESTOR_URL_REPO,
+    '[aria-label="Explore"] [data-hydro-click*="\\"target\\":\\"REPOSITORY\\""]': EXTRACTOR.SLUG,
 
     /* Explore */
     // Trending
@@ -358,6 +355,14 @@ $(() => {
       viewBox="0 0 ${icon.width} ${icon.height}">${icon.path}</svg>`
   }
 
+  const CREATE_TOKEN_PATH = `//${GH_DOMAIN}/settings/tokens/new?scopes=repo,user:follow`
+  const EDIT_TOKEN_PATH = `//${GH_DOMAIN}/settings/tokens`
+  const IS_ENTERPRISE = GH_DOMAIN !== 'github.com'
+  const API_PREFIX = IS_ENTERPRISE
+    ? `//${GH_DOMAIN}/api/v3`
+    : `//api.${GH_DOMAIN}`
+  const SITE_PREFIX = `//${GH_DOMAIN}/`
+
   const CARD_TPL = {
     user: `
       <address class="ghh">
@@ -409,7 +414,7 @@ $(() => {
             <span class="ghh-title"><a href="{{ownerUrl}}">{{owner}}</a> / <strong><a href="{{repoUrl}}">{{repo}}</a></strong></span>
             {{#hasToken}}${
               me
-                ? '{{#starredByMe}}<button class="ghh-aux" data-action="unstar" data-args="{{owner}}/{{repo}}">{{{icons.star}}} Unstar{{/starredByMe}}{{^starredByMe}}<button class="ghh-primary" data-action="star" data-args="{{owner}}/{{repo}}">{{{icons.star}}} Star{{/starredByMe}}</button>'
+                ? '{{#starredByMe}}<button class="ghh-aux" data-action="unstar" data-args="{{owner}}/{{repo}}">{{{icons.starFill}}} Unstar{{/starredByMe}}{{^starredByMe}}<button class="ghh-primary" data-action="star" data-args="{{owner}}/{{repo}}">{{{icons.star}}} Star{{/starredByMe}}</button>'
                 : ''
             }{{/hasToken}}
           </p>
@@ -497,6 +502,7 @@ $(() => {
           <h3>${getIcon('key')} GitHub Access Token</h3>
           <p>GitHub limits unauthenticated API requests to 60 per hour, but after binding your access token you will be able to enjoy the rate limit of <strong>5,000</strong> requests per hour.</p>
           <p>You should at least add permission for <code>public_repo</code> to enable star/unstar, and <code>user:follow</code> to enable follow/unfollow.</p>
+          <p><a href="${CREATE_TOKEN_PATH}" class="ghh-token-link" target="_blank">Create a new access token</a> if you don't have any.</p>
           <p>
             <input class="ghh-token form-control" type="text" placeholder="Paste access token here..." size="40">
             <button class="btn btn-primary ghh-save">Save</button>
@@ -505,14 +511,6 @@ $(() => {
         </form>
       </div>`
   }
-
-  const CREATE_TOKEN_PATH = `//${GH_DOMAIN}/settings/tokens/new?scopes=repo,user:follow`
-  const EDIT_TOKEN_PATH = `//${GH_DOMAIN}/settings/tokens`
-  const IS_ENTERPRISE = GH_DOMAIN !== 'github.com'
-  const API_PREFIX = IS_ENTERPRISE
-    ? `//${GH_DOMAIN}/api/v3`
-    : `//api.${GH_DOMAIN}`
-  const SITE_PREFIX = `//${GH_DOMAIN}/`
 
   function trim(str, isCollapse) {
     if (!str) {
@@ -681,7 +679,7 @@ $(() => {
   }
 
   function getEmoji(unicode) {
-    return String.fromCodePoint(parseInt(unicode, 16))
+    return unicode.split('-').map(code => String.fromCodePoint(parseInt(code, 16))).join('')
   }
 
   function replaceEmoji(text) {
@@ -690,7 +688,7 @@ $(() => {
       if (!url) {
         return match
       }
-      let [, unicode] = url.match(/unicode\/([0-9a-z]+).png/) || []
+      let [, unicode] = url.match(/unicode\/([0-9a-z-]+).png/) || []
       return `<g-emoji class="g-emoji" alias="${key}" fallback-src="${url}">${getEmoji(
         unicode
       )}</g-emoji>`
@@ -867,7 +865,8 @@ $(() => {
           link: getIcon('link', 0.875),
           code: getIcon('code', 0.875),
           bookmark: getIcon('bookmark', 0.875),
-          star: getIcon('star', 0.75)
+          star: getIcon('star', 0.75),
+          starFill: getIcon('star-fill', 0.75)
         }
       }
       if (raw.parent) {
@@ -1360,6 +1359,11 @@ $(() => {
                                 )
                               }
                             })
+                        } else if (!me || value === me) {
+                          elem.tooltipster(
+                            'content',
+                            getCardHTML(type, raw)
+                          )
                         }
 
                         // if the logged-in user is following the current user
@@ -1709,7 +1713,7 @@ $(() => {
   }
 
   $('body').on('keydown', e => {
-    if (e.key.toLowerCase() !== 'h') {
+    if (!e.key || e.key.toLowerCase() !== 'h') {
       return
     }
 
@@ -1753,7 +1757,7 @@ $(() => {
         value: true,
         className: 'ghh-aux',
         action: 'unstar',
-        content: `${getIcon('star', 0.75)} Unstar`
+        content: `${getIcon('star-fill', 0.75)} Unstar`
       },
       unstar: {
         type: 'repo',

@@ -1,7 +1,6 @@
-(function () {
+;(function () {
     function createStyle(styleText) {
         var style = document.createElement('style');
-        style.type = 'text/css';
 
         // <style> element must be appended into DOM before setting `cssText`
         // otherwise IE8 will interpret the text in IE7 mode.
