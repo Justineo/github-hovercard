@@ -1,5 +1,11 @@
 ## Changelog
 
+## 1.9.1
+
+- Reduced extraction produced by MutationObserver, hopefully to fix co-existence with other extensions like Refined GitHub.
+- Fixed userscript version so that it can work with other scripts which called `$.noConflict`.
+- Now Use Chrome version as the source of Edge version.
+
 ## 1.9.0
 
 - Refactored extraction process to use task queue with `requestIdleCallback` to lessen the performance overhead for large pages.
