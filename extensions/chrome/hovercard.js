@@ -2,6 +2,7 @@ $(() => {
   'use strict'
 
   const GH_DOMAIN = location.host
+  const MAX_MUTATIONS = 3
 
   const EXCLUDES = [
     '.tooltipster-base',
@@ -12,7 +13,9 @@ $(() => {
     'time-ago',
     'relative-time',
     '.user-status-container',
-    '#files_bucket'
+    '#files_bucket',
+    '.changed_href',
+    '.added_href'
   ].join(',')
 
   const DEFAULT_TARGET = document.body
@@ -26,7 +29,6 @@ $(() => {
   }
 
   let taskQueue = []
-  let isExtracting = false
 
   function queueTask (fn) {
     if (!taskQueue.length) {
@@ -37,7 +39,7 @@ $(() => {
   }
 
   function runTaskQueue (deadline) {
-    while ((deadline.timeRemaining() > 0 || deadline.didTimeout) && taskQueue.length) {
+    while (deadline.timeRemaining() > 0 && taskQueue.length) {
       let fn = taskQueue.shift()
       fn()
     }
@@ -45,12 +47,12 @@ $(() => {
     if (taskQueue.length) {
       scheduleRunTaskQueue()
     } else {
-      lockExtracting(tooltipster)
+      extractSilent(tooltipster)
     }
   }
 
   function scheduleRunTaskQueue () {
-    requestIdleCallback(runTaskQueue, { timeout: 2048 })
+    requestIdleCallback(runTaskQueue)
   }
 
   function nextTick (fn) {
@@ -58,21 +60,16 @@ $(() => {
     p.then(fn)
   }
 
-  function lockExtracting(fn) {
-    isExtracting = true
+  function extractSilent(fn) {
+    pauseObserve()
     fn()
 
     // nextTick will run **after** MutationObserver callbacks
-    nextTick(() => {
-      isExtracting = false
-    })
+    nextTick(startObserve)
   }
 
   let observer = new MutationObserver(mutations => {
-    if (isExtracting) {
-      return
-    }
-    mutations.forEach(mutation => {
+    mutations.slice(0, MAX_MUTATIONS).forEach(mutation => {
       let target = mutation.target
       if (!isExclude(target)) {
         extract(target)
@@ -80,11 +77,18 @@ $(() => {
     })
   })
 
-  queueTask(() => {
+  function startObserve () {
     observer.observe(DEFAULT_TARGET, {
-      childList: true
+      childList: true,
+      subtree: true
     })
-  })
+  }
+
+  function pauseObserve () {
+    observer.disconnect()
+  }
+
+  queueTask(startObserve)
 
   // based on octotree's config
   const GH_RESERVED_USER_NAMES = [
@@ -1103,8 +1107,12 @@ $(() => {
       let strategy = STRATEGIES[selector]
       let elems = $(selector)
       elems.each(function () {
+        if (isExclude(this)) {
+          return
+        }
+
         queueTask(() => {
-          lockExtracting(() => {
+          extractSilent(() => {
             extractElem(context, this, strategy)
           })
         })

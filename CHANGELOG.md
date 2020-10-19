@@ -1,5 +1,10 @@
 ## Changelog
 
+## 1.9.2
+
+- Reduced the mutations to be handled by limiting tasks on every mutation callback.
+- Enhanced the extraction exclusion logic.
+
 ## 1.9.1
 
 - Reduced extraction produced by MutationObserver, hopefully to fix co-existence with other extensions like Refined GitHub.
