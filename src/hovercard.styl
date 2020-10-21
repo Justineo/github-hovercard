@@ -22,6 +22,8 @@ $gh-link-color = #0366d6
   line-height 2
   font-family $sans-serif
   hyphens auto
+  outline none
+  padding 8px 10px
 
   &.extended
     max-width 640px
@@ -782,6 +784,7 @@ $contribution
   bottom 0
   left 0
   background-color rgba(0, 0, 0, .6)
+  outline none
 
   form
     position absolute
@@ -837,14 +840,13 @@ $contribution
       background-color #fff
       border 1px solid $gh-border-color
       border-radius 3px
-      padding 16px
       color #586069
       font-size 14px
       line-height 1.5
 
     .loading
       display block
-      margin 0 32px
+      margin 8px 48px
 
   .tooltipster-arrow-background
     width 14px
@@ -905,6 +907,7 @@ $contribution
 
   .ghh
     width 328px
+    padding 16px
 
     a
       color $gh-dark-text-color

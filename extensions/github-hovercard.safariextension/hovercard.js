@@ -791,6 +791,20 @@ $(() => {
     return { type, id }
   }
 
+  function getCardContent(type, raw, target) {
+    let content = $(getCardHTML(type, raw))
+    content.attr('tabindex', '0')
+    content.on('keydown', e => {
+      if (e.key === 'Escape') {
+        target.tooltipster('hide')
+        target.focus()
+        return false
+      }
+    })
+
+    return content
+  }
+
   function getCardHTML(type, raw) {
     let data
     if (type === EXTRACT_TYPE.USER) {
@@ -1046,8 +1060,14 @@ $(() => {
   }
 
   // prepare token form
-  let tokenForm = $(CARD_TPL.form)
+  let tokenForm = $(CARD_TPL.form).attr('tabindex', '0')
   let tokenField = tokenForm.find('.ghh-token')
+  tokenForm.on('keydown', e => {
+    if (e.key === 'Escape') {
+      tokenForm.detach()
+      return false
+    }
+  })
   tokenForm.find('.ghh-save').on('click', () => {
     let newToken = tokenField.val().trim()
     if (newToken) {
@@ -1070,7 +1090,7 @@ $(() => {
   $('body')
     .on('click', '.ghh-token-link', showTokenForm)
     .on('tripleclick', '.ghh', showTokenForm)
-    .on('wheel', '.ghh-readme, .ghh-issue-body, .ghh-commit-body', function(e) {
+    .on('wheel', '.ghh-readme, .ghh-issue-body, .ghh-commit-body', e => {
       if (
         this.scrollTop + e.originalEvent.deltaY + this.clientHeight >=
         this.scrollHeight
@@ -1106,7 +1126,7 @@ $(() => {
     selectors.forEach(selector => {
       let strategy = STRATEGIES[selector]
       let elems = $(selector)
-      elems.each(function () {
+      elems.each(function() {
         if (isExclude(this)) {
           return
         }
@@ -1144,7 +1164,7 @@ $(() => {
 
         let raw = cache[type][value]
         if (raw && type !== EXTRACT_TYPE.USER) {
-          elem.tooltipster('content', getCardHTML(type, raw))
+          elem.tooltipster('content', getCardContent(type, raw, elem))
         } else {
           if (raw && type === EXTRACT_TYPE.USER) {
             let subject = getHovercardSubject() || {}
@@ -1154,7 +1174,7 @@ $(() => {
               Object.assign(raw, {
                 hovercard: cache.hovercard[value][subjectSlug]
               })
-              elem.tooltipster('content', getCardHTML(type, raw))
+              elem.tooltipster('content', getCardContent(type, raw, elem))
               return
             }
           }
@@ -1363,14 +1383,14 @@ $(() => {
                               if (!--todo) {
                                 elem.tooltipster(
                                   'content',
-                                  getCardHTML(type, raw)
+                                  getCardContent(type, raw, elem)
                                 )
                               }
                             })
                         } else if (!me || value === me) {
                           elem.tooltipster(
                             'content',
-                            getCardHTML(type, raw)
+                            getCardContent(type, raw, elem)
                           )
                         }
 
@@ -1395,7 +1415,7 @@ $(() => {
                               if (!--todo) {
                                 elem.tooltipster(
                                   'content',
-                                  getCardHTML(type, raw)
+                                  getCardContent(type, raw, elem)
                                 )
                               }
                             })
@@ -1414,7 +1434,7 @@ $(() => {
                               if (!--todo) {
                                 elem.tooltipster(
                                   'content',
-                                  getCardHTML(type, raw)
+                                  getCardContent(type, raw, elem)
                                 )
                               }
                             })
@@ -1457,7 +1477,7 @@ $(() => {
                         })
                         .always(() => {
                           if (!--todo) {
-                            elem.tooltipster('content', getCardHTML(type, raw))
+                            elem.tooltipster('content', getCardContent(type, raw, elem))
                           }
                         })
                     }
@@ -1478,7 +1498,7 @@ $(() => {
                         .always(() => {
                           Object.assign(raw, extra)
                           if (!--todo) {
-                            elem.tooltipster('content', getCardHTML(type, raw))
+                            elem.tooltipster('content', getCardContent(type, raw, elem))
                           }
                         })
                     }
@@ -1497,7 +1517,7 @@ $(() => {
                         .done(html => {
                           raw.bodyHTML = html
                           if (!--todo) {
-                            elem.tooltipster('content', getCardHTML(type, raw))
+                            elem.tooltipster('content', getCardContent(type, raw, elem))
                           }
                         })
                         .fail(handleError)
@@ -1532,7 +1552,7 @@ $(() => {
                           Object.assign(raw, extra)
                           Object.assign(cache[type][value], extra)
                           if (!--todo) {
-                            elem.tooltipster('content', getCardHTML(type, raw))
+                            elem.tooltipster('content', getCardContent(type, raw, elem))
                           }
                         })
                         .fail(handleError)
@@ -1575,7 +1595,7 @@ $(() => {
                           )
                           allReviews.unshift(...results)
                           if (!--todo) {
-                            elem.tooltipster('content', getCardHTML(type, raw))
+                            elem.tooltipster('content', getCardContent(type, raw, elem))
                           }
                         })
                         .fail(handleError)
@@ -1623,7 +1643,7 @@ $(() => {
 
                           allReviews.push(...reviewers)
                           if (!--todo) {
-                            elem.tooltipster('content', getCardHTML(type, raw))
+                            elem.tooltipster('content', getCardContent(type, raw, elem))
                           }
                         })
                         .fail(handleError)
@@ -1637,7 +1657,7 @@ $(() => {
                     renderMarkdown(raw.body, value.split(':')[0])
                       .done(html => {
                         raw.bodyHTML = html
-                        elem.tooltipster('content', getCardHTML(type, raw))
+                        elem.tooltipster('content', getCardContent(type, raw, elem))
                       })
                       .fail(handleError)
 
@@ -1680,19 +1700,22 @@ $(() => {
                         raw.otherTags = tags.slice(1)
                       }
 
-                      elem.tooltipster('content', getCardHTML(type, raw))
+                      elem.tooltipster('content', getCardContent(type, raw, elem))
                     })
 
                     return
                   }
                 }
 
-                elem.tooltipster('content', getCardHTML(type, raw))
+                elem.tooltipster('content', getCardContent(type, raw, elem))
               })
               .fail(handleError)
           }
           request()
         }
+      },
+      functionReady () {
+
       },
       interactive: true
     })

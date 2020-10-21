@@ -11,6 +11,8 @@
   line-height: 2;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
   hyphens: auto;
+  outline: none;
+  padding: 8px 10px;
 }
 .ghh.extended {
   max-width: 640px;
@@ -866,6 +868,7 @@
   bottom: 0;
   left: 0;
   background-color: rgba(0,0,0,0.6);
+  outline: none;
 }
 .ghh-overlay form {
   position: absolute;
@@ -920,14 +923,13 @@
   background-color: #fff;
   border: 1px solid #d1d5da;
   border-radius: 3px;
-  padding: 16px;
   color: #586069;
   font-size: 14px;
   line-height: 1.5;
 }
 .ghh-theme-github .tooltipster-box .loading {
   display: block;
-  margin: 0 32px;
+  margin: 8px 48px;
 }
 .ghh-theme-github .tooltipster-arrow-background {
   width: 14px;
@@ -983,6 +985,7 @@
 }
 .ghh-theme-github .ghh {
   width: 328px;
+  padding: 16px;
 }
 .ghh-theme-github .ghh a {
   color: #24292e;

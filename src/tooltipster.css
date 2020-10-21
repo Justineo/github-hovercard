@@ -200,10 +200,10 @@ width, height, top, and left */
 }
 
 .tooltipster-box .loading {
-	display: inline-block;
+	display: block;
 	width: 32px;
 	height: 32px;
-	margin: 0 32px;
+	margin: 6px 46px;
     background: url(spinner.gif) no-repeat center center;
     background-size: 24px auto;
 }
@@ -212,7 +212,6 @@ width, height, top, and left */
 	font-family: inherit;
 	font-size: 11px;
 	line-height: 16px;
-	padding: 8px 10px;
 	overflow: hidden;
 }
 
@@ -238,7 +237,6 @@ width, height, top, and left */
 .tooltipster-content {
 	color: white;
 	line-height: 18px;
-	padding: 6px 14px;
 }
 
 /* .tooltipster-arrow : will keep only the zone of .tooltipster-arrow-uncropped that
