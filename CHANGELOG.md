@@ -8,6 +8,7 @@
 
 - Reduced the mutations to be handled by limiting tasks on every mutation callback.
 - Enhanced the extraction exclusion logic.
+- Pressing <kbd>esc</kbd> on focused hovercards now will close them.
 
 ## 1.9.1
 
