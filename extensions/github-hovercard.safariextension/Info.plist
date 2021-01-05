@@ -13,9 +13,9 @@
     <key>CFBundleInfoDictionaryVersion</key>
     <string>6.0</string>
     <key>CFBundleShortVersionString</key>
-    <string>1.9.2</string>
+    <string>1.9.3</string>
     <key>CFBundleVersion</key>
-    <string>1.9.2</string>
+    <string>1.9.3</string>
     <key>Content</key>
     <dict>
       <key>Scripts</key>
