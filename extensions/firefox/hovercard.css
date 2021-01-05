@@ -1282,7 +1282,7 @@
 }
 .ghh-theme-one-dark .ghh .ghh-state-verified {
   color: #22863a;
-  border: 1px solid #e1e4e8;
+  border: 1px solid #343434;
   background-color: transparent;
   font-size: 10px;
   padding: 0 4px;
@@ -1500,7 +1500,7 @@
 }
 .ghh-theme-github-dark .ghh .ghh-state-verified {
   color: #22863a;
-  border: 1px solid #e1e4e8;
+  border: 1px solid #30363d;
   background-color: transparent;
   font-size: 10px;
   padding: 0 4px;
