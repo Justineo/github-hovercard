@@ -1,5 +1,9 @@
 ## Changelog
 
+## 1.9.3
+
+- Added GitHub Dark theme by @TreyRuffy
+
 ## 1.9.2
 
 - Reduced the mutations to be handled by limiting tasks on every mutation callback.

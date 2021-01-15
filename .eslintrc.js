@@ -1,7 +1,9 @@
 module.exports = {
     "env": {
         "browser": true,
-        "es6": true
+        "es6": true,
+        "webextensions": true,
+        "jquery": true,
     },
     "extends": "eslint:recommended",
     "globals": {
@@ -15,6 +17,7 @@ module.exports = {
         "ecmaVersion": 2018
     },
     "rules": {
-        "no-fallthrough": 0
+        "no-fallthrough": 0,
+        "no-console": "off"
     }
 };
