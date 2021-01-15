@@ -2,7 +2,7 @@
 
 ## 1.9.3
 
-- Added GitHub Dark theme by @TreyRuffy
+- Added GitHub Dark theme by @TreyRuffy.
 
 ## 1.9.2
 
