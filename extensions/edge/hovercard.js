@@ -436,7 +436,7 @@ document.addEventListener('DOMContentLoaded', () => {
             </a>
             {{#hasIssues}}<a href="{{issuesUrl}}">
               <strong>{{issues}}</strong>
-              <span>Issues</span>
+              <span>Issues & PRs</span>
             </a>{{/hasIssues}}
           </div>
           {{#desc}}<p class="ghh-repo-desc">{{{icons.info}}}{{{.}}}</p>{{/desc}}
