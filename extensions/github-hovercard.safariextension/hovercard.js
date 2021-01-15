@@ -826,8 +826,8 @@ $(() => {
         hasMeta: raw.site_admin || raw.type === 'Organization',
         hasToken: !!token,
         isSelf: raw.login === me,
-        followersUrl: `//${GH_DOMAIN}/${raw.login}/followers`,
-        followingUrl: `//${GH_DOMAIN}/${raw.login}/following`,
+        followersUrl: `//${GH_DOMAIN}/${raw.login}?tab=followers`,
+        followingUrl: `//${GH_DOMAIN}/${raw.login}?tab=following`,
         reposUrl: `//${GH_DOMAIN}/${raw.login}?tab=repositories`,
         icons: {
           location: getIcon('location', 0.875),
