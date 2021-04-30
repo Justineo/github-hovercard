@@ -1,8 +1,14 @@
 ## Changelog
 
+## 1.9.4
+
+- Removed `tabs` permission request.
+
 ## 1.9.3
 
-- Added GitHub Dark theme by @TreyRuffy.
+- Corrected "Issues" to "Issues & PRs". (#154 @kidonng)
+- Added two new themes for dark mode. (#160 @TreyRuffy)
+- Fixed `followersUrl` & `followingUrl`. (#161 @ellreka)
 
 ## 1.9.2
 
