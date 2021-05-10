@@ -554,7 +554,7 @@ $(() => {
 
     /* Common */
     // Avatars
-    'img.avatar:not([alt=""])': EXTRACTOR.ALT_USER,
+    'img.avatar:not([alt=""]):not(.width-full)': EXTRACTOR.ALT_USER,
     'img.gravatar:not([alt=""])': EXTRACTOR.ALT_USER,
 
     /* All links */
