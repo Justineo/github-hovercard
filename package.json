@@ -25,7 +25,7 @@
     "gulp-replace": "^0.5.4",
     "gulp-stylus": "^2.7.0",
     "gulp-uglify": "^1.5.4",
-    "marked": "^1.2.0",
+    "marked": "^4.0.10",
     "merge-stream": "^1.0.1",
     "plist": "^2.1.0",
     "rename": "^1.0.4"
