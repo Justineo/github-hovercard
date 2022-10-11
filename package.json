@@ -27,7 +27,7 @@
     "gulp-uglify": "^1.5.4",
     "marked": "^1.2.0",
     "merge-stream": "^1.0.1",
-    "plist": "^2.1.0",
+    "plist": "^3.0.6",
     "rename": "^1.0.4"
   },
   "author": "Justineo",
