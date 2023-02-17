@@ -248,6 +248,7 @@ document.addEventListener('DOMContentLoaded', () => {
     "malware",
     "man",
     "marketplace",
+    "codespaces",
     "mention",
     "mentioned",
     "mentioning",
