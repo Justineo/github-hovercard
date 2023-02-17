@@ -248,6 +248,7 @@ $(() => {
     "malware",
     "man",
     "marketplace",
+    "codespaces",
     "mention",
     "mentioned",
     "mentioning",
