@@ -11,7 +11,8 @@ module.exports = {
         "SharedArrayBuffer": "readonly",
         "$": true,
         "Mustache": true,
-        "browser": true
+        "browser": true,
+        "chrome": true
     },
     "parserOptions": {
         "ecmaVersion": 2018
