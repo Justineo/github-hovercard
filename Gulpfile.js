@@ -202,6 +202,15 @@ gulp.task('edge:cp', gulp.series('edge:hack', 'css', 'icons', function () {
   fs.writeFileSync(manifestPath, JSON.stringify(manifest, null, '  '));
 
   var targets = [
+    './src/*', '!./src/hovercard.js', './tmp/hovercard.js', '!./src/*.styl',
+    './tmp/hovercard.css', './tmp/tomorrow-night.css', './tmp/tooltipster.css', './icon.png'
+  ];
+  return gulp.src(targets)
+    .pipe(gulp.dest('./extensions/edge'));
+}));ifest.version = version;
+  fs.writeFileSync(manifestPath, JSON.stringify(manifest, null, '  '));
+
+  var targets = [
     './src/*', '!./src/hovercard.js', '!./src/jquery.js', '!./src/*.styl',
     './tmp/hovercard.css', './tmp/tomorrow-night.css', './tmp/tooltipster.css', './icon.png'
   ];
